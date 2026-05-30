@@ -1,0 +1,31 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "AGENTS.md"
+  ],
+  "formatter": {
+    "python": {
+      "command": ["uv", "run", "ruff", "format", "--stdin-filename", "$FILE"],
+      "extensions": [".py"]
+    }
+  },
+  "lsp": {
+    "python": {
+      "command": ["uv", "run", "basedpyright", "--stdio"],
+      "extensions": [".py"]
+    }
+  },
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "tail_turns": 2,
+    "preserve_recent_tokens": 8192,
+    "reserved": 4096
+  },
+  "snapshot": true,
+  "permission": {
+    "webfetch": "allow",
+    "websearch": "allow",
+    "bash": "allow"
+  }
+}

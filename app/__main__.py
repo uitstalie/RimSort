@@ -21,7 +21,8 @@
 #   nuitka-project: --mode=app
 #   nuitka-project: --macos-app-icon={MAIN_DIRECTORY}/../themes/default-icons/AppIcon_a.icns
 # nuitka-project-else:
-#   nuitka-project: --mode=standalone
+#   nuitka-project: --mode=onefile
+#   nuitka-project: --onefile-tempdir-spec=/tmp/rimsort_{PID}
 
 # nuitka-project-if: os.path.exists("{MAIN_DIRECTORY}/../version.xml"):
 #   nuitka-project: --include-data-file={MAIN_DIRECTORY}/../version.xml=version.xml
@@ -32,6 +33,7 @@ import sys
 import traceback
 from logging import WARNING, getLogger
 from multiprocessing import freeze_support, set_start_method
+from pathlib import Path
 from types import TracebackType
 from typing import Type
 
@@ -158,6 +160,24 @@ if __name__ == "__main__":
     # See also: https://nuitka.net/doc/user-manual.html#use-case-4-program-distribution
     # Otherwise, use sys.argv[0] to get the actual relative path to the executable
     #########################################################################################
+
+    # CRITICAL: Set up Qt environment variables BEFORE any Qt imports
+    # This is necessary for Nuitka builds to find Qt plugins and resources
+    if "__compiled__" in globals():
+        # Running from Nuitka build
+        application_folder = Path(sys.argv[0]).resolve().parent
+        # Set Qt plugin paths
+        os.environ.setdefault("QT_QPA_PLATFORM_PLUGIN_PATH", str(application_folder))
+        os.environ.setdefault("QT_PLUGIN_PATH", str(application_folder))
+        # Set Qt WebEngine locales path
+        qtwebengine_locales = application_folder / "qtwebengine_locales"
+        if qtwebengine_locales.exists():
+            os.environ["QTWEBENGINE_LOCALES_PATH"] = str(qtwebengine_locales)
+        # Disable Qt WebEngine sandbox to avoid issues with Nuitka builds
+        os.environ.setdefault("QTWEBENGINE_DISABLE_SANDBOX", "1")
+        # Ensure XCB platform plugin can find its dependencies on Linux
+        if SYSTEM == "Linux":
+            os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
 
     # CRITICAL: Check for CLI mode BEFORE any imports that might use Qt
     # This must happen before AppInfo() or any other code that could trigger Qt initialization

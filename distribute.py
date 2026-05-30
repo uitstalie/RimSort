@@ -45,6 +45,10 @@ _NUITKA_CMD = [
     "app/",
     "--python-flag=-m",
     f"--include-data-dir={glob.glob('.venv/**/qtwebengine_locales', recursive=True)[0]}=qtwebengine_locales",
+    "--include-qt-plugins=all",
+    "--enable-plugin=pyside6",
+    "--lto=no",
+    "--jobs=4",
 ]
 
 if _SYSTEM == "Darwin" and _PROCESSOR in ["i386", "arm"]:
