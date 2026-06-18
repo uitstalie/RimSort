@@ -350,12 +350,17 @@ class SteamworksAppDependenciesQuery:
 
 class SteamworksGameLaunch(Process):
     def __init__(
-        self, game_install_path: str, run_args: str = "", _libs: str | None = None
+        self,
+        game_install_path: str,
+        run_args: str = "",
+        _libs: str | None = None,
+        process_nice: int = 0,
     ) -> None:
         Process.__init__(self)
         self._libs = _libs
         self.game_install_path = game_install_path
         self.run_args = run_args
+        self.process_nice = process_nice
 
     def run(self) -> None:
         """
@@ -370,7 +375,9 @@ class SteamworksGameLaunch(Process):
 
         # Launch the game
         launch_game_process(
-            game_install_path=Path(self.game_install_path), run_args=self.run_args
+            game_install_path=Path(self.game_install_path),
+            run_args=self.run_args,
+            process_nice=self.process_nice,
         )
         # If we had an API initialization, try to unload it
         if (
