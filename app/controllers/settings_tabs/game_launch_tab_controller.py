@@ -8,7 +8,8 @@ from app.views.settings_dialog import SettingsDialog
 class GameLaunchTabController(BaseTabController):
     """Controller for the Game Launch settings tab.
 
-    Manages: Steam protocol launch toggle, run arguments text field.
+    Manages: Steam protocol launch toggle, run arguments text field,
+    process nice value spinbox, and system tools detection.
     """
 
     def __init__(
@@ -32,6 +33,8 @@ class GameLaunchTabController(BaseTabController):
         self.dialog.run_args.setText(instance.run_args)
         self.dialog.run_args.setCursorPosition(0)
 
+        self.dialog.process_nice_spinbox.setValue(instance.process_nice)
+
     def update_model_from_view(self) -> None:
         self.settings.instances[
             self.settings.current_instance
@@ -42,6 +45,10 @@ class GameLaunchTabController(BaseTabController):
         self.settings.instances[
             self.settings.current_instance
         ].run_args = self.dialog.run_args.text()
+
+        self.settings.instances[
+            self.settings.current_instance
+        ].process_nice = self.dialog.process_nice_spinbox.value()
 
     @Slot(str)
     def _on_run_args_text_changed(self, text: str = "") -> None:

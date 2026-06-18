@@ -30,6 +30,9 @@ class Instance(msgspec.Struct):
     steam_client_integration: bool = False
     # Launch game via Steam protocol to enable Steam overlay
     launch_via_steam_protocol: bool = False
+    # Process nice value for game launch on Linux (-20 to 19, 0 = default)
+    # Positive = lower priority, negative = higher priority (requires CAP_SYS_NICE)
+    process_nice: int = 0
     instance_folder_override: str = (
         ""  # Custom instance folder path, empty = use default
     )

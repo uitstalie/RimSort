@@ -2900,6 +2900,11 @@ class MainContent(QObject):
             current_instance
         ].launch_via_steam_protocol
 
+        # Retrieve process nice value for Linux process priority
+        process_nice = self.settings_controller.settings.instances[
+            current_instance
+        ].process_nice
+
         # Manage steam_appid.txt file for Steam integration
         # If Steam integration is enabled, Steam requires this file with the app ID in the game folder
         # The Steam App ID is "294100" for RimWorld.
@@ -2945,7 +2950,11 @@ class MainContent(QObject):
             # Launch game executable directly
             # This method ignores Steam overlay but respects custom run arguments
             logger.info("Launching game process without Steamworks API...")
-            launch_game_process(game_install_path=game_install_path, run_args=run_args)
+            launch_game_process(
+                game_install_path=game_install_path,
+                run_args=run_args,
+                process_nice=process_nice,
+            )
 
     @Slot()
     def _use_this_instead_clicked(self) -> None:

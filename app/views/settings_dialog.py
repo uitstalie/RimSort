@@ -353,6 +353,66 @@ class SettingsDialog(QDialog):
 
         self.setTabOrder(self.run_args_info_label, self.run_args)
 
+        # Process Priority group (Linux only)
+        process_priority_group = QGroupBox(self.tr("Process Priority"))
+        tab_layout.addWidget(process_priority_group)
+
+        process_priority_layout = QGridLayout(process_priority_group)
+
+        priority_label = QLabel(self.tr("Nice value (-20 = highest, 19 = lowest):"))
+        process_priority_layout.addWidget(
+            priority_label, 0, 0, alignment=Qt.AlignmentFlag.AlignRight
+        )
+
+        self.process_nice_spinbox = QSpinBox()
+        self.process_nice_spinbox.setRange(-20, 19)
+        self.process_nice_spinbox.setValue(0)
+        self.process_nice_spinbox.setToolTip(
+            self.tr(
+                "Sets the CPU scheduling priority for the game process.\n"
+                "- Negative values (e.g. -10): higher priority, may require sudo/CAP_SYS_NICE on Linux.\n"
+                "- Positive values (e.g. 10): lower priority, no special permissions needed.\n"
+                "- 0: system default.\n"
+                "For automatic CPU governor optimization, consider using gamemoderun wrapper instead."
+            )
+        )
+        process_priority_layout.addWidget(self.process_nice_spinbox, 0, 1)
+
+        # System Tools detection
+        tools_group = QGroupBox(self.tr("Available System Tools"))
+        tab_layout.addWidget(tools_group)
+
+        tools_layout = QVBoxLayout(tools_group)
+
+        from app.utils.generic import detect_system_tools
+
+        detected = detect_system_tools()
+        available_tools = [name for name, info in detected.items() if info["available"]]
+        unavailable_tools = [
+            name for name, info in detected.items() if not info["available"]
+        ]
+
+        tools_summary = QLabel()
+        if available_tools:
+            tools_text = (
+                f"✓ Detected: {', '.join(available_tools)}\n"
+                f"✗ Not found: {', '.join(unavailable_tools) if unavailable_tools else 'none'}"
+            )
+        else:
+            tools_text = "No gaming optimization tools detected. Install gamemode, mangohud, etc. for better performance."
+        tools_summary.setText(tools_text)
+        tools_summary.setWordWrap(True)
+        tools_layout.addWidget(tools_summary)
+
+        tools_help = QLabel(
+            self.tr(
+                "Use these tools as wrapper commands in run arguments above.\n"
+                "Example: gamemoderun %command% -popupwindow"
+            )
+        )
+        tools_help.setWordWrap(True)
+        tools_layout.addWidget(tools_help)
+
         # Push the content to the top
         tab_layout.addStretch()
 

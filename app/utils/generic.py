@@ -280,7 +280,9 @@ def get_executable_path(game_install_path: Path) -> str | None:
         return None
 
 
-def launch_game_process(game_install_path: Path, run_args: str = "") -> None:
+def launch_game_process(
+    game_install_path: Path, run_args: str = "", process_nice: int = 0
+) -> None:
     """
     This function starts the Rimworld game process in it's own Process,
     by launching the executable found in the configured game directory.
@@ -292,6 +294,7 @@ def launch_game_process(game_install_path: Path, run_args: str = "") -> None:
     :param game_install_path: is a path to the game folder
     :param run_args: a launch command string with optional Steam-style
                      %command% syntax (e.g., "PROTON_LOG=1 gamemoderun %command% -logfile /tmp/log")
+    :param process_nice: nice value for the game process (Linux only, -20 to 19, 0 = default)
     """
     if not game_install_path:
         logger.error("The path to the game folder is empty")
@@ -340,7 +343,8 @@ def launch_game_process(game_install_path: Path, run_args: str = "") -> None:
 
     logger.info(
         f"Launching the game with subprocess.Popen(): `{executable_path}` "
-        f"with env_vars: {list(env_vars.keys())}, wrappers: {wrapper_commands}, args: {game_args}"
+        f"with env_vars: {list(env_vars.keys())}, wrappers: {wrapper_commands}, "
+        f"args: {game_args}, nice: {process_nice}"
     )
     pid, popen_args = launch_process(
         executable_path,
@@ -348,6 +352,7 @@ def launch_game_process(game_install_path: Path, run_args: str = "") -> None:
         str(game_install_path),
         env_vars=env_vars,
         wrapper_commands=wrapper_commands,
+        process_nice=process_nice,
     )
     logger.info(
         f"Launched independent RimWorld game process with PID {pid} using args {popen_args}"
@@ -391,6 +396,7 @@ def launch_process(
     cwd: str,
     env_vars: dict[str, str] | None = None,
     wrapper_commands: list[str] | None = None,
+    process_nice: int = 0,
 ) -> tuple[int, list[str]]:
     """
     Launch a process with optional environment variables and wrapper executables.
@@ -402,6 +408,7 @@ def launch_process(
     Platform-specific behavior:
     - macOS: Uses 'open' command; wrapper executables are NOT supported and will be ignored
     - Linux/Windows: Directly launches executable with wrapper commands prepended
+    - Linux: Optionally sets process nice value via os.nice() (requires CAP_SYS_NICE for negative)
 
     :param executable_path: Path to the executable to launch
     :param args: List of command-line arguments to pass to the executable
@@ -409,6 +416,7 @@ def launch_process(
     :param env_vars: Optional dictionary of environment variables to set for the process
     :param wrapper_commands: Optional list of wrapper executables to prepend (e.g., ['gamemoderun'])
                              Note: Ignored on macOS as the 'open' command doesn't support this
+    :param process_nice: Optional nice value to set for the child process (Linux only, -20 to 19)
     :return: Tuple of (process PID, list of popen arguments used)
     """
     pid = -1
@@ -450,9 +458,69 @@ def launch_process(
             pid = p.pid
         else:
             # not Windows, so assume POSIX; if not, we'll get a usable exception
-            p = subprocess.Popen(popen_args, start_new_session=True, cwd=cwd, env=env)
+            # Apply process nice value if non-zero
+            if process_nice != 0:
+
+                def _set_nice() -> None:
+                    try:
+                        os.nice(process_nice)
+                        logger.debug(f"Set child process nice value to ~{process_nice}")
+                    except PermissionError:
+                        logger.warning(
+                            f"Cannot set nice value to {process_nice}: "
+                            "negative values require CAP_SYS_NICE. "
+                            "Consider using gamemoderun wrapper instead."
+                        )
+
+                p = subprocess.Popen(
+                    popen_args,
+                    start_new_session=True,
+                    cwd=cwd,
+                    env=env,
+                    preexec_fn=_set_nice,
+                )
+            else:
+                p = subprocess.Popen(
+                    popen_args, start_new_session=True, cwd=cwd, env=env
+                )
             pid = p.pid
     return pid, popen_args
+
+
+def detect_system_tools() -> dict[str, dict[str, bool | str]]:
+    """
+    Detect common gaming optimization tools available on the system.
+
+    Checks for:
+    - gamemoderun (Feral GameMode)
+    - mangohud (MangoHud overlay)
+    - primusrun / optirun (GPU switching)
+    - ionice (I/O scheduling)
+    - taskset (CPU affinity)
+
+    :return: Dictionary keyed by tool category, each containing:
+             - 'available': bool - whether the tool is found in PATH
+             - 'path': str - the resolved path (empty if not found)
+             - 'description': str - brief description of the tool's purpose
+    """
+    tools_to_check = {
+        "gamemoderun": "CPU governor optimization (Feral GameMode)",
+        "mangohud": "Performance overlay (MangoHud)",
+        "primusrun": "Hybrid GPU offloading (Primus)",
+        "optirun": "Hybrid GPU offloading (Bumblebee)",
+        "ionice": "I/O scheduling priority",
+        "taskset": "CPU affinity control",
+    }
+
+    result: dict[str, dict[str, bool | str]] = {}
+    for cmd, description in tools_to_check.items():
+        resolved = shutil.which(cmd)
+        result[cmd] = {
+            "available": resolved is not None,
+            "path": resolved or "",
+            "description": description,
+        }
+    return result
 
 
 def open_url_browser(url: str) -> None:
