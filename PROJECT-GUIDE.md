@@ -55,6 +55,37 @@ uv run python distribute.py --help
 - Type checking: mypy strict, PyRight
 - Tests: pytest + pytest-qt
 
+## 本机特有改动：Steam 启动时注入中文字体
+
+**问题**：勾选 "Launch via Steam protocol" 启动时，游戏里**中文全部空白**（拉丁字母正常）；
+直接 exec 启动则正常。
+
+**根因**（2026-10-01 实测）：
+
+1. Unity 的 Linux 播放器**只扫描 `/usr/share/fonts` 一个目录**，且**完全不使用 fontconfig**
+2. Steam 给原生 Linux 游戏套的 scout/soldier 容器里，该目录只有 6 个 DejaVu **拉丁**字体；
+   宿主的字体被挂在 `/run/host/fonts`，Unity 不读 ⇒ 容器内无中文字体可用
+3. 容器根是**对运行时平台目录做硬链接**，参与链接的文件由
+   `<platform>/usr-mtree.txt.gz` **清单**决定 ⇒ 只放文件、不改清单会被忽略
+
+**实现**：`app/utils/steam/linux_runtime_fonts.py`
+
+- `ensure_cjk_fonts_in_steam_runtimes()` 在 **Steam 协议启动分支**里调用
+  （`app/views/main_content_panel.py` 的 `_do_run_game`，仅 Linux 生效）
+- 把宿主的中文 **`.ttf`**（`DroidSansFallbackFull.ttf`、`simhei.ttf`）复制进各
+  `*_platform_*/files/share/fonts/cjk/`，并把条目写进该平台清单（备份为 `.orig`）
+- 幂等、失败只告警不阻断启动（与 `process_nice` 的处理风格一致）
+- 测试：`tests/utils/steam/test_linux_runtime_fonts.py`
+
+**注意**：
+
+- **必须 `.ttf`/`.otf`**：Unity 不认 `.ttc` 字体集合
+- **每次 Steam Linux Runtime 更新后**需再触发一次（更新会换掉 `*_platform_*` 目录）。
+  升级后随便启动一次游戏即可自动修复；也可离线运行
+  `common/rimworld-linux/restore-container-cjk-fonts.py`（工作区里的等价独立脚本）
+- 已实测**无效**、勿再试：`PRESSURE_VESSEL_FILESYSTEMS_RO` 挂字体目录、
+  往 `~/.fonts`/`~/.local/share/fonts` 放字体、去掉 `start_RimWorld.sh` 的 `LC_ALL=C`
+
 ## Working Notes
 
 - Prefer the existing Python 3.12 + PySide6 MVC structure.
