@@ -8,8 +8,8 @@ This module provides:
 import os
 import shutil
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Optional
 from zipfile import ZIP_DEFLATED, BadZipFile, ZipFile
 
 from loguru import logger
@@ -17,11 +17,11 @@ from PySide6.QtCore import QThread, Signal
 
 # Export for use in other modules
 __all__ = [
-    "ZipExtractThread",
-    "validate_zip_integrity",
-    "get_zip_contents",
-    "create_zip_backup",
     "BadZipFile",
+    "ZipExtractThread",
+    "create_zip_backup",
+    "get_zip_contents",
+    "validate_zip_integrity",
 ]
 
 
@@ -116,7 +116,7 @@ class ZipExtractThread(QThread):
 
         except Exception as e:
             logger.error(f"ZIP extraction failed: {e}")
-            self.finished.emit(False, f"Extraction error: {str(e)}")
+            self.finished.emit(False, f"Extraction error: {e!s}")
 
     def stop(self) -> None:
         """Signal the thread to abort extraction on next iteration."""
@@ -153,10 +153,10 @@ def validate_zip_integrity(zip_path: str | Path) -> tuple[bool, str]:
         return True, ""
     except BadZipFile as e:
         logger.error(f"Invalid ZIP file: {e}")
-        return False, f"Invalid ZIP file: {str(e)}"
+        return False, f"Invalid ZIP file: {e!s}"
     except Exception as e:
         logger.error(f"Failed to validate ZIP: {e}")
-        return False, f"Error validating ZIP: {str(e)}"
+        return False, f"Error validating ZIP: {e!s}"
 
 
 def get_zip_contents(zip_path: str | Path) -> list[str]:
@@ -182,13 +182,13 @@ def get_zip_contents(zip_path: str | Path) -> list[str]:
         raise
     except Exception as e:
         logger.error(f"Failed to read ZIP contents: {e}")
-        raise BadZipFile(f"Failed to read ZIP contents: {str(e)}") from e
+        raise BadZipFile(f"Failed to read ZIP contents: {e!s}") from e
 
 
 def create_zip_backup(
     source_dir: str | Path,
     backup_path: str | Path,
-    progress_callback: Optional[Callable[[int, int], None]] = None,
+    progress_callback: Callable[[int, int], None] | None = None,
 ) -> None:
     """Create a compressed ZIP backup of a directory.
 

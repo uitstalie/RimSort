@@ -13,9 +13,8 @@ from loguru import logger
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QMessageBox
 
-import app.utils.symlink as symlink
 from app.models.settings import Instance, Settings
-from app.utils import http
+from app.utils import http, symlink
 from app.utils.event_bus import EventBus
 from app.utils.generic import handle_remove_read_only
 from app.utils.generic import rmtree as g_rmtree
@@ -43,9 +42,9 @@ class SteamcmdInterface:
 
     _instance: "None | SteamcmdInterface" = None
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> "SteamcmdInterface":
+    def __new__(cls, *args: Any, **kwargs: Any) -> "SteamcmdInterface":  # noqa: PYI034
         if cls._instance is None:
-            cls._instance = super(SteamcmdInterface, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
         return cls._instance
 
     def __init__(self, steamcmd_prefix: str, validate: bool) -> None:
@@ -53,7 +52,7 @@ class SteamcmdInterface:
             self.initialized = True
             self.setup = False
             self.steamcmd_prefix = steamcmd_prefix
-            super(SteamcmdInterface, self).__init__()
+            super().__init__()
             logger.debug("Initializing SteamcmdInterface")
             self.initialize_prefix(steamcmd_prefix, validate)
 
@@ -77,17 +76,17 @@ class SteamcmdInterface:
             self.steamcmd_url = (
                 "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_osx.tar.gz"
             )
-            self.steamcmd = str((Path(self.steamcmd_install_path) / "steamcmd.sh"))
+            self.steamcmd = str(Path(self.steamcmd_install_path) / "steamcmd.sh")
         elif self.system == "Linux":
             self.steamcmd_url = (
                 "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz"
             )
-            self.steamcmd = str((Path(self.steamcmd_install_path) / "steamcmd.sh"))
+            self.steamcmd = str(Path(self.steamcmd_install_path) / "steamcmd.sh")
         elif self.system == "Windows":
             self.steamcmd_url = (
                 "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
             )
-            self.steamcmd = str((Path(self.steamcmd_install_path) / "steamcmd.exe"))
+            self.steamcmd = str(Path(self.steamcmd_install_path) / "steamcmd.exe")
         else:
             show_fatal_error(
                 "SteamcmdInterface",
@@ -104,15 +103,13 @@ class SteamcmdInterface:
         if not os.path.exists(self.steamcmd_steam_path):
             os.makedirs(self.steamcmd_steam_path)
         self.steamcmd_appworkshop_acf_path = str(
-            (
-                Path(self.steamcmd_steam_path)
-                / "steamapps"
-                / "workshop"
-                / "appworkshop_294100.acf"
-            )
+            Path(self.steamcmd_steam_path)
+            / "steamapps"
+            / "workshop"
+            / "appworkshop_294100.acf"
         )
         self.steamcmd_content_path = str(
-            (Path(self.steamcmd_steam_path) / "steamapps" / "workshop" / "content")
+            Path(self.steamcmd_steam_path) / "steamapps" / "workshop" / "content"
         )
 
     @classmethod
@@ -132,30 +129,36 @@ class SteamcmdInterface:
         runner: RunnerPanel | None = None,
     ) -> bool:
         """
-        Creates a symlink/junction from src_path to dst_path.
+                Creates a symlink/junction from src_path to dst_path.
 
-        Note that this method will not convert relative paths to absolute paths before system calls.
-        To ensure that compatibility with Windows, src_path must exist and be a directory.
+                Note that this method will not convert relative paths to absolute paths before system calls.
+        # jscpd:ignore-start
+                To ensure that compatibility with Windows, src_path must exist and be a directory.
 
-        If the dst_path exists and force is False:
-            - If dst_path is a symlink/junction, it will be unlinked re-created based on method args.
-            - If dst_path is a directory and empty, it will be deleted.
-            - If dst_path is a directory and not empty, it will safely fail and return False.
-            - If dst_path is a file, it will safely fail and return False.
-        If the dst_path exists and force is True:
-            - dst_path will be removed (even if it is a non-empty directory) and re-created based on method args, even if it already exists.
+                If the dst_path exists and force is False:
+                    - If dst_path is a symlink/junction, it will be unlinked re-created based on method args.
+                    - If dst_path is a directory and empty, it will be deleted.
+                    - If dst_path is a directory and not empty, it will safely fail and return False.
+        # jscpd:ignore-end
+        # jscpd:ignore-start
+                    - If dst_path is a file, it will safely fail and return False.
+                If the dst_path exists and force is True:
+        # jscpd:ignore-start
+                    - dst_path will be removed (even if it is a non-empty directory) and re-created based on method args, even if it already exists.
 
-        :param src_path: The source path/target to create the symlink from. Must be a directory
-        :type src_path: str
-        :param dst_path: The destination path to create the symlink to.
-        :type dst_path: str
-        :param force: Force the creation of the symlink/junction, even if the dst_path exists. Default is False.
-        :type force: bool
-        :param show_dialogues: Show conditional dialogues to the user on fixable failures. Default is True.
-        :type show_dialogues: bool
-        :param runner: A RunnerPanel to interact with. Default is None.
-        :type runner: RunnerPanel
-        :return: True if the symlink/junction was created successfully. False otherwise.
+                :param src_path: The source path/target to create the symlink from. Must be a directory
+                :type src_path: str
+                :param dst_path: The destination path to create the symlink to.
+                :type dst_path: str
+        # jscpd:ignore-end
+                :param force: Force the creation of the symlink/junction, even if the dst_path exists. Default is False.
+                :type force: bool
+                :param show_dialogues: Show conditional dialogues to the user on fixable failures. Default is True.
+                :type show_dialogues: bool
+                :param runner: A RunnerPanel to interact with. Default is None.
+        # jscpd:ignore-end
+                :type runner: RunnerPanel
+                :return: True if the symlink/junction was created successfully. False otherwise.
         """
         if runner is not None:
             runner.message(f"[{src_path}] -> " + dst_path)
@@ -205,12 +208,12 @@ class SteamcmdInterface:
         except Exception as e:
             if runner is not None:
                 runner.message(
-                    f"Failed to create symlink. Error: {type(e).__name__}: {str(e)}"
+                    f"Failed to create symlink. Error: {type(e).__name__}: {e!s}"
                 )
             show_warning(
                 "Failed to Create Symlink",
                 f"Failed to create symlink for {sys.platform}",
-                details=f"Error: {type(e).__name__}: {str(e)}",
+                details=f"Error: {type(e).__name__}: {e!s}",
             )
 
             return False
@@ -256,7 +259,7 @@ class SteamcmdInterface:
         :return: True if the symlink/junction was created successfully. False otherwise.
         :rtype: bool
         """
-        msg = f"Failed to create symlink. Error: {type(e).__name__}: {str(e)}"
+        msg = f"Failed to create symlink. Error: {type(e).__name__}: {e!s}"
         if runner is not None:
             runner.message(msg)
 
@@ -285,6 +288,31 @@ class SteamcmdInterface:
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
+
+    @property
+    def console_log_path(self) -> Path:
+        return Path(self.steamcmd_install_path) / "logs" / "console_log.txt"
+
+    def _get_process_environment(self) -> dict[str, str] | None:
+        """Return an isolated environment for SteamCMD on Linux.
+
+        SteamCMD otherwise shares the desktop Steam client's configuration under
+        the user's home directory and can overwrite its ``libraryfolders.vdf``.
+        Other platforms retain their existing inherited environment.
+        """
+        if self.system != "Linux":
+            return None
+
+        home_path = Path(self.steamcmd_prefix).expanduser().resolve() / "home"
+        config_path = home_path / ".config"
+        data_path = home_path / ".local" / "share"
+        config_path.mkdir(parents=True, exist_ok=True)
+        data_path.mkdir(parents=True, exist_ok=True)
+        return {
+            "HOME": str(home_path),
+            "XDG_CONFIG_HOME": str(config_path),
+            "XDG_DATA_HOME": str(data_path),
+        }
 
     def _build_download_script(self, publishedfileids: list[str]) -> str:
         """Write a SteamCMD script for *publishedfileids* and return its path.
@@ -363,6 +391,7 @@ class SteamcmdInterface:
         runner._pending_steamcmd_batches = batches[1:]
         runner._steamcmd_executable = self.steamcmd
         runner._steamcmd_wrapper = self
+        runner._steamcmd_environment = self._get_process_environment()
 
         # Kick off the first batch immediately.
         batch_num = 1
@@ -373,10 +402,12 @@ class SteamcmdInterface:
         )
         script_path = self._build_download_script(first_batch)
         runner.message(f"Compiled & using script: {script_path}")
+        runner._steamcmd_console_log_path = str(self.console_log_path)
         runner.execute(
             self.steamcmd,
             [f'+runscript "{script_path}"'],
             total,
+            environment=runner._steamcmd_environment,
         )
 
     def download_game_version(
@@ -732,7 +763,7 @@ class SteamcmdInterface:
                     "SteamcmdInterface",
                     f"Failed to download steamcmd for {self.system}",
                     "Did the file/url change?<br>Does your environment have access to the internet?",
-                    details=f"Error: {type(e).__name__}: {str(e)}",
+                    details=f"Error: {type(e).__name__}: {e!s}",
                 )
         else:
             runner.message("SteamCMD already installed...")
@@ -754,9 +785,7 @@ class SteamcmdInterface:
                 runner.message(
                     f"Workshop content path does not exist. Creating for symlinking:\n\n{self.steamcmd_content_path}\n"
                 )
-            symlink_destination_path = str(
-                (Path(self.steamcmd_content_path) / "294100")
-            )
+            symlink_destination_path = str(Path(self.steamcmd_content_path) / "294100")
             runner.message(f"Symlink source : {symlink_source_path}")
             runner.message(f"Symlink destination: {symlink_destination_path}")
             if symlink.is_junction_or_link(

@@ -5,7 +5,6 @@ import sys
 from collections.abc import Callable, MutableMapping
 from pathlib import Path
 from time import sleep
-from typing import Optional
 
 from loguru import logger
 
@@ -16,8 +15,8 @@ from app.utils.generic import show_no_steam_warning, show_snap_steam_warning
 # You can automatically ensure this is done by utilizing distribute.py
 try:
     if "__compiled__" not in globals():
-        sys.path.append(str((Path.cwd() / "submodules" / "SteamworksPy")))
-except Exception:
+        sys.path.append(str(Path.cwd() / "submodules" / "SteamworksPy"))
+except Exception:  # noqa: S110
     pass
 
 SLEEP_TIME = 15
@@ -27,7 +26,7 @@ SNAP_STEAM_PATH = (
 )
 
 
-def _find_steam_executable() -> Optional[Path]:
+def _find_steam_executable() -> Path | None:
     """
     Find the Steam executable path based on the current platform.
 

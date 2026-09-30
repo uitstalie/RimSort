@@ -7,7 +7,7 @@ permalink: user-guide/rule-editor
 
 # Rule Editor
 
-To access the rule editor either navigate to `Edit > Rule Editor...` in the main menu bar, or open the context menu for the mod you wish to edit and navigate to `Miscellaneous Options > Edit mod with Rule Editor`.
+To access the rule editor either navigate to `Edit > Rule Editor…` in the main menu bar, or open the context menu for the mod you wish to edit and navigate to `Miscellaneous options > Edit mod with Rule Editor`.
 
 ![Rule Editor Preview](../assets/images/previews/rule_editor.png)
 
@@ -29,7 +29,7 @@ The Rule Editor is a powerful tool in RimSort that allows you to view, create, a
 ### From a Mod's Context Menu
 
 1. Right-click on a mod in the active or inactive mods list
-2. Navigate to `Miscellaneous Options > Edit mod with Rule Editor`
+2. Navigate to `Miscellaneous options > Edit mod with Rule Editor`
 
 ## Interface Layout
 
@@ -39,12 +39,14 @@ The Rule Editor window is divided into several sections:
 
 This panel shows the rules for the currently selected mod, organized by rule type:
 
-- **About.xml (loadAfter)**: Mods that must load after this mod
-- **About.xml (loadBefore)**: Mods that must load before this mod
+- **About.xml (loadAfter)**: Mods that this mod must load after
+- **About.xml (loadBefore)**: Mods that this mod must load before
 - **About.xml (incompatibilitiesWith)**: Mods that are incompatible with this mod
 
 - **Community Rules (loadAfter/loadBefore/incompatibilitiesWith)**: Community-defined rules
 - **Force load at top/bottom**: Checkboxes to force the mod to load at the top or bottom of the list
+
+- **User Rules (loadAfter/loadBefore/incompatibilitiesWith)**: Personal rules you define, with the same Force load at top/bottom checkboxes
 
 ### Mods List (Top Right)
 
@@ -62,6 +64,9 @@ A table displaying all rules for the current mod with the following columns:
 - **Rule type**: loadAfter, loadBefore, incompatibleWith, loadTop, or loadBottom
 - **Comment**: Optional annotation explaining the rule
 
+{: .note}
+> Rules originating from `About.xml` show their rule type in lowercase (`loadafter`, `loadbefore`, `incompatiblewith`), while Community and User rules use the camelCase forms (`loadAfter`, `loadBefore`, `incompatibleWith`, `loadTop`, `loadBottom`).
+
 ## Using the Rule Editor
 
 ### Viewing Rules for a Mod
@@ -74,8 +79,8 @@ A table displaying all rules for the current mod with the following columns:
 
 1. Find the target mod in the mods list (use search if needed)
 2. Drag the mod from the list to one of the rule panels:
-   - Drop on "loadAfter" to make the dragged mod load after the current mod
-   - Drop on "loadBefore" to make the dragged mod load before the current mod
+   - Drop on "loadAfter" to make the dragged mod load before the current mod
+   - Drop on "loadBefore" to make the dragged mod load after the current mod
    - Drop on "incompatibilitiesWith" to mark the mods as incompatible
 3. When prompted, enter a comment explaining why this rule exists
 4. The new rule will appear in the rules table
@@ -95,8 +100,8 @@ A table displaying all rules for the current mod with the following columns:
 ### Saving Changes
 
 - Click the save button for the rule type you modified:
-  - **Save Community Rules** button (disk icon with community rules tooltip)
-  - **Save User Rules** button (disk icon with user rules tooltip)
+  - **Save Community Rules** (the disk icon whose tooltip reads "Save rules to communityRules.json")
+  - **Save User Rules** (the disk icon whose tooltip reads "Save rules to userRules.json")
 - Changes are saved to the respective JSON files and the metadata cache is refreshed
 
 ## Rule Types Explained

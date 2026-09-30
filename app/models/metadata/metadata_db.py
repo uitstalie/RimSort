@@ -27,23 +27,35 @@ class AuxMetadataEntry(Base):
     __tablename__ = "auxiliary_metadata"
 
     path: Mapped[str] = mapped_column(primary_key=True)
-    type: Mapped[str] = mapped_column(String, default="Unknown")
+    type: Mapped[str] = mapped_column(
+        String, default="Unknown", server_default="Unknown"
+    )
 
     published_file_id: Mapped[str | None] = mapped_column(
         String, nullable=True, default=None
     )
-    acf_time_touched: Mapped[int] = mapped_column(Integer, default=-1)
-    acf_time_updated: Mapped[int] = mapped_column(Integer, default=-1)
-    external_time_created: Mapped[int] = mapped_column(Integer, default=-1)
-    external_time_updated: Mapped[int] = mapped_column(Integer, default=-1)
+    acf_time_touched: Mapped[int] = mapped_column(
+        Integer, default=-1, server_default="-1"
+    )
+    acf_time_updated: Mapped[int] = mapped_column(
+        Integer, default=-1, server_default="-1"
+    )
+    external_time_created: Mapped[int] = mapped_column(
+        Integer, default=-1, server_default="-1"
+    )
+    external_time_updated: Mapped[int] = mapped_column(
+        Integer, default=-1, server_default="-1"
+    )
 
-    user_notes: Mapped[str] = mapped_column(String, default="")
+    user_notes: Mapped[str] = mapped_column(String, default="", server_default="")
     color_hex: Mapped[str] = mapped_column(
         String, default=None, nullable=True
     )  # None/NULL means use theme default
-    ignore_warnings: Mapped[bool] = mapped_column(Boolean, default=False)
+    ignore_warnings: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default="0"
+    )
 
-    outdated: Mapped[bool] = mapped_column(Boolean, default=False)
+    outdated: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
     db_time_touched = Column(DateTime, default=func.now(), onupdate=func.now())
 
     tags: Mapped[list["TagsEntry"]] = relationship(
@@ -65,9 +77,12 @@ class TagsEntry(Base):
     )
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, TagsEntry) and self.tag == other.tag:
-            return True
-        elif isinstance(other, str) and self.tag == other:
+        if (
+            isinstance(other, TagsEntry)
+            and self.tag == other.tag
+            or isinstance(other, str)
+            and self.tag == other
+        ):
             return True
 
         return super().__eq__(other)

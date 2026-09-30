@@ -238,7 +238,7 @@ class MetadataMediator:
         assert self.game_path is not None
 
         metadata_mutex = QMutex()
-        self._mods_metadata = dict()
+        self._mods_metadata = {}
         parsers = [
             self._ParserWorker(
                 mod_path_batch,

@@ -35,7 +35,6 @@ from logging import WARNING, getLogger
 from multiprocessing import freeze_support, set_start_method
 from pathlib import Path
 from types import TracebackType
-from typing import Type
 
 from loguru import logger
 
@@ -62,7 +61,7 @@ elif SYSTEM == "Windows":
 
 
 def handle_exception(
-    exc_type: Type[BaseException],
+    exc_type: type[BaseException],
     exc_value: BaseException,
     exc_traceback: TracebackType | None,
 ) -> None:
@@ -189,10 +188,10 @@ if __name__ == "__main__":
             try:
                 # Nuitka's attach mode doesn't update C-runtime fds.
                 # Map standard streams to the active console explicitly.
-                sys.stdin = open("CONIN$", "r", encoding="utf-8", errors="replace")
-                sys.stdout = open("CONOUT$", "w", encoding="utf-8", buffering=1)
-                sys.stderr = open("CONOUT$", "w", encoding="utf-8", buffering=1)
-            except Exception:
+                sys.stdin = open("CONIN$", "r", encoding="utf-8", errors="replace")  # noqa: SIM115
+                sys.stdout = open("CONOUT$", "w", encoding="utf-8", buffering=1)  # noqa: SIM115
+                sys.stderr = open("CONOUT$", "w", encoding="utf-8", buffering=1)  # noqa: SIM115
+            except Exception:  # noqa: S110
                 pass  # No console available; carry on silently.
 
         import runpy
@@ -260,15 +259,25 @@ if __name__ == "__main__":
     try:
         lock = SingleInstanceLock(AppInfo().app_storage_folder / "rimsort.lock")
         if not lock.acquire():
+            from PySide6.QtCore import QCoreApplication
             from PySide6.QtWidgets import QApplication, QMessageBox
 
             _app = QApplication(sys.argv)
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Warning)
-            msg.setWindowTitle("RimSort Already Running")
-            msg.setText("Another instance of RimSort is already running.")
+            msg.setWindowTitle(
+                QCoreApplication.translate("RimSort", "RimSort Already Running")
+            )
+            msg.setText(
+                QCoreApplication.translate(
+                    "RimSort", "Another instance of RimSort is already running."
+                )
+            )
             msg.setInformativeText(
-                "Please close the existing instance before starting a new one."
+                QCoreApplication.translate(
+                    "RimSort",
+                    "Please close the existing instance before starting a new one.",
+                )
             )
             msg.setStandardButtons(QMessageBox.StandardButton.Ok)
             msg.exec()

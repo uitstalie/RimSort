@@ -1,7 +1,7 @@
 import os
+from collections.abc import Callable
 from functools import partial
 from pathlib import Path
-from typing import Callable
 
 from PySide6.QtCore import QObject
 from PySide6.QtGui import QAction, QKeySequence
@@ -30,12 +30,14 @@ class MenuBar(QObject):
         self.settings_action: QAction
         self.quit_action: QAction
         self.open_mod_list_action: QAction
+        self.append_mod_list_action: QAction
         self.save_mod_list_action: QAction
         self.import_from_rentry_action: QAction
         self.import_from_workshop_collection_action: QAction
         self.import_from_save_file_action: QAction
         self.export_to_clipboard_action: QAction
         self.export_to_rentry_action: QAction
+        self.modlist_history_action: QAction
         self.upload_log_actions: list[QAction] = []
         self.default_open_log_actions: list[QAction] = []
         self.upload_rimsort_log_action: QAction
@@ -128,6 +130,9 @@ class MenuBar(QObject):
         self.open_mod_list_action = self._add_action(
             file_menu, self.tr("Open Mod List…"), "Ctrl+O"
         )
+        self.append_mod_list_action = self._add_action(
+            file_menu, self.tr("Append Mod List…"), "Ctrl+Alt+O"
+        )
         file_menu.addSeparator()
         self.save_mod_list_action = self._add_action(
             file_menu, self.tr("Save Mod List As…"), "Ctrl+Shift+S"
@@ -151,6 +156,10 @@ class MenuBar(QObject):
         )
         self.export_to_rentry_action = self._add_action(
             self.export_submenu, self.tr("To Rentry.co…")
+        )
+        file_menu.addSeparator()
+        self.modlist_history_action = self._add_action(
+            file_menu, self.tr("Mod List History…")
         )
         file_menu.addSeparator()
 

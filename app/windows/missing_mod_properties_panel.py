@@ -1,4 +1,5 @@
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 from loguru import logger
 from PySide6.QtWidgets import QMessageBox
@@ -115,7 +116,7 @@ class MissingModPropertiesPanel(BaseModsPanel):
             logger.error(f"Error adding mods to ignore list: {e}")
             self._show_message(
                 "Error",
-                f"Error adding mods to ignore list: {str(e)}",
+                f"Error adding mods to ignore list: {e!s}",
                 "critical",
             )
 

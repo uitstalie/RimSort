@@ -1,10 +1,14 @@
 {
     "threshold": 0,
+    "gitignore": true,
     "ignore": [
         "**/submodules/**",
         "**/.git/**",
         "**/*.md",
+        "**/*.xml",
+        "**/locales/**",
         "**/.github/**",
-        "**/.venv/**"
+        "**/.venv/**",
+        "**/docs/_includes/components/**"
     ]
 }

@@ -126,7 +126,7 @@ def create_saves_backup(
         backup_dir.mkdir(exist_ok=True)
         logger.info(f"Backup directory is: {backup_dir.resolve()}")
 
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # noqa: DTZ005
         backup_filename = f"Saves_{timestamp}.zip"
         backup_archive_path = backup_dir / backup_filename
 
@@ -159,7 +159,7 @@ def create_backup_in_thread(settings: Settings) -> None:
     if not settings.backup_saves_on_launch:
         return
 
-    today = datetime.date.today().isoformat()
+    today = datetime.date.today().isoformat()  # noqa: DTZ011
     if settings.last_backup_date == today:
         logger.info(f"A backup has already been created today ({today}). Skipping.")
         return

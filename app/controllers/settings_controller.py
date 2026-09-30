@@ -246,7 +246,7 @@ class SettingsController(QObject):
                 "Please select a valid game location.<br><br>"
                 "Windows: RimWorldWin64.exe or RimWorldWin.exe<br><br>"
                 "Mac: RimworldMac.app<br><br>"
-                "Linux: RimWorldLinux<br><br>"
+                "Linux: RimWorldLinux64 or RimWorldLinux<br><br>"
                 "RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux"
             )
         return True, ""
@@ -278,9 +278,14 @@ class SettingsController(QObject):
         game_folder = self.settings.instances[
             self.settings.current_instance
         ].game_folder
-        if not (Path(local_folder).is_dir()) or local_folder != str(
-            Path(game_folder) / "Mods"
-        ):
+        local_path = Path(local_folder)
+        is_game_mods_folder = False
+        if local_path.is_dir():
+            try:
+                is_game_mods_folder = local_path.samefile(Path(game_folder) / "Mods")
+            except OSError:
+                is_game_mods_folder = False
+        if not is_game_mods_folder:
             return False, self.tr(
                 "The selected local mods folder location is not a valid directory.<br><br>"
                 "Please select a valid folder for local mods.<br><br>"

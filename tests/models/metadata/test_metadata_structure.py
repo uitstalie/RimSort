@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-import app.models.metadata.metadata_structure as metadata_structure
+from app.models.metadata import metadata_structure
 from app.models.metadata.metadata_structure import (
     AboutXmlMod,
     ListedMod,
@@ -276,6 +276,15 @@ class TestPublishedFileId:
         about = tmp_path / "About"
         about.mkdir()
         (about / "PublishedFileId.txt").write_text("")
+        mod = ListedMod()
+        mod.mod_path = tmp_path
+        assert mod.published_file_id is None
+
+    def test_zero_id_returns_none(self, tmp_path: Path) -> None:
+        """A zero placeholder is not a valid Steam Workshop ID."""
+        about = tmp_path / "About"
+        about.mkdir()
+        (about / "PublishedFileId.txt").write_text("0")
         mod = ListedMod()
         mod.mod_path = tmp_path
         assert mod.published_file_id is None

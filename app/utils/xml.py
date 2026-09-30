@@ -1,8 +1,8 @@
 import gzip
 import os
-import xml.dom.minidom as minidom
 import xml.etree.ElementTree as ET
 from typing import Any
+from xml.dom import minidom
 
 import zstandard as zstd
 from bs4 import BeautifulSoup
@@ -147,7 +147,7 @@ def json_to_xml_write(
             f.write(reparsed.toprettyxml(indent="  ", encoding=None))
     except Exception as e:
         if raise_errs:
-            raise e
+            raise
         logger.error(f"Error writing XML file: {e}")
         return
 

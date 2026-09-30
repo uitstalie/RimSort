@@ -33,6 +33,7 @@ Scripts/
 # IDE
 .idea/
 .vs
+.cursor
 
 # Nuitka / build
 *.build/
@@ -55,3 +56,5 @@ ltex.dictionary*
 
 # Translation cache
 .translation_cache.json
+# CocoIndex Code (ccc)
+/.cocoindex_code/

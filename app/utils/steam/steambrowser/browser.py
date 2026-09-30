@@ -5,11 +5,10 @@ import re
 from enum import Enum
 from functools import partial
 from pathlib import Path
-from string import Template
 from typing import Any
 
 from loguru import logger
-from PySide6.QtCore import QPoint, Qt, QUrl
+from PySide6.QtCore import QPoint, Qt, QTimer, QUrl, Signal
 from PySide6.QtGui import QAction, QCloseEvent, QPixmap
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import (
@@ -52,6 +51,39 @@ from app.views.dialogue import show_dialogue_conditional, show_warning
 
 from .js_bridge import JavaScriptBridge
 
+URL_PREFIX_SHAREDFILES = "https://steamcommunity.com/sharedfiles/filedetails/?id="
+URL_PREFIX_WORKSHOP = "https://steamcommunity.com/workshop/filedetails/?id="
+SEARCHTEXT_STRING = "&searchtext="
+CHROME_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+)
+
+
+def parse_publishedfileid_from_url(
+    url: str,
+    *,
+    url_prefix_sharedfiles: str = URL_PREFIX_SHAREDFILES,
+    url_prefix_workshop: str = URL_PREFIX_WORKSHOP,
+    searchtext_string: str = SEARCHTEXT_STRING,
+) -> str | None:
+    """Extract a Steam publishedfileid from a workshop URL."""
+    publishedfileid: str | None = None
+    if url_prefix_sharedfiles in url:
+        publishedfileid = url.split(url_prefix_sharedfiles, 1)[1]
+    elif url_prefix_workshop in url:
+        publishedfileid = url.split(url_prefix_workshop, 1)[1]
+    else:
+        return None
+    if searchtext_string in publishedfileid:
+        publishedfileid = publishedfileid.split(searchtext_string)[0]
+    if "?" in publishedfileid:
+        publishedfileid = publishedfileid.split("?")[0]
+    if "/" in publishedfileid:
+        publishedfileid = publishedfileid.split("/")[0]
+    publishedfileid = publishedfileid.strip()
+    return publishedfileid or None
+
 
 class BadgeState(str, Enum):
     INSTALLED = "installed"
@@ -59,10 +91,102 @@ class BadgeState(str, Enum):
     DEFAULT = "default"
 
 
+def resolve_workshop_page_mode(
+    current_url: str,
+    *,
+    url_prefix_steam: str = "https://steamcommunity.com",
+    url_prefix_sharedfiles: str = URL_PREFIX_SHAREDFILES,
+    url_prefix_workshop: str = URL_PREFIX_WORKSHOP,
+    section_readytouseitems: str = "section=readytouseitems",
+    section_collections: str = "section=collections",
+) -> str:
+    """Classify the Steam workshop page for targeted JS injection."""
+    if url_prefix_steam not in current_url:
+        return "other"
+
+    is_workshop_hub = (
+        "/app/294100/workshop" in current_url
+        and "/workshop/browse" not in current_url
+        and "filedetails" not in current_url
+    )
+    is_collections_page = section_collections in current_url
+    is_browse_grid = (
+        section_readytouseitems in current_url
+        or "/workshop/browse" in current_url
+        or "/myworkshopfiles" in current_url
+        or (not is_collections_page and "section=" in current_url)
+    )
+    is_item_page = url_prefix_sharedfiles in current_url
+    is_collection_page = url_prefix_workshop in current_url
+
+    if is_browse_grid:
+        return "browse"
+    if is_workshop_hub:
+        return "hub"
+    if is_item_page or is_collection_page:
+        return "detail"
+    return "other"
+
+
+def toolbar_add_to_list_visible(
+    current_url: str,
+    *,
+    url_prefix_steam: str = "https://steamcommunity.com",
+    url_prefix_sharedfiles: str = URL_PREFIX_SHAREDFILES,
+    url_prefix_workshop: str = URL_PREFIX_WORKSHOP,
+    searchtext_string: str = SEARCHTEXT_STRING,
+) -> bool:
+    """Whether the toolbar Add to list action applies to the current page URL."""
+    if url_prefix_steam not in current_url:
+        return False
+    is_item_page = url_prefix_sharedfiles in current_url
+    is_collection_page = url_prefix_workshop in current_url
+    if not (is_item_page or is_collection_page):
+        return False
+    return (
+        parse_publishedfileid_from_url(
+            current_url,
+            url_prefix_sharedfiles=url_prefix_sharedfiles,
+            url_prefix_workshop=url_prefix_workshop,
+            searchtext_string=searchtext_string,
+        )
+        is not None
+    )
+
+
+def build_web_channel_script(
+    *,
+    installed_mods: list[str],
+    added_mods: list[str],
+    page_mode: str,
+    script_path: Path,
+    inject_delay_ms: int = 300,
+) -> str:
+    """Inject workshop badge script using marker replacement (safe for JS `$` syntax)."""
+    raw_script = script_path.read_text(encoding="utf-8")
+    js_badge_state = {member.name: member.value for member in BadgeState}
+    replacements = {
+        "@badge_state_js@": json.dumps(js_badge_state),
+        "@page_mode@": page_mode,
+        "@installed_mods@": json.dumps(installed_mods),
+        "@added_mods@": json.dumps(added_mods),
+        "@inject_delay_ms@": str(inject_delay_ms),
+    }
+    script = raw_script
+    for marker, value in replacements.items():
+        script = script.replace(marker, value)
+    return script
+
+
 class SteamBrowser(QWidget):
     """
     A generic panel used to browse Workshop content - downloader included
     """
+
+    # Emitted at the top of closeEvent, before the wait-list is cleared and
+    # torn down, so callers can preserve it regardless of what triggered the
+    # close (programmatic .close() or the user closing the window directly).
+    about_to_close = Signal()
 
     # Cleared in closeEvent when the window is closed.
     web_view: QWebEngineView | None
@@ -106,6 +230,8 @@ class SteamBrowser(QWidget):
         self.web_profile.setPersistentCookiesPolicy(
             QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
         )
+        self.web_profile.setHttpUserAgent(CHROME_USER_AGENT)
+        self._inject_steam_recovery_script()
         self.current_html = ""
         self.current_title = "RimSort - Steam Browser"
         self.current_url = startpage
@@ -124,6 +250,10 @@ class SteamBrowser(QWidget):
         )
         self.section_readytouseitems = "section=readytouseitems"
         self.section_collections = "section=collections"
+        self._load_progress_fallback_timer: QTimer | None = None
+        self._load_stall_timer: QTimer | None = None
+        self._load_show_fallback_timer: QTimer | None = None
+        self._load_stall_reloaded: bool = False
 
         # LAYOUTS
         self.window_layout = QHBoxLayout()
@@ -186,8 +316,8 @@ class SteamBrowser(QWidget):
         self.web_view.loadStarted.connect(self._web_view_load_started)
         self.web_view.loadProgress.connect(self._web_view_load_progress)
         self.web_view.loadFinished.connect(self._web_view_load_finished)
+        self.web_view.urlChanged.connect(self._on_web_view_url_changed)
         self.web_view.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-        self.web_view.load(self.startpage)
 
         # QWebChannel setup
         self.channel = QWebChannel(self)
@@ -261,7 +391,12 @@ class SteamBrowser(QWidget):
 
         # launch the browser window
         self._launch_browser_window()
+        QTimer.singleShot(0, self._start_initial_load)
         logger.debug("Finished Browser Window initialization")
+
+    def _start_initial_load(self) -> None:
+        assert self.web_view is not None
+        self.web_view.load(self.startpage)
 
     def _show_add_mods_by_id_dialog(self) -> None:
         dialog = QDialog(self)
@@ -303,33 +438,92 @@ class SteamBrowser(QWidget):
             f"Browser window started with launch state: {browser_window_launch_state}"
         )
 
+    def _get_effective_page_url(self) -> str:
+        """Return the best available URL for the current browser page."""
+        location_text = self.location.text().strip()
+        if location_text:
+            location_url = QUrl(location_text)
+            if location_url.isValid() and location_url.scheme():
+                return location_url.toString()
+        assert self.web_view is not None
+        web_view_url = self.web_view.url().toString()
+        if web_view_url and web_view_url != "about:blank":
+            return web_view_url
+        return self.current_url
+
+    def _normalize_browse_url(self, raw_url: str) -> str:
+        """Normalize user-entered URL text before loading."""
+        text = raw_url.strip()
+        if not text:
+            return text
+        if not text.startswith(("http://", "https://")):
+            text = f"https://{text}"
+        return text
+
+    def _on_web_view_url_changed(self, url: QUrl) -> None:
+        self._sync_location_from_js(url.toString())
+
+    def _sync_location_from_js(self, url: str) -> None:
+        """Update the address bar from the page URL without triggering a reload."""
+        text = (url or "").strip()
+        if not text or text == "about:blank":
+            return
+        if self.current_url == text and self.location.text() == text:
+            return
+        self.current_url = text
+        self.location.setText(text)
+        self._update_toolbar_add_to_list_button(text)
+
+    def _is_add_to_list_in_toolbar(self) -> bool:
+        return any(
+            action is self.add_to_list_button for action in self.nav_bar.actions()
+        )
+
+    def _update_toolbar_add_to_list_button(self, url: str) -> None:
+        should_show = toolbar_add_to_list_visible(
+            url,
+            url_prefix_steam=self.url_prefix_steam,
+            url_prefix_sharedfiles=self.url_prefix_sharedfiles,
+            url_prefix_workshop=self.url_prefix_workshop,
+            searchtext_string=self.searchtext_string,
+        )
+        in_toolbar = self._is_add_to_list_in_toolbar()
+        if should_show and not in_toolbar:
+            self.nav_bar.addAction(self.add_to_list_button)
+        elif not should_show and in_toolbar:
+            self.nav_bar.removeAction(self.add_to_list_button)
+
     def __browse_to_location(self) -> None:
         assert self.web_view is not None
-        url = QUrl(self.location.text())
-        logger.debug(f"Browsing to: {url.url()}")
+        normalized = self._normalize_browse_url(self.location.text())
+        url = QUrl(normalized)
+        if not url.isValid():
+            logger.warning(f"Invalid browse URL: {normalized}")
+            return
+        self.current_url = url.toString()
+        self.location.setText(self.current_url)
+        logger.debug(f"Browsing to: {self.current_url}")
         self.web_view.load(url)
 
     def _add_collection_or_mod_to_list(self) -> None:
-        # Ascertain the pfid depending on the url prefix
-        if self.url_prefix_sharedfiles in self.current_url:
-            publishedfileid = self.current_url.split(self.url_prefix_sharedfiles, 1)[1]
-        elif self.url_prefix_workshop in self.current_url:
-            publishedfileid = self.current_url.split(self.url_prefix_workshop, 1)[1]
-        else:
-            logger.error(
-                f"Unable to parse publishedfileid from url: {self.current_url}"
-            )
+        page_url = self._get_effective_page_url()
+        publishedfileid = parse_publishedfileid_from_url(
+            page_url,
+            url_prefix_sharedfiles=self.url_prefix_sharedfiles,
+            url_prefix_workshop=self.url_prefix_workshop,
+            searchtext_string=self.searchtext_string,
+        )
+        if not publishedfileid:
+            logger.error(f"Unable to parse publishedfileid from url: {page_url}")
             show_warning(
                 title=self.tr("No publishedfileid found"),
                 text=self.tr(
                     "Unable to parse publishedfileid from url, Please check if url is in the correct format"
                 ),
-                information=f"Url: {self.current_url}",
+                information=f"Url: {page_url}",
             )
-            return None
-        # If there is extra data after the PFID, strip it
-        if self.searchtext_string in publishedfileid:
-            publishedfileid = publishedfileid.split(self.searchtext_string)[0]
+            return
+        self.current_url = page_url
         # Handle collection vs individual mod
         if "collectionItemDetails" not in self.current_html:
             self._add_mod_to_list(publishedfileid)
@@ -453,6 +647,13 @@ class SteamBrowser(QWidget):
         publishedfileid: str,
         title: str | None = None,
     ) -> None:
+        # Normalize to str: collection adds come from Steam's WebAPI JSON,
+        # which returns publishedfileid as a number, while JS-bridge/URL adds
+        # already pass a str. Keeping this the single choke point for tracking
+        # list membership ensures pfid comparisons/lookups elsewhere (e.g.
+        # matching a SteamCMD success line, popping a completed download from
+        # the preserved snapshot) never miss due to an int/str mismatch.
+        publishedfileid = str(publishedfileid)
         # Try to extract the mod name from the page title, fallback to current_title
         extracted_page_title = extract_page_title_steam_browser(self.current_title)
         page_title = (
@@ -485,7 +686,7 @@ class SteamBrowser(QWidget):
             logger.debug(
                 f"Tried to add duplicate PFID to downloader list: {publishedfileid}"
             )
-            if publishedfileid not in self.downloader_list_dupe_tracking.keys():
+            if publishedfileid not in self.downloader_list_dupe_tracking:
                 if not title:
                     self.downloader_list_dupe_tracking[publishedfileid] = page_title
                 else:
@@ -505,6 +706,33 @@ class SteamBrowser(QWidget):
         self.downloader_list_dupe_tracking.clear()
         for mod_id in mods_to_clear_badges_for:
             self._update_badge_js(mod_id, BadgeState.DEFAULT)
+
+    def get_download_list_snapshot(self) -> dict[str, str]:
+        """
+        Capture the current downloader wait-list as {publishedfileid: display_title}.
+
+        Used to preserve the user's queued mods across the window being closed
+        (e.g. when a SteamCMD/Steamworks download is kicked off), since closing
+        this window tears down and clears the list.
+        """
+        snapshot: dict[str, str] = {}
+        for i in range(self.downloader_list.count()):
+            item = self.downloader_list.item(i)
+            if item is None:
+                continue
+            publishedfileid = item.data(Qt.ItemDataRole.UserRole)
+            if not publishedfileid:
+                continue
+            publishedfileid = str(publishedfileid)
+            widget = self.downloader_list.itemWidget(item)
+            title = widget.text() if isinstance(widget, QLabel) else publishedfileid
+            snapshot[publishedfileid] = title
+        return snapshot
+
+    def restore_download_list(self, snapshot: dict[str, str]) -> None:
+        """Re-populate the downloader wait-list from a previously captured snapshot."""
+        for publishedfileid, title in snapshot.items():
+            self._add_mod_to_list(publishedfileid, title=title)
 
     def _downloader_item_contextmenu_event(self, point: QPoint) -> None:
         context_item = self.downloader_list.itemAt(point)
@@ -547,6 +775,17 @@ class SteamBrowser(QWidget):
                 f"Mod {publishedfileid} not found in download tracking list, cannot remove."
             )
 
+    def remove_mod_if_queued(self, publishedfileid: str) -> None:
+        """Remove a mod from the downloader list if it's currently queued.
+
+        Unlike _remove_mod_from_list, this is a quiet no-op (no warning log)
+        when the mod isn't queued - meant for callers (e.g. a SteamCMD
+        success notification) that don't know in advance whether this
+        browser instance is even the one tracking that mod.
+        """
+        if publishedfileid in self.downloader_list_mods_tracking:
+            self._remove_mod_from_list(publishedfileid)
+
     def _subscribe_to_mods_from_list(self) -> None:
         logger.debug(
             f"Signaling Steamworks subscription handler with {len(self.downloader_list_mods_tracking)} mods"
@@ -558,6 +797,21 @@ class SteamBrowser(QWidget):
             ]
         )
 
+    def _inject_steam_recovery_script(self) -> None:
+        recovery_path = Path(AppInfo().setup_steam_recovery_script_file)
+        try:
+            source_code = recovery_path.read_text(encoding="utf-8")
+        except OSError as exc:
+            logger.error(f"Failed to read Steam recovery script: {exc}")
+            return
+        script = QWebEngineScript()
+        script.setSourceCode(source_code)
+        script.setInjectionPoint(QWebEngineScript.InjectionPoint.DocumentCreation)
+        script.setWorldId(QWebEngineScript.ScriptWorldId.MainWorld)
+        script.setRunsOnSubFrames(True)
+        assert self.web_profile is not None
+        self.web_profile.scripts().insert(script)
+
     def _web_view_load_started(self) -> None:
         # Progress bar start, placeholder start
         # Commented out to stop flashing on every page load
@@ -566,21 +820,86 @@ class SteamBrowser(QWidget):
         self.progress_bar.setTextVisible(True)
         self.nav_bar.removeAction(self.add_to_list_button)
 
+        if self._load_progress_fallback_timer is not None:
+            self._load_progress_fallback_timer.stop()
+        self._load_progress_fallback_timer = QTimer(self)
+        self._load_progress_fallback_timer.setSingleShot(True)
+        self._load_progress_fallback_timer.timeout.connect(
+            self._reset_stuck_progress_bar
+        )
+        self._load_progress_fallback_timer.start(15000)
+
+        if self._load_stall_timer is not None:
+            self._load_stall_timer.stop()
+        self._load_stall_timer = QTimer(self)
+        self._load_stall_timer.setSingleShot(True)
+        self._load_stall_timer.timeout.connect(self._on_load_stall)
+        self._load_stall_timer.start(10000)
+
+        if self._load_show_fallback_timer is not None:
+            self._load_show_fallback_timer.stop()
+        self._load_show_fallback_timer = QTimer(self)
+        self._load_show_fallback_timer.setSingleShot(True)
+        self._load_show_fallback_timer.timeout.connect(self._on_load_show_fallback)
+        self._load_show_fallback_timer.start(1200)
+
+    def _on_load_stall(self) -> None:
+        if self.progress_bar.value() > 0 or self._load_stall_reloaded:
+            return
+        assert self.web_view is not None
+        logger.warning("Steam browser load stalled at 0%; reloading once per session")
+        self._load_stall_reloaded = True
+        self.web_view.reload()
+
+    def _on_load_show_fallback(self) -> None:
+        if self.progress_bar.value() > 0:
+            return
+        assert self.web_view is not None
+        self.web_view_loading_placeholder.hide()
+        self.web_view.show()
+
+    def _reset_stuck_progress_bar(self) -> None:
+        if self.progress_bar.value() > 0:
+            self.progress_bar.setValue(0)
+            self.progress_bar.setTextVisible(False)
+
     def _web_view_load_progress(self, progress: int) -> None:
         # Progress bar progress
         self.progress_bar.setValue(progress)
         # Placeholder done after page begins to load
-        if progress > 25:
+        if progress > 0:
+            if self._load_stall_timer is not None:
+                self._load_stall_timer.stop()
+            if self._load_show_fallback_timer is not None:
+                self._load_show_fallback_timer.stop()
             assert self.web_view is not None
             self.web_view_loading_placeholder.hide()
             self.web_view.show()
 
     # TODO: Probably a good idea to break this huge function down into a bunch of smaller helpers
-    def _web_view_load_finished(self) -> None:
+    def _web_view_load_finished(self, ok: bool) -> None:
         assert self.web_view is not None
+
+        if self._load_progress_fallback_timer is not None:
+            self._load_progress_fallback_timer.stop()
+        if self._load_stall_timer is not None:
+            self._load_stall_timer.stop()
+        if self._load_show_fallback_timer is not None:
+            self._load_show_fallback_timer.stop()
+
+        self.web_view_loading_placeholder.hide()
+        self.web_view.show()
+
         # Progress bar done
         self.progress_bar.setValue(0)
         self.progress_bar.setTextVisible(False)
+
+        inject_delay_ms = 300
+        if not ok:
+            inject_delay_ms = 1200
+            logger.warning(
+                "Steam browser load reported failure; continuing with deferred workshop inject"
+            )
 
         # Cache information from page
         self.current_title = self.web_view.title()
@@ -591,7 +910,6 @@ class SteamBrowser(QWidget):
         self.setWindowTitle(self.current_title)
         self.location.setText(self.current_url)
 
-        # Check if we are browsing a collection/mod - remove elements if found
         if self.url_prefix_steam in self.current_url:
             # Remove "Install Steam" button
             install_button_removal_script = """
@@ -603,28 +921,18 @@ class SteamBrowser(QWidget):
             self.web_view.page().runJavaScript(
                 install_button_removal_script, 0, lambda result: None
             )
-            # remove_top_banner = """
-            # var element = document.getElementById("global_header");
-            # var elements = document.getElementsByClassName("responsive_header")
-            # if (element) {
-            #     element.parentNode.removeChild(element);
-            # }
-            # if (elements){
-            #     elements[0].parentNode.removeChild(elements[0])
-            #     document.getElementsByClassName("responsive_page_content")[0].setAttribute("style","padding-top: 0px;")
-            #     document.getElementsByClassName("apphub_HeaderTop workshop")[0].setAttribute("style","padding-top: 0px;")
-            #     document.getElementsByClassName("apphub_HomeHeaderContent")[0].setAttribute("style","padding-top: 0px;")
-            # }
-
-            # """
-            # self.web_view.page().runJavaScript(
-            #     remove_top_banner, 0, lambda result: None
-            # )
-            # change target <a>
+            # change target <a> — only inside workshop/collection tiles
             change_target_a_script = """
-            var elements = document.getElementsByTagName("a");
-            for (var i = 0, l = elements.length; i < l; i++) {
-                elements[i].target = "_self";
+            var linkSelectors = [
+                '.workshopItem a',
+                '.collectionItem a',
+                'a[href*="filedetails/?id="]'
+            ];
+            for (var s = 0; s < linkSelectors.length; s++) {
+                var links = document.querySelectorAll(linkSelectors[s]);
+                for (var i = 0; i < links.length; i++) {
+                    links[i].target = "_self";
+                }
             }
             """
             self.web_view.page().runJavaScript(
@@ -640,163 +948,161 @@ class SteamBrowser(QWidget):
 
             installed_mods_list = self._get_installed_mods_list()
             added_mods_list = self._get_added_mods_list()
-
-            # Setup QWebChannel bridge
-            template_path = Path(AppInfo().setup_web_channel_script_file)
-            raw_script = Template(template_path.read_text(encoding="utf-8"))
-            js_badge_state = {member.name: member.value for member in BadgeState}
-            setup_web_channel_script = raw_script.substitute(
-                installed_mods=json.dumps(installed_mods_list),
-                added_mods=json.dumps(added_mods_list),
-                badge_state_js=json.dumps(js_badge_state),
-            )
-            self.web_view.page().runJavaScript(
-                setup_web_channel_script, 0, lambda result: None
-            )
-
             is_item_page = self.url_prefix_sharedfiles in self.current_url
             is_collection_page = self.url_prefix_workshop in self.current_url
-            is_collections_page = self.section_collections in self.current_url
-            is_items_page = self.section_readytouseitems in self.current_url or (
-                not is_collections_page and "section=" in self.current_url
+            page_mode = resolve_workshop_page_mode(
+                self.current_url,
+                url_prefix_steam=self.url_prefix_steam,
+                url_prefix_sharedfiles=self.url_prefix_sharedfiles,
+                url_prefix_workshop=self.url_prefix_workshop,
+                section_readytouseitems=self.section_readytouseitems,
+                section_collections=self.section_collections,
             )
 
-            if is_item_page or is_collection_page or is_items_page:
-                if is_item_page or is_collection_page:
-                    # get mod id from steam workshop url
-                    if self.url_prefix_sharedfiles in self.current_url:
-                        publishedfileid = self.current_url.split(
-                            self.url_prefix_sharedfiles, 1
-                        )[1]
-                    else:
-                        publishedfileid = self.current_url.split(
-                            self.url_prefix_workshop, 1
-                        )[1]
-                    if self.searchtext_string in publishedfileid:
-                        publishedfileid = publishedfileid.split(self.searchtext_string)[
-                            0
-                        ]
-                    # check if mod is installed
-                    is_installed = self._is_mod_installed(publishedfileid)
-                    # Remove area that shows "Subscribe to download" and "Subscribe"/"Unsubscribe" button for mods
-                    mod_subscribe_area_removal_script = """
-                    var elements = document.getElementsByClassName("game_area_purchase_game");
-                    while (elements.length > 0) {
-                        elements[0].parentNode.removeChild(elements[0]);
-                    }
-                    """
-                    self.web_view.page().runJavaScript(
-                        mod_subscribe_area_removal_script, 0, lambda result: None
-                    )
-                    # Remove area that shows "Subscribe to all" and "Unsubscribe to all" buttons for collections
-                    mod_unsubscribe_button_removal_script = """
-                    var elements = document.getElementsByClassName("subscribeCollection");
-                    while (elements.length > 0) {
-                        elements[0].parentNode.removeChild(elements[0]);
-                    }
-                    """
-                    self.web_view.page().runJavaScript(
-                        mod_unsubscribe_button_removal_script, 0, lambda result: None
-                    )
-                    # Remove "Subscribe" buttons from any mods shown in a collection
-                    subscribe_buttons_removal_script = """
-                    var elements = document.getElementsByClassName("general_btn subscribe");
-                    while (elements.length > 0) {
-                        elements[0].parentNode.removeChild(elements[0]);
-                    }
-                    """
-                    self.web_view.page().runJavaScript(
-                        subscribe_buttons_removal_script, 0, lambda result: None
-                    )
-                    # add buttons for collection items
-                    add_collection_buttons_script = """
-                    // find all collection items
-                    var collectionItems = document.getElementsByClassName('collectionItem');
+            try:
+                setup_web_channel_script = build_web_channel_script(
+                    installed_mods=installed_mods_list,
+                    added_mods=added_mods_list,
+                    page_mode=page_mode,
+                    script_path=Path(AppInfo().setup_web_channel_script_file),
+                    inject_delay_ms=inject_delay_ms,
+                )
+                self.web_view.page().runJavaScript(
+                    setup_web_channel_script, 0, lambda result: None
+                )
+            except Exception as exc:
+                logger.error(f"Failed to inject workshop badge script: {exc}")
+
+            if is_item_page or is_collection_page:
+                publishedfileid = parse_publishedfileid_from_url(
+                    self.current_url,
+                    url_prefix_sharedfiles=self.url_prefix_sharedfiles,
+                    url_prefix_workshop=self.url_prefix_workshop,
+                    searchtext_string=self.searchtext_string,
+                )
+                if not publishedfileid:
+                    return
+                # check if mod is installed
+                is_installed = self._is_mod_installed(publishedfileid)
+                # Remove area that shows "Subscribe to download" and "Subscribe"/"Unsubscribe" button for mods
+                mod_subscribe_area_removal_script = """
+                var elements = document.getElementsByClassName("game_area_purchase_game");
+                while (elements.length > 0) {
+                    elements[0].parentNode.removeChild(elements[0]);
+                }
+                """
+                self.web_view.page().runJavaScript(
+                    mod_subscribe_area_removal_script, 0, lambda result: None
+                )
+                # Remove area that shows "Subscribe to all" and "Unsubscribe to all" buttons for collections
+                mod_unsubscribe_button_removal_script = """
+                var elements = document.getElementsByClassName("subscribeCollection");
+                while (elements.length > 0) {
+                    elements[0].parentNode.removeChild(elements[0]);
+                }
+                """
+                self.web_view.page().runJavaScript(
+                    mod_unsubscribe_button_removal_script, 0, lambda result: None
+                )
+                # Remove "Subscribe" buttons from any mods shown in a collection
+                subscribe_buttons_removal_script = """
+                var elements = document.getElementsByClassName("general_btn subscribe");
+                while (elements.length > 0) {
+                    elements[0].parentNode.removeChild(elements[0]);
+                }
+                """
+                self.web_view.page().runJavaScript(
+                    subscribe_buttons_removal_script, 0, lambda result: None
+                )
+                # add buttons for collection items
+                add_collection_buttons_script = """
+                // find all collection items
+                var collectionItems = document.getElementsByClassName('collectionItem');
+                
+                for (var i = 0; i < collectionItems.length; i++) {
+                    var item = collectionItems[i];
                     
-                    for (var i = 0; i < collectionItems.length; i++) {
-                        var item = collectionItems[i];
+                    // get the mod id from the item
+                    var modId = item.id.replace('sharedfile_', '');
+                    
+                    // find the subscription controls div
+                    var subscriptionControls = item.querySelector('.subscriptionControls');
+                    if (!subscriptionControls) {
+                        continue;
+                    }
+                    
+                    // check if mod is installed
+                    var isInstalled = window.installedMods && window.installedMods.includes(modId);
+                    
+                    if (isInstalled) {
+                        // create installed indicator
+                        var installedIndicator = document.createElement('div');
+                        installedIndicator.innerHTML = '✓';
+                        installedIndicator.style.backgroundColor = '#4CAF50';
+                        installedIndicator.style.color = 'white';
+                        installedIndicator.style.width = '24px';
+                        installedIndicator.style.height = '24px';
+                        installedIndicator.style.borderRadius = '4px';
+                        installedIndicator.style.display = 'flex';
+                        installedIndicator.style.alignItems = 'center';
+                        installedIndicator.style.justifyContent = 'center';
+                        installedIndicator.style.fontWeight = 'bold';
+                        installedIndicator.style.fontSize = '16px';
                         
-                        // get the mod id from the item
-                        var modId = item.id.replace('sharedfile_', '');
+                        // Replace subscription controls with our indicator
+                        subscriptionControls.innerHTML = '';
+                        subscriptionControls.appendChild(installedIndicator);
+                    } else {
+                        // create link button
+                        var linkButton = document.createElement('a');
+                        linkButton.innerHTML = '→';
+                        linkButton.href = 'https://steamcommunity.com/sharedfiles/filedetails/?id=' + modId;
+                        linkButton.style.backgroundColor = '#2196F3';
+                        linkButton.style.color = 'white';
+                        linkButton.style.width = '24px';
+                        linkButton.style.height = '24px';
+                        linkButton.style.borderRadius = '4px';
+                        linkButton.style.display = 'flex';
+                        linkButton.style.alignItems = 'center';
+                        linkButton.style.justifyContent = 'center';
+                        linkButton.style.cursor = 'pointer';
+                        linkButton.style.fontWeight = 'bold';
+                        linkButton.style.fontSize = '20px';
+                        linkButton.style.textDecoration = 'none';
                         
-                        // find the subscription controls div
-                        var subscriptionControls = item.querySelector('.subscriptionControls');
-                        if (!subscriptionControls) {
-                            continue;
-                        }
-                        
-                        // check if mod is installed
-                        var isInstalled = window.installedMods && window.installedMods.includes(modId);
-                        
-                        if (isInstalled) {
-                            // create installed indicator
-                            var installedIndicator = document.createElement('div');
-                            installedIndicator.innerHTML = '✓';
-                            installedIndicator.style.backgroundColor = '#4CAF50';
-                            installedIndicator.style.color = 'white';
-                            installedIndicator.style.width = '24px';
-                            installedIndicator.style.height = '24px';
-                            installedIndicator.style.borderRadius = '4px';
-                            installedIndicator.style.display = 'flex';
-                            installedIndicator.style.alignItems = 'center';
-                            installedIndicator.style.justifyContent = 'center';
-                            installedIndicator.style.fontWeight = 'bold';
-                            installedIndicator.style.fontSize = '16px';
-                            
-                            // Replace subscription controls with our indicator
-                            subscriptionControls.innerHTML = '';
-                            subscriptionControls.appendChild(installedIndicator);
-                        } else {
-                            // create link button
-                            var linkButton = document.createElement('a');
-                            linkButton.innerHTML = '→';
-                            linkButton.href = 'https://steamcommunity.com/sharedfiles/filedetails/?id=' + modId;
-                            linkButton.style.backgroundColor = '#2196F3';
-                            linkButton.style.color = 'white';
-                            linkButton.style.width = '24px';
-                            linkButton.style.height = '24px';
-                            linkButton.style.borderRadius = '4px';
-                            linkButton.style.display = 'flex';
-                            linkButton.style.alignItems = 'center';
-                            linkButton.style.justifyContent = 'center';
-                            linkButton.style.cursor = 'pointer';
-                            linkButton.style.fontWeight = 'bold';
-                            linkButton.style.fontSize = '20px';
-                            linkButton.style.textDecoration = 'none';
-                            
-                            // Replace subscription controls with our button
-                            subscriptionControls.innerHTML = '';
-                            subscriptionControls.appendChild(linkButton);
-                        }
+                        // Replace subscription controls with our button
+                        subscriptionControls.innerHTML = '';
+                        subscriptionControls.appendChild(linkButton);
+                    }
+                }
+                """
+                self.web_view.page().runJavaScript(
+                    add_collection_buttons_script, 0, lambda result: None
+                )
+                # add installed indicator if mod is installed
+                if is_installed:
+                    add_installed_indicator_script = """
+                    // Create a new div for the installed indicator
+                    var installedDiv = document.createElement('div');
+                    installedDiv.style.backgroundColor = '#4CAF50';  // Green background
+                    installedDiv.style.color = 'white';
+                    installedDiv.style.padding = '10px';
+                    installedDiv.style.borderRadius = '5px';
+                    installedDiv.style.marginBottom = '10px';
+                    installedDiv.style.textAlign = 'center';
+                    installedDiv.style.fontWeight = 'bold';
+                    installedDiv.innerHTML = '✓ Already Installed';
+                    // Insert it at the top of the page content
+                    var contentDiv = document.querySelector('.workshopItemDetailsHeader');
+                    if (contentDiv) {
+                        contentDiv.parentNode.insertBefore(installedDiv, contentDiv);
                     }
                     """
                     self.web_view.page().runJavaScript(
-                        add_collection_buttons_script, 0, lambda result: None
+                        add_installed_indicator_script, 0, lambda result: None
                     )
-                    # add installed indicator if mod is installed
-                    if is_installed:
-                        add_installed_indicator_script = """
-                        // Create a new div for the installed indicator
-                        var installedDiv = document.createElement('div');
-                        installedDiv.style.backgroundColor = '#4CAF50';  // Green background
-                        installedDiv.style.color = 'white';
-                        installedDiv.style.padding = '10px';
-                        installedDiv.style.borderRadius = '5px';
-                        installedDiv.style.marginBottom = '10px';
-                        installedDiv.style.textAlign = 'center';
-                        installedDiv.style.fontWeight = 'bold';
-                        installedDiv.innerHTML = '✓ Already Installed';
-                        // Insert it at the top of the page content
-                        var contentDiv = document.querySelector('.workshopItemDetailsHeader');
-                        if (contentDiv) {
-                            contentDiv.parentNode.insertBefore(installedDiv, contentDiv);
-                        }
-                        """
-                        self.web_view.page().runJavaScript(
-                            add_installed_indicator_script, 0, lambda result: None
-                        )
-                    # Show the add_to_list_button
-                    self.nav_bar.addAction(self.add_to_list_button)
+
+            self._update_toolbar_add_to_list_button(self.current_url)
 
     def __set_current_html(self, html: str) -> None:
         # Update cached html with html from current page
@@ -826,7 +1132,7 @@ class SteamBrowser(QWidget):
         """Get list of mod IDs added to the download list"""
         added_mods = []
         for modId in self.downloader_list_mods_tracking:
-            added_mods.append(modId)
+            added_mods.append(modId)  # noqa: PERF402
 
         return added_mods
 
@@ -834,10 +1140,17 @@ class SteamBrowser(QWidget):
         """Calls a JavaScript function in the web view to update a specific mod's badge"""
         assert self.web_view is not None
         script = f"""
-        if (typeof window.updateModBadge === 'function') {{
+        if (typeof PAGE_MODE !== 'undefined' && PAGE_MODE === 'hub'
+            && typeof rimsortUpdateHubAddButton === 'function') {{
+            rimsortUpdateHubAddButton('{mod_id}', '{status.value}');
+        }} else if (typeof window.updateModBadge === 'function') {{
             window.updateModBadge('{mod_id}', '{status.value}');
         }} else {{
             console.warn('window.updateModBadge is not defined yet.');
+        }}
+        if (typeof PAGE_MODE !== 'undefined' && PAGE_MODE === 'browse'
+            && typeof window.updateAllModBadges === 'function') {{
+            window.updateAllModBadges();
         }}
         """
         self.web_view.page().runJavaScript(script, 0, lambda result: None)
@@ -845,6 +1158,14 @@ class SteamBrowser(QWidget):
     def closeEvent(self, event: QCloseEvent) -> None:
         """Properly clean up web engine resources to prevent memory leaks and hanging processes"""
         logger.debug("Cleaning up SteamBrowser resources...")
+        self.about_to_close.emit()
+
+        if self._load_progress_fallback_timer is not None:
+            self._load_progress_fallback_timer.stop()
+        if self._load_stall_timer is not None:
+            self._load_stall_timer.stop()
+        if self._load_show_fallback_timer is not None:
+            self._load_show_fallback_timer.stop()
 
         # Delete on close flag
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
@@ -858,7 +1179,8 @@ class SteamBrowser(QWidget):
                 self.web_view.loadStarted.disconnect()
                 self.web_view.loadProgress.disconnect()
                 self.web_view.loadFinished.disconnect()
-            except Exception:
+                self.web_view.urlChanged.disconnect()
+            except Exception:  # noqa: S110
                 pass
 
             # Clean up page

@@ -1,7 +1,7 @@
 import os
 import re
 from collections.abc import Callable, Generator
-from typing import Any, Optional
+from typing import Any
 
 from charset_normalizer import from_bytes
 from loguru import logger
@@ -13,9 +13,7 @@ from app.utils.mod_utils import get_mod_name_from_pfid
 class FileSearch:
     """Utility class for performing file searches with advanced features."""
 
-    def __init__(
-        self, metadata_controller: Optional[MetadataController] = None
-    ) -> None:
+    def __init__(self, metadata_controller: MetadataController | None = None) -> None:
         self.stop_requested = False
         self.metadata_controller = metadata_controller or MetadataController.instance()
 
@@ -32,7 +30,7 @@ class FileSearch:
         search_text: str,
         root_paths: list[str],
         options: dict[str, Any],
-        result_callback: Optional[Callable[[str, str, str], None]] = None,
+        result_callback: Callable[[str, str, str], None] | None = None,
     ) -> Generator[dict[str, str], None, None]:
         """
         Perform a search for files containing the specified text.
@@ -62,7 +60,7 @@ class FileSearch:
         search_text: str,
         root_paths: list[str],
         options: dict[str, Any],
-        result_callback: Optional[Callable[..., None]] = None,
+        result_callback: Callable[..., None] | None = None,
     ) -> Generator[dict[str, str] | tuple[str, str, str], None, None]:
         """
         Generic search method that handles all search types.
@@ -183,7 +181,7 @@ class FileSearch:
     def _create_search_method(
         self, search_type: str
     ) -> Callable[
-        [str, list[str], dict[str, Any], Optional[Callable[[str, str, str], None]]],
+        [str, list[str], dict[str, Any], Callable[[str, str, str], None] | None],
         Generator[tuple[str, str, str], None, None],
     ]:
         """
@@ -200,7 +198,7 @@ class FileSearch:
             search_text: str,
             root_paths: list[str],
             options: dict[str, Any],
-            result_callback: Optional[Callable[[str, str, str], None]] = None,
+            result_callback: Callable[[str, str, str], None] | None = None,
         ) -> Generator[tuple[str, str, str], None, None]:
             # Apply search-type specific options
             search_options = options.copy()
@@ -263,7 +261,7 @@ class FileSearch:
             try:
                 with open(file_path, "r", encoding=encoding, errors="ignore") as f:
                     return f.read()
-            except Exception:
+            except Exception:  # noqa: S112
                 continue
         return ""
 

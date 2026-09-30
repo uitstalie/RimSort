@@ -591,6 +591,10 @@ Examples:
 - '\ d+\. \ d+(\. \ d+)?'sürüm numaralarını bulmak için</translation>
     </message>
     <message>
+        <source>File Search</source>
+        <translation>Dosya Arama</translation>
+    </message>
+    <message>
         <source>When checked, search only XML files and use optimized XML search.
 When unchecked, search all file types with standard search.</source>
         <translation>Kontrol edildiğinde yalnızca XML dosyalarını arayın ve optimize edilmiş XML aramasını kullanın.
@@ -603,6 +607,33 @@ Kontrol edilmediğinde, tüm dosya türlerini standart arama ile arayın.</trans
     <message>
         <source>Right-click for actions</source>
         <translation>Eylemler için sağ tıklayın</translation>
+    </message>
+</context>
+<context>
+    <name>FilterPanel</name>
+    <message>
+        <source>Mod Source</source>
+        <translation>Mod Kaynağı</translation>
+    </message>
+    <message>
+        <source>Mod Type</source>
+        <translation>Mod Türü</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>Etiketler</translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <translation>Tümünü Seç</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Hiçbiri</translation>
+    </message>
+    <message>
+        <source>Clear All</source>
+        <translation>Tümünü Temizle</translation>
     </message>
 </context>
 <context>
@@ -682,7 +713,7 @@ Manage mods installed from GitHub releases.</source>
     </message>
     <message>
         <source>Failed: {names}</source>
-        <translation>Başarısız oldu: {isimler}</translation>
+        <translation>Başarısız oldu:  {names}</translation>
     </message>
     <message>
         <source>Checking for updates...</source>
@@ -1040,6 +1071,14 @@ Manage mods installed from GitHub releases.</source>
         <translation>Bunun nedeni, hatalı biçimlendirilmiş ayarlar veya sürümler arasında hatalı geçiş veya farklı mod yöneticisi olabilir.&lt;br&gt;&lt;br&gt;Ayarlarınızı sıfırlamayı, farklı bir sıralama algoritması seçmeyi veya ayarlar dosyanızı silmeyi deneyin.&lt;br&gt;&lt;br&gt;Sorun devam ederse, lütfen bunu geliştiricilere bildirin.</translation>
     </message>
     <message>
+        <source>Import failed</source>
+        <translation>İçe aktarma başarısız oldu</translation>
+    </message>
+    <message>
+        <source>Could not read the selected mod list file.</source>
+        <translation>Seçilen mod listesi dosyası okunamadı.</translation>
+    </message>
+    <message>
         <source>Failed to export to file</source>
         <translation>Dosyaya aktarma başarısız oldu</translation>
     </message>
@@ -1154,6 +1193,14 @@ Manage mods installed from GitHub releases.</source>
         <translation>Dosya: {path}</translation>
     </message>
     <message>
+        <source>Upload failed</source>
+        <translation>Upload failed</translation>
+    </message>
+    <message>
+        <source>Failed to upload log file to RimSort Logs.</source>
+        <translation>Failed to upload log file to RimSort Logs.</translation>
+    </message>
+    <message>
         <source>Uploaded file</source>
         <translation>Dosya yüklendi</translation>
     </message>
@@ -1242,6 +1289,10 @@ Manage mods installed from GitHub releases.</source>
         <translation>Mod güncellemeleri için Steam Atölyesi kontrol ediliyor...</translation>
     </message>
     <message>
+        <source>Failed to check for Workshop updates</source>
+        <translation>Failed to check for Workshop updates</translation>
+    </message>
+    <message>
         <source>No Workshop mods to check for updates</source>
         <translation>Güncellemeleri kontrol edecek Atölye modu yok</translation>
     </message>
@@ -1288,6 +1339,10 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>Please add mods to list before attempting to download.</source>
         <translation>İndirmeye başlamadan önce lütfen modları listeye ekleyin.</translation>
+    </message>
+    <message>
+        <source>RimSort - SteamCMD downloader</source>
+        <translation>RimSort - SteamCMD indiricisi</translation>
     </message>
     <message>
         <source>SteamCMD not found</source>
@@ -2380,6 +2435,10 @@ Manage mods installed from GitHub releases.</source>
         <translation>Mod Listesini Aç</translation>
     </message>
     <message>
+        <source>Append Mod List…</source>
+        <translation>Append Mod List…</translation>
+    </message>
+    <message>
         <source>Save Mod List As…</source>
         <translation>Mod Listesini Şu Olarak Kaydet...</translation>
     </message>
@@ -2406,6 +2465,10 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>To Rentry.co…</source>
         <translation>Rentry.co'ya</translation>
+    </message>
+    <message>
+        <source>Mod List History…</source>
+        <translation>Mod Listesi Geçmişi…</translation>
     </message>
     <message>
         <source>Open...</source>
@@ -2602,6 +2665,14 @@ Manage mods installed from GitHub releases.</source>
         <source>Current: {current_instance}</source>
         <translation>Akım: {current_instance}</translation>
     </message>
+    <message>
+        <source>Verify Game Files</source>
+        <translation>Oyun Dosyalarını Doğrulayın</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to verify RimWorld's game files through Steam?&lt;br&gt;&lt;br&gt;This process cannot be canceled once it has started.</source>
+        <translation>RimWorld'ün oyun dosyalarını Steam aracılığıyla doğrulamak istediğinizden emin misiniz?&lt;br&gt;&lt;br&gt;Bu işlem başladıktan sonra iptal edilemez.</translation>
+    </message>
 </context>
 <context>
     <name>MissingDependenciesDialog</name>
@@ -2646,6 +2717,18 @@ Aktif modlar listenize hangi eksik bağımlılıkların ekleneceğini seçin.</t
     <message>
         <source>Needs to be downloaded - requires SteamCMD</source>
         <translation>İndirilmesi gerekiyor - SteamCMD gerektirir</translation>
+    </message>
+    <message>
+        <source>Open Workshop</source>
+        <translation>Açık Atölye</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>İndirmek</translation>
+    </message>
+    <message>
+        <source>Workshop ID not found — open Workshop to find manually</source>
+        <translation>Atölye Kimliği bulunamadı — manuel olarak bulmak için Atölye'yi açın</translation>
     </message>
     <message>
         <source>
@@ -2950,6 +3033,10 @@ Lütfen aşağıdaki tabloda tercih ettiğiniz Mod varyantı seçin. Doğrulamak
     <message>
         <source>None</source>
         <translation>Hiçbiri</translation>
+    </message>
+    <message>
+        <source>Calculating...</source>
+        <translation>Hesaplanıyor...</translation>
     </message>
 </context>
 <context>
@@ -3350,6 +3437,149 @@ An alternative updated mod is recommended:
     <message>
         <source>Open folder(s) in text editor</source>
         <translation>Metin Düzenleyicisinde Klasör (ler)</translation>
+    </message>
+</context>
+<context>
+    <name>ModlistHistoryPanel</name>
+    <message>
+        <source>Mod List History</source>
+        <translation>Mod Listesi Geçmişi</translation>
+    </message>
+    <message>
+        <source>Every save writes a snapshot of your mod list. Select a snapshot to compare it with the one before it, or hold Ctrl and select two snapshots to compare them directly.</source>
+        <translation>Her kaydetme, mod listenizin anlık görüntüsünü yazar.Bir anlık görüntüyü öncekiyle karşılaştırmak için seçin veya Ctrl tuşunu basılı tutarak iki anlık görüntüyü doğrudan karşılaştırmak için seçin.</translation>
+    </message>
+    <message>
+        <source>Change</source>
+        <translation>Değiştirmek</translation>
+    </message>
+    <message>
+        <source>Mod</source>
+        <translation>Mod</translation>
+    </message>
+    <message>
+        <source>Restore Selected</source>
+        <translation>Seçileni Geri Yükle</translation>
+    </message>
+    <message>
+        <source>Export Selected…</source>
+        <translation>Seçilenleri Dışa Aktar…</translation>
+    </message>
+    <message>
+        <source>Edit Note…</source>
+        <translation>Notu Düzenle…</translation>
+    </message>
+    <message>
+        <source>Open History Folder</source>
+        <translation>Geçmiş Klasörünü Aç</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Kapalı</translation>
+    </message>
+    <message>
+        <source>No snapshots yet</source>
+        <translation>Henüz anlık görüntü yok</translation>
+    </message>
+    <message>
+        <source>Save your mod list to create one</source>
+        <translation>Bir tane oluşturmak için mod listenizi kaydedin</translation>
+    </message>
+    <message>
+        <source>Oldest snapshot</source>
+        <translation>En eski anlık görüntü</translation>
+    </message>
+    <message>
+        <source>Nothing to compare against</source>
+        <translation>Karşılaştırılacak hiçbir şey yok</translation>
+    </message>
+    <message>
+        <source>Comparing</source>
+        <translation>Karşılaştırma</translation>
+    </message>
+    <message>
+        <source>{old} → {new}</source>
+        <translation>→  {old} {new}</translation>
+    </message>
+    <message>
+        <source>No differences</source>
+        <translation>Fark yok</translation>
+    </message>
+    <message>
+        <source>Added to active ({n})</source>
+        <translation>Etkinliğe eklendi ({n})</translation>
+    </message>
+    <message>
+        <source>Removed from active ({n})</source>
+        <translation>Aktiften kaldırıldı ({n})</translation>
+    </message>
+    <message>
+        <source>Reordered ({n})</source>
+        <translation>Yeniden sıralandı ({n})</translation>
+    </message>
+    <message>
+        <source>Newly installed / disabled ({n})</source>
+        <translation>Yeni yüklendi / devre dışı bırakıldı ({n})</translation>
+    </message>
+    <message>
+        <source>No longer installed ({n})</source>
+        <translation>Artık kurulu değil ({n})</translation>
+    </message>
+    <message>
+        <source>Source: {src}</source>
+        <translation>Kaynak: {src}</translation>
+    </message>
+    <message>
+        <source>Restore Mod List</source>
+        <translation>Mod Listesini Geri Yükle</translation>
+    </message>
+    <message>
+        <source>Load the active mod list from this snapshot ({ts})?</source>
+        <translation>Bu anlık görüntüden ({ts}) aktif mod listesi yüklensin mi?</translation>
+    </message>
+    <message>
+        <source>This replaces the mods currently loaded in RimSort. Nothing is written to disk until you press Save.</source>
+        <translation>Bu, şu anda RimSort'ta yüklü olan modların yerini alır.Siz Kaydet'e basana kadar diske hiçbir şey yazılmaz.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Eski haline getirmek</translation>
+    </message>
+    <message>
+        <source>Restore failed</source>
+        <translation>Geri yükleme başarısız oldu</translation>
+    </message>
+    <message>
+        <source>Could not restore the selected snapshot.</source>
+        <translation>Seçilen anlık görüntü geri yüklenemedi.</translation>
+    </message>
+    <message>
+        <source>Export snapshot</source>
+        <translation>Anlık görüntüyü dışa aktar</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Dışa aktarma başarısız oldu</translation>
+    </message>
+    <message>
+        <source>Could not write the snapshot file.</source>
+        <translation>Anlık görüntü dosyası yazılamadı.</translation>
+    </message>
+    <message>
+        <source>Snapshot Note</source>
+        <translation>Anlık Görüntü Notu</translation>
+    </message>
+    <message>
+        <source>Note for {ts}:</source>
+        <translation>{ts} için not:</translation>
+    </message>
+    <message>
+        <source>Could not save note</source>
+        <translation>Not kaydedilemedi</translation>
+    </message>
+    <message>
+        <source>The snapshot note could not be written.</source>
+        <translation>Anlık görüntü notu yazılamadı.</translation>
     </message>
 </context>
 <context>
@@ -3958,6 +4188,21 @@ An alternative updated mod is recommended:
     </message>
 </context>
 <context>
+    <name>RimSort</name>
+    <message>
+        <source>RimSort Already Running</source>
+        <translation>RimSort Zaten Çalışıyor</translation>
+    </message>
+    <message>
+        <source>Another instance of RimSort is already running.</source>
+        <translation>RimSort'un başka bir örneği zaten çalışıyor.</translation>
+    </message>
+    <message>
+        <source>Please close the existing instance before starting a new one.</source>
+        <translation>Lütfen yeni bir örnek başlatmadan önce mevcut örneği kapatın.</translation>
+    </message>
+</context>
+<context>
     <name>RuleEditor</name>
     <message>
         <source>No mod currently being edited</source>
@@ -4022,6 +4267,10 @@ An alternative updated mod is recommended:
     <message>
         <source>Search mods by name</source>
         <translation>Modları adına göre arama</translation>
+    </message>
+    <message>
+        <source>RimSort - Rule Editor</source>
+        <translation>RimSort - Kural Düzenleyici</translation>
     </message>
     <message>
         <source>Duplicate rule</source>
@@ -4226,8 +4475,8 @@ An alternative updated mod is recommended:
         <translation>Tüm ayarları varsayılan değerlerine sıfırlamak istediğinizden emin misiniz?</translation>
     </message>
     <message>
-        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
-        <translation>Seçilen oyun klasörü geçerli bir RimWorld yürütülebilir dosyası içermiyor.&lt;br&gt;&lt;br&gt;Lütfen geçerli bir oyun konumu seçin.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe veya RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe veya oyunun Linux'ta Windows sürümünü kullanıyorsanız RimWorldWin.exe</translation>
+        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
+        <translation>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</translation>
     </message>
     <message>
         <source>The selected config folder does not contain ModsConfig.xml.&lt;br&gt;&lt;br&gt;Please select a valid config folder.&lt;br&gt;&lt;br&gt;If you have not launched the game before,&lt;br&gt;&lt;br&gt;Please launch the game at least once to generate the necessary config files.</source>
@@ -4397,8 +4646,60 @@ An alternative updated mod is recommended:
         <translation>Topolojik olarak</translation>
     </message>
     <message>
+        <source>Game location</source>
+        <translation>Oyun konumu</translation>
+    </message>
+    <message>
+        <source>Config location</source>
+        <translation>Yapılandırma konumu</translation>
+    </message>
+    <message>
+        <source>Steam mods location</source>
+        <translation>Steam modlarının konumu</translation>
+    </message>
+    <message>
+        <source>Local mods location</source>
+        <translation>Yerel modların konumu</translation>
+    </message>
+    <message>
+        <source>Instance folder location (optional)</source>
+        <translation>Örnek klasör konumu (isteğe bağlı)</translation>
+    </message>
+    <message>
+        <source>Backup Settings</source>
+        <translation>Yedekleme Ayarları</translation>
+    </message>
+    <message>
+        <source>Integration with recent save</source>
+        <translation>Son kaydetmeyle entegrasyon</translation>
+    </message>
+    <message>
+        <source>Mod list history</source>
+        <translation>Mod listesi geçmişi</translation>
+    </message>
+    <message>
+        <source>Save a snapshot of the mod list every time it is saved</source>
+        <translation>Her kaydedildiğinde mod listesinin anlık görüntüsünü kaydedin</translation>
+    </message>
+    <message>
+        <source>If enabled, RimSort writes a timestamped copy of the active and inactive mod lists on every save so you can compare them later (File → Mod List History…).</source>
+        <translation>Etkinleştirilirse, RimSort her kayıtta etkin ve etkin olmayan mod listelerinin zaman damgalı bir kopyasını yazar, böylece bunları daha sonra karşılaştırabilirsiniz (Dosya → Mod Listesi Geçmişi…).</translation>
+    </message>
+    <message>
+        <source>Number of snapshots to keep:</source>
+        <translation>Saklanacak anlık görüntü sayısı:</translation>
+    </message>
+    <message>
+        <source>The number of mod list snapshots to keep. Set to -1 to keep all.</source>
+        <translation>Saklanacak mod listesi anlık görüntülerinin sayısı.Tümünü korumak için -1'e ayarlayın.</translation>
+    </message>
+    <message>
         <source>RimWorld Versions Database</source>
         <translation>RimWorld Versiyon Veritabanı</translation>
+    </message>
+    <message>
+        <source>Auxiliary Metadata DB deletion time limit in seconds. (Delete instantly 0, Never Delete -1)</source>
+        <translation>Yardımcı Meta Veri Veritabanı silme süresi saniye cinsinden sınırlanmıştır. (Anında sil 0, Asla Silme -1)</translation>
     </message>
     <message>
         <source>To enable editing of this time limit, enable the checkbox (Enable editing) on the right.
@@ -4413,12 +4714,24 @@ Bu, temel olarak mod renklendirmenizi, kullanıcı notlarınızı vb. silme işl
 (Bu, RimSort dışındaki silme işlemleri için de geçerlidir)</translation>
     </message>
     <message>
+        <source>Sorting Method</source>
+        <translation>Sıralama Yöntemi</translation>
+    </message>
+    <message>
+        <source>Dependencies Handling Behavior</source>
+        <translation>Bağımlılıkları Yönetme Davranışı</translation>
+    </message>
+    <message>
         <source>Use dependency rules for sorting.</source>
         <translation>Sıralama için bağımlılık kurallarını kullan</translation>
     </message>
     <message>
         <source>Prompt user to download dependencies when click in Sort</source>
         <translation>Sıralama yaparken kullanıcıya gerekli modları indirmek için sor.</translation>
+    </message>
+    <message>
+        <source>XML Parsing Behavior</source>
+        <translation>XML Ayrıştırma Davranışı</translation>
     </message>
     <message>
         <source>When enabled, *ByVersion tags take precedence over the base tags, 
@@ -4443,6 +4756,10 @@ Bazı modlar yanlış büyük/küçük harf kullanır (örneğin, about/about.xm
 büyük/küçük harfe duyarlı dosya sistemleri (Linux). RimWorld modlama spesifikasyonuna göre,
 doğru yol About/About.xml'dir.
 Bakınız: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</translation>
+    </message>
+    <message>
+        <source>Mod list options</source>
+        <translation>Mod listesi seçenekleri</translation>
     </message>
     <message>
         <source>Notifies to download mods that may be missing in the active modlist</source>
@@ -4477,12 +4794,20 @@ Bakınız: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</transl
         <translation>Geçersiz modları gizler, etkinleştirilmesi önerilmez</translation>
     </message>
     <message>
+        <source>Inactive Mods Sorting</source>
+        <translation>Etkin Olmayan Modların Sıralanması</translation>
+    </message>
+    <message>
         <source>Save inactive mods sort state</source>
         <translation>Etkin olmayan modların sıralama durumunu kaydet</translation>
     </message>
     <message>
         <source>DB Builder</source>
         <translation>Veritabanı Oluşturucu</translation>
+    </message>
+    <message>
+        <source>When building the database:</source>
+        <translation>Veritabanını oluştururken:</translation>
     </message>
     <message>
         <source>Get PublishedFileIDs from locally installed mods.</source>
@@ -4529,12 +4854,20 @@ Bakınız: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</transl
         <translation>Veritabanı Oluştur</translation>
     </message>
     <message>
+        <source>Database expiry in seconds for example, 604800 for 7 days. and 0 for no expiry.</source>
+        <translation>Veritabanının geçerlilik süresi saniye cinsinden, örneğin 7 gün için 604800. ve süre sonu olmaması için 0.</translation>
+    </message>
+    <message>
         <source>Validate downloaded mods</source>
         <translation>İndirilen modları doğrulayın</translation>
     </message>
     <message>
         <source>Automatically clear depot cache</source>
         <translation>Depo önbelleğini otomatik olarak temizleyin</translation>
+    </message>
+    <message>
+        <source>SteamCMD installation location</source>
+        <translation>SteamCMD kurulum konumu</translation>
     </message>
     <message>
         <source>Clear depot cache</source>
@@ -4553,8 +4886,24 @@ Bakınız: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</transl
         <translation>Steamcmd'yi kurun</translation>
     </message>
     <message>
+        <source>todds</source>
+        <translation>küçük çocuklar</translation>
+    </message>
+    <message>
+        <source>Quality preset</source>
+        <translation>Kalite ön ayarı</translation>
+    </message>
+    <message>
         <source>Optimized - Recommended for RimWorld</source>
         <translation>Optimize edilmiş - Rimworld için önerilir</translation>
+    </message>
+    <message>
+        <source>If -p as in path is not specified, path from current active or all mods selection will be used.</source>
+        <translation>Yolda -p belirtilmezse, geçerli etkin veya tüm mod seçiminin yolu kullanılacaktır.</translation>
+    </message>
+    <message>
+        <source>When optimizing textures</source>
+        <translation>Dokuları optimize ederken</translation>
     </message>
     <message>
         <source>Optimize active mods only</source>
@@ -4577,12 +4926,24 @@ Bakınız: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</transl
         <translation>Oyunu başlatmadan önce todds'u otomatik olarak çalıştır</translation>
     </message>
     <message>
+        <source>Text Editor command location</source>
+        <translation>Metin Düzenleyici komut konumu</translation>
+    </message>
+    <message>
+        <source>Theme Settings</source>
+        <translation>Tema Ayarları</translation>
+    </message>
+    <message>
         <source>Enable to use theme / stylesheet instead of system Theme</source>
         <translation>Sistem teması yerine tema / stil sayfası kullanmayı etkinleştirin</translation>
     </message>
     <message>
         <source>Open Theme Location</source>
         <translation>Tema Konumu Açık</translation>
+    </message>
+    <message>
+        <source>Font Settings</source>
+        <translation>Yazı Tipi Ayarları</translation>
     </message>
     <message>
         <source>Font Family</source>
@@ -4597,12 +4958,40 @@ Bakınız: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</transl
         <translation>Sıfırlamak</translation>
     </message>
     <message>
+        <source>Language Setting</source>
+        <translation>Dil Ayarı</translation>
+    </message>
+    <message>
         <source>Select Language (Restart required to apply changes)</source>
         <translation>Dili seçin (değişiklikleri uygulamak için gerekli yeniden başlat)</translation>
     </message>
     <message>
+        <source>RimSort restart required for some settings</source>
+        <translation>Bazı ayarlar için RimSort'un yeniden başlatılması gerekiyor</translation>
+    </message>
+    <message>
         <source>Constrain dialogues to main window monitor</source>
         <translation>Diyalogları ana pencere monitörüyle sınırlandırın</translation>
+    </message>
+    <message>
+        <source>Main Window Launch State</source>
+        <translation>Ana Pencere Başlatma Durumu</translation>
+    </message>
+    <message>
+        <source>Browser Window Launch State</source>
+        <translation>Tarayıcı Penceresi Başlatma Durumu</translation>
+    </message>
+    <message>
+        <source>Settings Window Launch State</source>
+        <translation>Ayarlar Penceresi Başlatma Durumu</translation>
+    </message>
+    <message>
+        <source>Custom Width:</source>
+        <translation>Özel Genişlik:</translation>
+    </message>
+    <message>
+        <source>Custom Height:</source>
+        <translation>Özel Yükseklik:</translation>
     </message>
     <message>
         <source>Advanced</source>
@@ -4911,6 +5300,10 @@ E.g., 'oels.vehiclemapframework', alternatives: 'oels.vehiclemapframework.dev'</
 <context>
     <name>SettingsFailureDialog</name>
     <message>
+        <source>Unable to parse settings file!</source>
+        <translation>Ayarlar dosyası ayrıştırılamıyor!</translation>
+    </message>
+    <message>
         <source>Open Settings</source>
         <translation>Ayarlar Aç</translation>
     </message>
@@ -5150,6 +5543,13 @@ Lütfen devam etmek için aşağıdaki seçeneklerden birini seçin.</translatio
     </message>
 </context>
 <context>
+    <name>TaskProgressWindow</name>
+    <message>
+        <source>Cancel</source>
+        <translation>İptal etmek</translation>
+    </message>
+</context>
+<context>
     <name>ThemeController</name>
     <message>
         <source>Theme path Error</source>
@@ -5264,6 +5664,10 @@ Destek için lütfen bize ulaşın: {support_url} {development_guide_url}</trans
     <message>
         <source>Export Mod List</source>
         <translation>Dışa Aktar Mod Listesi</translation>
+    </message>
+    <message>
+        <source>The selected file is not a valid mod list file.&lt;br&gt;Expected RimWorld ModsConfig XML or RimSort JSON export.&lt;br&gt;Details: {e}</source>
+        <translation>Seçilen dosya geçerli bir mod listesi dosyası değil.&lt;br&gt;Beklenen RimWorld ModsConfig XML veya RimSort JSON dışa aktarımı.&lt;br&gt;Ayrıntılar: {e}</translation>
     </message>
     <message>
         <source>The selected file is not a valid mod list file.&lt;br&gt;Details: {e}</source>
@@ -5544,6 +5948,10 @@ Destek için lütfen bize ulaşın: {support_url} {development_guide_url}</trans
     <message>
         <source>Warning: These operations will delete selected files permanently!</source>
         <translation>Uyarı: Bu işlemler seçilmiş dosyaları kalıcı olarak siler!</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Sorun giderme</translation>
     </message>
     <message>
         <source>Export List</source>

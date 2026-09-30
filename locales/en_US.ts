@@ -174,6 +174,82 @@
     </message>
 </context>
 <context>
+    <name>DownloadRimWorldDialog</name>
+    <message>
+        <source>Download RimWorld Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Version:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Destination:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steam Username</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steam Username:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Note: An interactive console will open. You will be prompted to enter your password and Steam Guard code if required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Destination Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select a version.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select a destination folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please enter your Steam username.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not determine depot IDs for this platform.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SteamCMD is not set up. Please set it up in the settings first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download Started</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SteamCMD has been launched in a new terminal window.
+Please follow the prompts to complete the download.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to start download: {e}</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DuplicateModsPanel</name>
     <message>
         <source>RimSort - Duplicate Mods Found</source>
@@ -519,7 +595,38 @@ When unchecked, search all file types with standard search.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>File Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Right-click for actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FilterPanel</name>
+    <message>
+        <source>Mod Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mod Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear All</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -544,6 +651,58 @@ Manage mods installed from GitHub releases.</source>
     </message>
     <message>
         <source>Update Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uninstall</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete mod completely</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Convert to plain git mod</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete mods</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete the following mods completely? This cannot be undone.
+
+{mod_list}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deleted {n} mod(s).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File deletion failed for: {names}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Convert the following mods to git tracking? They will be updated via the Git Mod Updater instead of GitHub releases.
+
+{mod_list}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Release-based mods will be re-cloned from HEAD, replacing current files.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Convert to git tracking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Converted {n} mod(s) to git tracking.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed: {names}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -890,6 +1049,14 @@ Manage mods installed from GitHub releases.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Import failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not read the selected mod list file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Failed to export to file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1002,6 +1169,14 @@ Manage mods installed from GitHub releases.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Upload failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to upload log file to RimSort Logs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Uploaded file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1086,6 +1261,10 @@ Manage mods installed from GitHub releases.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Failed to check for Workshop updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>No Workshop mods to check for updates</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1131,6 +1310,10 @@ Manage mods installed from GitHub releases.</source>
     </message>
     <message>
         <source>Please add mods to list before attempting to download.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RimSort - SteamCMD downloader</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1482,6 +1665,14 @@ Manage mods installed from GitHub releases.</source>
     </message>
     <message>
         <source>GitHub Auto-Update Complete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Git Mods Found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No git-based mods were found in your local mods folder.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2230,6 +2421,10 @@ Manage mods installed from GitHub releases.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Append Mod List…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Save Mod List As…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2255,6 +2450,10 @@ Manage mods installed from GitHub releases.</source>
     </message>
     <message>
         <source>To Rentry.co…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mod List History…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2342,6 +2541,10 @@ Manage mods installed from GitHub releases.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Download RimWorld Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Add Git Mod</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2355,6 +2558,10 @@ Manage mods installed from GitHub releases.</source>
     </message>
     <message>
         <source>Update Workshop Mods</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update Git Mods</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2444,6 +2651,14 @@ Manage mods installed from GitHub releases.</source>
         <source>Current: {current_instance}</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Verify Game Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to verify RimWorld&apos;s game files through Steam?&lt;br&gt;&lt;br&gt;This process cannot be canceled once it has started.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MissingDependenciesDialog</name>
@@ -2495,6 +2710,18 @@ All dependencies are satisfied. No missing dependencies found.</source>
     </message>
     <message>
         <source>Dependency Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Workshop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Workshop ID not found — open Workshop to find manually</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2737,6 +2964,10 @@ Please select your preferred mod variant in the table below. You can also open e
     </message>
     <message>
         <source>Folder Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calculating...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3184,6 +3415,149 @@ Alternative Dependencies:</source>
     </message>
 </context>
 <context>
+    <name>ModlistHistoryPanel</name>
+    <message>
+        <source>Mod List History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every save writes a snapshot of your mod list. Select a snapshot to compare it with the one before it, or hold Ctrl and select two snapshots to compare them directly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mod</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Selected…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Note…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open History Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No snapshots yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save your mod list to create one</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Oldest snapshot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing to compare against</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Comparing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>{old} → {new}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No differences</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Added to active ({n})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Removed from active ({n})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reordered ({n})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Newly installed / disabled ({n})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No longer installed ({n})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source: {src}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore Mod List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load the active mod list from this snapshot ({ts})?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This replaces the mods currently loaded in RimSort. Nothing is written to disk until you press Save.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not restore the selected snapshot.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export snapshot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not write the snapshot file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapshot Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Note for {ts}:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not save note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The snapshot note could not be written.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ModsPanel</name>
     <message>
         <source>Hide Filter Disabled</source>
@@ -3195,6 +3569,10 @@ Alternative Dependencies:</source>
     </message>
     <message>
         <source>Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show tags in mod list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3785,6 +4163,21 @@ Alternative Dependencies:</source>
     </message>
 </context>
 <context>
+    <name>RimSort</name>
+    <message>
+        <source>RimSort Already Running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Another instance of RimSort is already running.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please close the existing instance before starting a new one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>RuleEditor</name>
     <message>
         <source>No mod currently being edited</source>
@@ -3848,6 +4241,10 @@ Alternative Dependencies:</source>
     </message>
     <message>
         <source>Search mods by name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RimSort - Rule Editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4052,7 +4449,7 @@ Alternative Dependencies:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
+        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4223,11 +4620,75 @@ Alternative Dependencies:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Game location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Config location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steam mods location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Local mods location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Instance folder location (optional)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Integration with recent save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mod list history</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save a snapshot of the mod list every time it is saved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If enabled, RimSort writes a timestamped copy of the active and inactive mod lists on every save so you can compare them later (File → Mod List History…).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of snapshots to keep:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The number of mod list snapshots to keep. Set to -1 to keep all.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RimWorld Versions Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auxiliary Metadata DB deletion time limit in seconds. (Delete instantly 0, Never Delete -1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>To enable editing of this time limit, enable the checkbox (Enable editing) on the right.
 After a mod is deleted, this is the time we wait until this mod item is deleted from the Auxiliary Metadata DB.
 This Auxiliary DB contains info for mod colors, toggled warning, user notes etc.
 This basically preserves your mod coloring, user notes etc. for this many seconds after deletion.
 (This applies to deletion outside of RimSort too)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sorting Method</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dependencies Handling Behavior</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4240,6 +4701,10 @@ This basically preserves your mod coloring, user notes etc. for this many second
     </message>
     <message>
         <source>Prompt user to download dependencies when click in Sort</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XML Parsing Behavior</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4258,6 +4723,10 @@ Some mods use incorrect casing (e.g., about/about.xml) which breaks on
 case-sensitive filesystems (Linux). Per the RimWorld modding spec, the
 correct path is About/About.xml.
 See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mod list options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4281,11 +4750,19 @@ See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Inactive Mods Sorting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Save inactive mods sort state</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>DB Builder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When building the database:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4341,6 +4818,10 @@ See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Database expiry in seconds for example, 604800 for 7 days. and 0 for no expiry.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Internal Tools</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4355,6 +4836,10 @@ See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
     <message>
         <source>Automatically clear the depot cache before downloading mods through SteamCMD.
 This may potentially prevent some issues with downloading mods such as download failures and deleted mods repopulating.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SteamCMD installation location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4378,7 +4863,23 @@ This may potentially prevent some issues with downloading mods such as download 
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>todds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quality preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Optimized - Recommended for RimWorld</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If -p as in path is not specified, path from current active or all mods selection will be used.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When optimizing textures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4399,6 +4900,14 @@ This may potentially prevent some issues with downloading mods such as download 
     </message>
     <message>
         <source>Automatically run todds before launching the game</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text Editor command location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Theme Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4424,6 +4933,10 @@ Name of folder will be used as name of the theme and any invalid theme will be i
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Font Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Font Family</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4436,11 +4949,39 @@ Name of folder will be used as name of the theme and any invalid theme will be i
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Language Setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Select Language (Restart required to apply changes)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>RimSort restart required for some settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Constrain dialogues to main window monitor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main Window Launch State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browser Window Launch State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings Window Launch State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom Width:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom Height:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4701,6 +5242,10 @@ Please choose one of the following options to proceed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Unable to parse settings file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Open Settings Folder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4930,6 +5475,13 @@ Please choose one of the following options to proceed.</source>
     </message>
 </context>
 <context>
+    <name>TaskProgressWindow</name>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ThemeController</name>
     <message>
         <source>Theme path Error</source>
@@ -5025,6 +5577,10 @@ Please reach out to us for support at: {support_url}</source>
     </message>
     <message>
         <source>Export Mod List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selected file is not a valid mod list file.&lt;br&gt;Expected RimWorld ModsConfig XML or RimSort JSON export.&lt;br&gt;Details: {e}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5332,6 +5888,10 @@ Please reach out to us for support at: {support_url}</source>
     </message>
     <message>
         <source>Warning: These operations will delete selected files permanently!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

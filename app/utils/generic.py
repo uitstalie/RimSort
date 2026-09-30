@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import sys
 import webbrowser
+from collections.abc import Callable, Generator
 from datetime import datetime
 from errno import EACCES
 from io import TextIOWrapper
@@ -11,7 +12,7 @@ from pathlib import Path
 from re import search, sub
 from stat import S_IRWXG, S_IRWXO, S_IRWXU
 from time import localtime, strftime
-from typing import Any, Callable, Generator
+from typing import Any
 
 import requests
 import vdf  # type: ignore
@@ -19,10 +20,10 @@ from loguru import logger
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QApplication
 
-import app.views.dialogue as dialogue
 from app.utils import http
 from app.utils.launch_command_parser import parse_launch_command
 from app.utils.platform.windows import scanpath_win32
+from app.views import dialogue
 
 translate = QCoreApplication.translate
 
@@ -136,7 +137,7 @@ def delete_files_with_condition(
     for root, dirs, files in os.walk(directory):
         for file in files:
             if condition(file):
-                file_path = str((Path(root) / file))
+                file_path = str(Path(root) / file)
                 try:
                     os.remove(file_path)
                 except OSError as e:
@@ -146,7 +147,7 @@ def delete_files_with_condition(
 
     for root, dirs, _ in os.walk(directory, topdown=False):
         for _dir in dirs:
-            dir_path = str((Path(root) / _dir))
+            dir_path = str(Path(root) / _dir)
             if not os.listdir(dir_path):
                 shutil.rmtree(
                     dir_path,
@@ -203,20 +204,23 @@ def directories(mods_path: Path | str) -> list[str]:
 def attempt_chmod(
     func: Callable[[str], Any], path: str, excinfo: BaseException
 ) -> bool:
-    if excinfo is not None and isinstance(excinfo, OSError):
-        if (
+    if (
+        excinfo is not None
+        and isinstance(excinfo, OSError)
+        and (
             func in (os.rmdir, os.remove, os.unlink, os.listdir)
             and excinfo.errno == EACCES
-        ):
-            os.chmod(path, S_IRWXU | S_IRWXG | S_IRWXO)  # 0777
-            try:
-                func(path)
-                return True
-            except Exception as e:
-                logger.warning(
-                    f"attempt_chmod for {func.__name__} double failure at {path}: {e}"
-                )
-                return False
+        )
+    ):
+        os.chmod(path, S_IRWXU | S_IRWXG | S_IRWXO)  # 0777
+        try:
+            func(path)
+            return True
+        except Exception as e:
+            logger.warning(
+                f"attempt_chmod for {func.__name__} double failure at {path}: {e}"
+            )
+            return False
 
     return False
 
@@ -234,7 +238,7 @@ def handle_remove_read_only(
             os.chmod(path, S_IRWXU | S_IRWXG | S_IRWXO)  # 0777
             func(path)
         else:
-            raise
+            raise  # noqa: PLE0704
 
 
 def get_executable_path(game_install_path: Path) -> str | None:
@@ -253,12 +257,15 @@ def get_executable_path(game_install_path: Path) -> str | None:
             (
                 str(exe)
                 for exe in [
+                    p / "RimWorldLinux64",
                     p / "RimWorldLinux",
                     p / "RimWorldWin64.exe",
                     p / "RimWorldWin.exe",
                 ]
                 if exe.exists()
-                and (exe.name != "RimWorldLinux" or os.access(exe, os.X_OK))
+                and (
+                    not exe.name.startswith("RimWorldLinux") or os.access(exe, os.X_OK)
+                )
             ),
             None,
         ),
@@ -741,7 +748,7 @@ def find_steam_rimworld(steam_folder: Path | str) -> str:
         if not library_folders:
             return ""
         # Find 294100 (RimWorld)
-        for _, folder in library_folders.items():
+        for folder in library_folders.values():
             if "294100" in folder.get("apps", {}):
                 rimworld_path = folder.get("path", "")
                 break
@@ -840,8 +847,8 @@ def get_relative_time(timestamp: int) -> str:
         str: Human-readable relative time string, or "Invalid timestamp" if conversion fails.
     """
     try:
-        dt = datetime.fromtimestamp(timestamp)
-        now = datetime.now()
+        dt = datetime.fromtimestamp(timestamp)  # noqa: DTZ006
+        now = datetime.now()  # noqa: DTZ005
         delta = now - dt
 
         if delta.days > 365:

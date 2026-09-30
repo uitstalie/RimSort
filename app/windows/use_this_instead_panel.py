@@ -1,7 +1,8 @@
 from collections import defaultdict
+from collections.abc import Generator
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Generator, Optional
+from typing import Any
 
 from loguru import logger
 from PySide6.QtCore import QCoreApplication
@@ -43,7 +44,7 @@ class ModGroupItem:
 
     mod_id: str
     metadata: dict[str, Any]
-    replacement: Optional[ReplacementInfo] = None
+    replacement: ReplacementInfo | None = None
 
 
 class UseThisInsteadPanel(BaseModsPanel):
@@ -187,7 +188,7 @@ class UseThisInsteadPanel(BaseModsPanel):
             groups: Dictionary of groups by package ID.
         """
         current_row = 0
-        for package_id, originals in groups.items():
+        for originals in groups.values():
             # Skip header row
             current_row += 1
             # Add original rows to tracking

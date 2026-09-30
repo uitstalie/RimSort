@@ -601,8 +601,39 @@ When unchecked, search all file types with standard search.</source>
         <translation>右键单击结果以进行操作</translation>
     </message>
     <message>
+        <source>File Search</source>
+        <translation>文件搜索</translation>
+    </message>
+    <message>
         <source>Right-click for actions</source>
         <translation>右键单击以进行操作</translation>
+    </message>
+</context>
+<context>
+    <name>FilterPanel</name>
+    <message>
+        <source>Mod Source</source>
+        <translation>模组源</translation>
+    </message>
+    <message>
+        <source>Mod Type</source>
+        <translation>模组类型</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>标签</translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <translation>选择全部</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>没有任何</translation>
+    </message>
+    <message>
+        <source>Clear All</source>
+        <translation>全部清除</translation>
     </message>
 </context>
 <context>
@@ -650,7 +681,7 @@ Manage mods installed from GitHub releases.</source>
 {mod_list}</source>
         <translation>完全删除以下模组吗？此操作无法撤消。
 
-{mod_列表}</translation>
+ {mod_list}</translation>
     </message>
     <message>
         <source>Deleted {n} mod(s).</source>
@@ -658,7 +689,7 @@ Manage mods installed from GitHub releases.</source>
     </message>
     <message>
         <source>File deletion failed for: {names}</source>
-        <translation>文件删除失败：{name}</translation>
+        <translation>文件删除失败： {names}</translation>
     </message>
     <message>
         <source>Convert the following mods to git tracking? They will be updated via the Git Mod Updater instead of GitHub releases.
@@ -666,7 +697,7 @@ Manage mods installed from GitHub releases.</source>
 {mod_list}</source>
         <translation>将以下 mod 转换为 git 跟踪？它们将通过 Git Mod Updater 而不是 GitHub 版本进行更新。
 
-{mod_列表}</translation>
+ {mod_list}</translation>
     </message>
     <message>
         <source>Release-based mods will be re-cloned from HEAD, replacing current files.</source>
@@ -682,7 +713,7 @@ Manage mods installed from GitHub releases.</source>
     </message>
     <message>
         <source>Failed: {names}</source>
-        <translation>失败：{名称}</translation>
+        <translation>失败： {names}</translation>
     </message>
     <message>
         <source>Checking for updates...</source>
@@ -1028,6 +1059,14 @@ Manage mods installed from GitHub releases.</source>
         <translation>所选的排序算法未实现</translation>
     </message>
     <message>
+        <source>Import failed</source>
+        <translation>导入失败</translation>
+    </message>
+    <message>
+        <source>Could not read the selected mod list file.</source>
+        <translation>无法读取选定的模组列表文件。</translation>
+    </message>
+    <message>
         <source>Failed to export to file</source>
         <translation>无法导出到文件</translation>
     </message>
@@ -1140,6 +1179,14 @@ Manage mods installed from GitHub releases.</source>
         <translation>文件：{path}</translation>
     </message>
     <message>
+        <source>Upload failed</source>
+        <translation>Upload failed</translation>
+    </message>
+    <message>
+        <source>Failed to upload log file to RimSort Logs.</source>
+        <translation>Failed to upload log file to RimSort Logs.</translation>
+    </message>
+    <message>
         <source>Uploaded file</source>
         <translation>上传文件</translation>
     </message>
@@ -1224,6 +1271,10 @@ Manage mods installed from GitHub releases.</source>
         <translation>正在检查 Steam 创意工坊模组的更新...</translation>
     </message>
     <message>
+        <source>Failed to check for Workshop updates</source>
+        <translation>Failed to check for Workshop updates</translation>
+    </message>
+    <message>
         <source>No Workshop mods to check for updates</source>
         <translation>没有创意工坊模组来检查更新</translation>
     </message>
@@ -1270,6 +1321,10 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>Please add mods to list before attempting to download.</source>
         <translation>请在尝试下载之前将模组添加到列表中。</translation>
+    </message>
+    <message>
+        <source>RimSort - SteamCMD downloader</source>
+        <translation>RimSort - SteamCMD 下载器</translation>
     </message>
     <message>
         <source>SteamCMD not found</source>
@@ -2410,6 +2465,10 @@ Manage mods installed from GitHub releases.</source>
         <translation>从 Rentry.co 导入</translation>
     </message>
     <message>
+        <source>Append Mod List…</source>
+        <translation>Append Mod List…</translation>
+    </message>
+    <message>
         <source>From Workshop collection</source>
         <translation>从 创意工坊合集 导入</translation>
     </message>
@@ -2420,6 +2479,10 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>To Clipboard…</source>
         <translation>导出到 剪切板</translation>
+    </message>
+    <message>
+        <source>Mod List History…</source>
+        <translation>模组列表历史记录...</translation>
     </message>
     <message>
         <source>Open...</source>
@@ -2600,6 +2663,14 @@ Manage mods installed from GitHub releases.</source>
         <source>Current: {current_instance}</source>
         <translation>当前：{current_instance}</translation>
     </message>
+    <message>
+        <source>Verify Game Files</source>
+        <translation>验证游戏文件</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to verify RimWorld's game files through Steam?&lt;br&gt;&lt;br&gt;This process cannot be canceled once it has started.</source>
+        <translation>您确定要通过 Steam 验证 RimWorld 的游戏文件吗？&lt;br&gt;&lt;br&gt;此过程一旦开始就无法取消。</translation>
+    </message>
 </context>
 <context>
     <name>MissingDependenciesDialog</name>
@@ -2644,6 +2715,18 @@ Select which missing dependencies to add to your active mods list.</source>
     <message>
         <source>Needs to be downloaded - requires SteamCMD</source>
         <translation>需要下载 - 需要SteamCMD</translation>
+    </message>
+    <message>
+        <source>Open Workshop</source>
+        <translation>开放工作坊</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>下载</translation>
+    </message>
+    <message>
+        <source>Workshop ID not found — open Workshop to find manually</source>
+        <translation>找不到创意工坊 ID — 打开创意工坊手动查找</translation>
     </message>
     <message>
         <source>
@@ -2949,6 +3032,10 @@ Steam Workshop 上的 RimWorld 模组如果共享相同的 包名，则为 '变�
     <message>
         <source>None</source>
         <translation>没有任何</translation>
+    </message>
+    <message>
+        <source>Calculating...</source>
+        <translation>正在计算...</translation>
     </message>
 </context>
 <context>
@@ -3355,6 +3442,149 @@ Alternative Dependencies:</source>
     <message>
         <source>Open folder(s) in text editor</source>
         <translation>在文本编辑器中打开文件夹</translation>
+    </message>
+</context>
+<context>
+    <name>ModlistHistoryPanel</name>
+    <message>
+        <source>Mod List History</source>
+        <translation>模组列表历史</translation>
+    </message>
+    <message>
+        <source>Every save writes a snapshot of your mod list. Select a snapshot to compare it with the one before it, or hold Ctrl and select two snapshots to compare them directly.</source>
+        <translation>每次保存都会写入您的模组列表的快照。选择一个快照将其与之前的快照进行比较，或者按住 Ctrl 并选择两个快照以直接进行比较。</translation>
+    </message>
+    <message>
+        <source>Change</source>
+        <translation>改变</translation>
+    </message>
+    <message>
+        <source>Mod</source>
+        <translation>模组</translation>
+    </message>
+    <message>
+        <source>Restore Selected</source>
+        <translation>恢复所选内容</translation>
+    </message>
+    <message>
+        <source>Export Selected…</source>
+        <translation>导出选定的...</translation>
+    </message>
+    <message>
+        <source>Edit Note…</source>
+        <translation>编辑注释...</translation>
+    </message>
+    <message>
+        <source>Open History Folder</source>
+        <translation>打开历史文件夹</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <source>No snapshots yet</source>
+        <translation>还没有快照</translation>
+    </message>
+    <message>
+        <source>Save your mod list to create one</source>
+        <translation>保存您的模组列表以创建一个</translation>
+    </message>
+    <message>
+        <source>Oldest snapshot</source>
+        <translation>最旧的快照</translation>
+    </message>
+    <message>
+        <source>Nothing to compare against</source>
+        <translation>没有什么可以比较的</translation>
+    </message>
+    <message>
+        <source>Comparing</source>
+        <translation>比较</translation>
+    </message>
+    <message>
+        <source>{old} → {new}</source>
+        <translation>→  {old} {new}</translation>
+    </message>
+    <message>
+        <source>No differences</source>
+        <translation>没有差异</translation>
+    </message>
+    <message>
+        <source>Added to active ({n})</source>
+        <translation>添加到活动 ({n})</translation>
+    </message>
+    <message>
+        <source>Removed from active ({n})</source>
+        <translation>已从活动状态中删除 ({n})</translation>
+    </message>
+    <message>
+        <source>Reordered ({n})</source>
+        <translation>重新排序 ({n})</translation>
+    </message>
+    <message>
+        <source>Newly installed / disabled ({n})</source>
+        <translation>新安装/禁用 ({n})</translation>
+    </message>
+    <message>
+        <source>No longer installed ({n})</source>
+        <translation>不再安装 ({n})</translation>
+    </message>
+    <message>
+        <source>Source: {src}</source>
+        <translation>来源：{src}</translation>
+    </message>
+    <message>
+        <source>Restore Mod List</source>
+        <translation>恢复模组列表</translation>
+    </message>
+    <message>
+        <source>Load the active mod list from this snapshot ({ts})?</source>
+        <translation>从此快照 ({ts}) 加载活动模组列表？</translation>
+    </message>
+    <message>
+        <source>This replaces the mods currently loaded in RimSort. Nothing is written to disk until you press Save.</source>
+        <translation>这将替换当前在 RimSort 中加载的模组。在您按“保存”之前，不会将任何内容写入磁盘。</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>恢复</translation>
+    </message>
+    <message>
+        <source>Restore failed</source>
+        <translation>恢复失败</translation>
+    </message>
+    <message>
+        <source>Could not restore the selected snapshot.</source>
+        <translation>无法恢复选定的快照。</translation>
+    </message>
+    <message>
+        <source>Export snapshot</source>
+        <translation>导出快照</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>导出失败</translation>
+    </message>
+    <message>
+        <source>Could not write the snapshot file.</source>
+        <translation>无法写入快照文件。</translation>
+    </message>
+    <message>
+        <source>Snapshot Note</source>
+        <translation>快照注释</translation>
+    </message>
+    <message>
+        <source>Note for {ts}:</source>
+        <translation>{ts} 注意：</translation>
+    </message>
+    <message>
+        <source>Could not save note</source>
+        <translation>无法保存笔记</translation>
+    </message>
+    <message>
+        <source>The snapshot note could not be written.</source>
+        <translation>无法写入快照注释。</translation>
     </message>
 </context>
 <context>
@@ -3963,6 +4193,21 @@ Alternative Dependencies:</source>
     </message>
 </context>
 <context>
+    <name>RimSort</name>
+    <message>
+        <source>RimSort Already Running</source>
+        <translation>RimSort 已经运行</translation>
+    </message>
+    <message>
+        <source>Another instance of RimSort is already running.</source>
+        <translation>RimSort 的另一个实例已在运行。</translation>
+    </message>
+    <message>
+        <source>Please close the existing instance before starting a new one.</source>
+        <translation>请先关闭现有实例，然后再启动新实例。</translation>
+    </message>
+</context>
+<context>
     <name>RuleEditor</name>
     <message>
         <source>No mod currently being edited</source>
@@ -4027,6 +4272,10 @@ Alternative Dependencies:</source>
     <message>
         <source>Search mods by name</source>
         <translation>按名称搜索模组</translation>
+    </message>
+    <message>
+        <source>RimSort - Rule Editor</source>
+        <translation>RimSort - 规则编辑器</translation>
     </message>
     <message>
         <source>Duplicate rule</source>
@@ -4231,8 +4480,8 @@ Alternative Dependencies:</source>
         <translation>你确定要将所有设置恢复为默认值吗？</translation>
     </message>
     <message>
-        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
-        <translation>所选游戏文件夹不包含有效的 RimWorld 可执行文件。&lt;br&gt;&lt;br&gt;请选择有效的游戏位置。&lt;br&gt;&lt;br&gt;Windows：RimWorldWin64.exe 或 RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac：RimworldMac.app&lt;br&gt;&lt;br&gt;Linux：RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe 或 RimWorldWin.exe（如果您在 Linux 上使用 Windows 版本的游戏）</translation>
+        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
+        <translation>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</translation>
     </message>
     <message>
         <source>The selected config folder does not contain ModsConfig.xml.&lt;br&gt;&lt;br&gt;Please select a valid config folder.&lt;br&gt;&lt;br&gt;If you have not launched the game before,&lt;br&gt;&lt;br&gt;Please launch the game at least once to generate the necessary config files.</source>
@@ -4402,8 +4651,60 @@ Alternative Dependencies:</source>
         <translation>按拓扑排序</translation>
     </message>
     <message>
+        <source>Game location</source>
+        <translation>比赛地点</translation>
+    </message>
+    <message>
+        <source>Config location</source>
+        <translation>配置位置</translation>
+    </message>
+    <message>
+        <source>Steam mods location</source>
+        <translation>Steam 模组位置</translation>
+    </message>
+    <message>
+        <source>Local mods location</source>
+        <translation>本地模组位置</translation>
+    </message>
+    <message>
+        <source>Instance folder location (optional)</source>
+        <translation>实例文件夹位置（可选）</translation>
+    </message>
+    <message>
+        <source>Backup Settings</source>
+        <translation>备份设置</translation>
+    </message>
+    <message>
+        <source>Integration with recent save</source>
+        <translation>与最近保存的集成</translation>
+    </message>
+    <message>
+        <source>Mod list history</source>
+        <translation>模组列表历史记录</translation>
+    </message>
+    <message>
+        <source>Save a snapshot of the mod list every time it is saved</source>
+        <translation>每次保存时都会保存 mod 列表的快照</translation>
+    </message>
+    <message>
+        <source>If enabled, RimSort writes a timestamped copy of the active and inactive mod lists on every save so you can compare them later (File → Mod List History…).</source>
+        <translation>如果启用，RimSort 会在每次保存时写入活动和非活动 Mod 列表的带时间戳的副本，以便您稍后可以比较它们（文件 → Mod 列表历史记录...）。</translation>
+    </message>
+    <message>
+        <source>Number of snapshots to keep:</source>
+        <translation>要保留的快照数量：</translation>
+    </message>
+    <message>
+        <source>The number of mod list snapshots to keep. Set to -1 to keep all.</source>
+        <translation>要保留的 mod 列表快照的数量。设置为 -1 以保留全部。</translation>
+    </message>
+    <message>
         <source>RimWorld Versions Database</source>
         <translation>RimWorld 版本数据库</translation>
+    </message>
+    <message>
+        <source>Auxiliary Metadata DB deletion time limit in seconds. (Delete instantly 0, Never Delete -1)</source>
+        <translation>辅助元数据数据库删除时间限制（以秒为单位）。 （立即删除0，永不删除-1）</translation>
     </message>
     <message>
         <source>To enable editing of this time limit, enable the checkbox (Enable editing) on the right.
@@ -4418,6 +4719,14 @@ This basically preserves your mod coloring, user notes etc. for this many second
 （这也适用于 RimSort 之外的删除）</translation>
     </message>
     <message>
+        <source>Sorting Method</source>
+        <translation>排序方式</translation>
+    </message>
+    <message>
+        <source>Dependencies Handling Behavior</source>
+        <translation>依赖关系处理行为</translation>
+    </message>
+    <message>
         <source>Use dependency rules for sorting.</source>
         <translation>使用依赖规则进行排序</translation>
     </message>
@@ -4428,6 +4737,10 @@ This basically preserves your mod coloring, user notes etc. for this many second
     <message>
         <source>Prompt user to download dependencies when click in Sort</source>
         <translation>在点击排序时提示用户下载依赖项</translation>
+    </message>
+    <message>
+        <source>XML Parsing Behavior</source>
+        <translation>XML 解析行为</translation>
     </message>
     <message>
         <source>When enabled, *ByVersion tags take precedence over the base tags, 
@@ -4452,6 +4765,10 @@ See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
 区分大小写的文件系统 (Linux)。根据 RimWorld 改装规范，
 正确的路径是 About/About.xml。
 请参阅：https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</translation>
+    </message>
+    <message>
+        <source>Mod list options</source>
+        <translation>模组列表选项</translation>
     </message>
     <message>
         <source>Notifies to download mods that may be missing in the active modlist</source>
@@ -4486,12 +4803,20 @@ See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
         <translation>隐藏无效模组，不建议启用</translation>
     </message>
     <message>
+        <source>Inactive Mods Sorting</source>
+        <translation>不活跃 Mod 排序</translation>
+    </message>
+    <message>
         <source>Save inactive mods sort state</source>
         <translation>保存未启用模组排序状态</translation>
     </message>
     <message>
         <source>DB Builder</source>
         <translation>数据库构建器</translation>
+    </message>
+    <message>
+        <source>When building the database:</source>
+        <translation>建立数据库时：</translation>
     </message>
     <message>
         <source>Get PublishedFileIDs from locally installed mods.</source>
@@ -4546,6 +4871,10 @@ See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
         <translation>构建数据库</translation>
     </message>
     <message>
+        <source>Database expiry in seconds for example, 604800 for 7 days. and 0 for no expiry.</source>
+        <translation>数据库过期时间（以秒为单位），例如 604800 表示 7 天。 0 表示没有过期时间。</translation>
+    </message>
+    <message>
         <source>Internal Tools</source>
         <translation>内部工具</translation>
     </message>
@@ -4562,6 +4891,10 @@ See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
 This may potentially prevent some issues with downloading mods such as download failures and deleted mods repopulating.</source>
         <translation>在使用 SteamCMD 下载模组前自动清除仓库缓存。
 这可能避免在下载模组时出现的一些问题，例如下载失败以及已删除模组重新生成的情况。</translation>
+    </message>
+    <message>
+        <source>SteamCMD installation location</source>
+        <translation>SteamCMD安装位置</translation>
     </message>
     <message>
         <source>Clear depot cache</source>
@@ -4584,8 +4917,24 @@ This may potentially prevent some issues with downloading mods such as download 
         <translation>安装 SteamCMD</translation>
     </message>
     <message>
+        <source>todds</source>
+        <translation>托兹</translation>
+    </message>
+    <message>
+        <source>Quality preset</source>
+        <translation>质量预设</translation>
+    </message>
+    <message>
         <source>Optimized - Recommended for RimWorld</source>
         <translation>优化 - 推荐用于 RimWorld</translation>
+    </message>
+    <message>
+        <source>If -p as in path is not specified, path from current active or all mods selection will be used.</source>
+        <translation>如果未指定路径中的 -p，则将使用当前活动路径或所有 mods 选择。</translation>
+    </message>
+    <message>
+        <source>When optimizing textures</source>
+        <translation>优化纹理时</translation>
     </message>
     <message>
         <source>Optimize active mods only</source>
@@ -4608,12 +4957,24 @@ This may potentially prevent some issues with downloading mods such as download 
         <translation>启动游戏前自动运行 todds</translation>
     </message>
     <message>
+        <source>Text Editor command location</source>
+        <translation>文本编辑器命令位置</translation>
+    </message>
+    <message>
+        <source>Theme Settings</source>
+        <translation>主题设置</translation>
+    </message>
+    <message>
         <source>Enable to use theme / stylesheet instead of system Theme</source>
         <translation>"启用主题/样式表而非系统默认主题"</translation>
     </message>
     <message>
         <source>Open Theme Location</source>
         <translation>打开主题路径</translation>
+    </message>
+    <message>
+        <source>Font Settings</source>
+        <translation>字体设置</translation>
     </message>
     <message>
         <source>Font Family</source>
@@ -4628,12 +4989,40 @@ This may potentially prevent some issues with downloading mods such as download 
         <translation>重置</translation>
     </message>
     <message>
+        <source>Language Setting</source>
+        <translation>语言设置</translation>
+    </message>
+    <message>
         <source>Select Language (Restart required to apply changes)</source>
         <translation>选择语言（需要重新启动以应用更改）</translation>
     </message>
     <message>
+        <source>RimSort restart required for some settings</source>
+        <translation>某些设置需要重新启动 RimSort</translation>
+    </message>
+    <message>
         <source>Constrain dialogues to main window monitor</source>
         <translation>将对话限制到主窗口监视器</translation>
+    </message>
+    <message>
+        <source>Main Window Launch State</source>
+        <translation>主窗口启动状态</translation>
+    </message>
+    <message>
+        <source>Browser Window Launch State</source>
+        <translation>浏览器窗口启动状态</translation>
+    </message>
+    <message>
+        <source>Settings Window Launch State</source>
+        <translation>设置窗口启动状态</translation>
+    </message>
+    <message>
+        <source>Custom Width:</source>
+        <translation>定制宽度：</translation>
+    </message>
+    <message>
+        <source>Custom Height:</source>
+        <translation>定制高度：</translation>
     </message>
     <message>
         <source>Advanced</source>
@@ -4927,6 +5316,10 @@ Please choose one of the following options to proceed.</source>
 请选择以下选项之一继续。</translation>
     </message>
     <message>
+        <source>Unable to parse settings file!</source>
+        <translation>无法解析设置文件！</translation>
+    </message>
+    <message>
         <source>Open Settings Folder</source>
         <translation>打开设置文件夹</translation>
     </message>
@@ -5156,6 +5549,13 @@ Please choose one of the following options to proceed.</source>
     </message>
 </context>
 <context>
+    <name>TaskProgressWindow</name>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+</context>
+<context>
     <name>ThemeController</name>
     <message>
         <source>Theme path Error</source>
@@ -5254,6 +5654,10 @@ Please reach out to us for support at: {support_url}</source>
     <message>
         <source>Export Mod List</source>
         <translation>导出模组列表</translation>
+    </message>
+    <message>
+        <source>The selected file is not a valid mod list file.&lt;br&gt;Expected RimWorld ModsConfig XML or RimSort JSON export.&lt;br&gt;Details: {e}</source>
+        <translation>所选文件不是有效的 Mod 列表文件。&lt;br&gt;预期为 RimWorld ModsConfig XML 或 RimSort JSON 导出。&lt;br&gt;详细信息：{e}</translation>
     </message>
     <message>
         <source>The selected file is not a valid mod list file.&lt;br&gt;Details: {e}</source>
@@ -5561,6 +5965,10 @@ Please reach out to us for support at: {support_url}</source>
     <message>
         <source>Warning: These operations will delete selected files permanently!</source>
         <translation>警告：这些操作将永久删除所选文件！</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>故障排除</translation>
     </message>
     <message>
         <source>Export List</source>

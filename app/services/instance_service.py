@@ -171,6 +171,7 @@ class InstanceService:
         inst = self.settings.instances[current_instance]
         game_folder_path = inst.game_folder
         config_folder_path = inst.config_folder
+        # jscpd:ignore-start
         local_mods_folder_path = inst.local_folder
         logger.info(f"Game folder: {game_folder_path}")
         logger.info(f"Config folder: {config_folder_path}")
@@ -188,6 +189,7 @@ class InstanceService:
         else:
             logger.warning("Essential path(s) are invalid or not set!")
             answer = show_dialogue_conditional(
+                # jscpd:ignore-end
                 title=QCoreApplication.translate(
                     "InstanceService", "Essential path(s)"
                 ),
@@ -556,7 +558,7 @@ class InstanceService:
                     str(Path(existing_instance_game_folder) / local_folder_name)
                     == existing_instance_local_folder
                 )
-                if existing_instance_local_folder and not local_folder_in_game:
+                if existing_instance_local_folder and not local_folder_in_game:  # noqa: SIM102
                     if os.path.exists(existing_instance_local_folder) and os.path.isdir(
                         existing_instance_local_folder
                     ):

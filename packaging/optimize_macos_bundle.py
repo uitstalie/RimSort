@@ -35,7 +35,7 @@ def _get_native_arch() -> str:
 
 def _is_fat_binary(path: str) -> bool:
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: PLW1510
             ["lipo", "-info", path],
             capture_output=True,
             text=True,

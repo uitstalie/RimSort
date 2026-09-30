@@ -1,7 +1,8 @@
 import errno
+from collections.abc import Callable
 from pathlib import Path
 from shutil import rmtree
-from typing import Any, Callable
+from typing import Any
 
 from loguru import logger
 from PySide6.QtGui import QAction

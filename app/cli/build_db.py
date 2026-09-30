@@ -8,7 +8,6 @@ enabling use in scripts and containers without GUI dependencies.
 import json
 import sys
 from pathlib import Path
-from typing import Optional
 
 import click
 
@@ -46,7 +45,7 @@ from app.utils.db_builder_core import DBBuilderCore
     help="Suppress progress output (errors still shown).",
 )
 def build_db(
-    api_key: Optional[str],
+    api_key: str | None,
     output: Path,
     dlc_data: bool,
     update: bool,

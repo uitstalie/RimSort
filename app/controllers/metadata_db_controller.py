@@ -1,5 +1,6 @@
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from loguru import logger
 from sqlalchemy import create_engine, text
@@ -30,7 +31,7 @@ class MetadataDbController:
 class AuxMetadataController(MetadataDbController):
     _instances: dict[
         Path, "AuxMetadataController"
-    ] = {}  # db_path : AuxMetadataController
+    ] = {}  # db_path : AuxMetadataController  # noqa: RUF012
 
     def __init__(self, db_path: Path) -> None:
         super().__init__(db_path)
@@ -61,6 +62,9 @@ class AuxMetadataController(MetadataDbController):
                 col_notnull = col_info[3]  # notnull flag
                 col_type = col_info[2]  # type string
                 if col_notnull or col_type.upper() == "INTEGER":
+                    # Re-query table info to include any columns added in the previous steps
+                    rows = conn.execute(text("PRAGMA table_info(auxiliary_metadata)"))
+                    columns = {row[1]: row for row in rows}
                     old_col_names = list(columns.keys())
                     conn.execute(
                         text(
@@ -141,7 +145,7 @@ class AuxMetadataController(MetadataDbController):
         except Exception as e:
             session.rollback()
             logger.exception(f"Failed to update aux metadata entry: {e}")
-            raise e
+            raise
 
         return entry
 
@@ -202,7 +206,7 @@ class AuxMetadataController(MetadataDbController):
             except Exception as e:
                 session.rollback()
                 logger.exception(f"Failed to create new aux metadata entry: {e}")
-                raise e
+                raise
 
         return entry
 

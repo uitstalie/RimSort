@@ -1,5 +1,4 @@
 import os
-from typing import Union
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -13,7 +12,7 @@ from app.views.menu_bar import MenuBar
 @pytest.fixture
 def menu_bar_instance(
     mock_settings_controller: MagicMock,
-    qapp: Union[QApplication, QCoreApplication],
+    qapp: QApplication | QCoreApplication,
 ) -> MenuBar:
     """Create a MenuBar instance for testing."""
     QObject.__setattr__(
@@ -30,7 +29,7 @@ class TestMenuBarUpdateMenuCreation:
     def test_update_menu_shown_when_env_var_not_set(
         self,
         mock_settings_controller: MagicMock,
-        qapp: Union[QApplication, QCoreApplication],
+        qapp: QApplication | QCoreApplication,
     ) -> None:
         """Test that Update menu is created when RIMSORT_DISABLE_UPDATER is not set."""
         # Ensure environment variable is not set
@@ -55,7 +54,7 @@ class TestMenuBarUpdateMenuCreation:
     def test_update_menu_hidden_when_env_var_set(
         self,
         mock_settings_controller: MagicMock,
-        qapp: Union[QApplication, QCoreApplication],
+        qapp: QApplication | QCoreApplication,
     ) -> None:
         """Test that Update menu is not created when RIMSORT_DISABLE_UPDATER is set."""
         # Set the environment variable
@@ -81,7 +80,7 @@ class TestMenuBarControllerWithDisabledUpdater:
     def test_controller_initialization_with_env_var_set(
         self,
         mock_settings_controller: MagicMock,
-        qapp: Union[QApplication, QCoreApplication],
+        qapp: QApplication | QCoreApplication,
     ) -> None:
         """Test that MenuBarController initializes correctly when actions are None."""
         # Set the environment variable
@@ -101,7 +100,7 @@ class TestMenuBarControllerWithDisabledUpdater:
     def test_controller_initialization_without_env_var(
         self,
         mock_settings_controller: MagicMock,
-        qapp: Union[QApplication, QCoreApplication],
+        qapp: QApplication | QCoreApplication,
     ) -> None:
         """Test that MenuBarController initializes correctly when actions exist."""
         # Ensure environment variable is not set
@@ -120,6 +119,88 @@ class TestMenuBarControllerWithDisabledUpdater:
 
             # Verify the controller was created successfully
             assert controller is not None
+
+
+class TestMenuBarAppendAction:
+    """Test the Append Mod List menu action."""
+
+    def test_append_mod_list_action_emits_event(
+        self,
+        menu_bar_instance: MenuBar,
+        mock_settings_controller: MagicMock,
+    ) -> None:
+        """Verify that triggering append_mod_list_action emits the do_append_mod_list signal."""
+        with patch("app.controllers.menu_bar_controller.EventBus") as mock_event_bus:
+            _controller = MenuBarController(
+                menu_bar_instance, mock_settings_controller.settings, lambda: None
+            )
+            menu_bar_instance.append_mod_list_action.trigger()
+            mock_event_bus.return_value.do_append_mod_list.emit.assert_called_once()
+
+
+class TestMenuBarModlistHistory:
+    """Test the Mod List History menu action."""
+
+    def test_modlist_history_action_emits_event(
+        self,
+        menu_bar_instance: MenuBar,
+        mock_settings_controller: MagicMock,
+    ) -> None:
+        """Triggering modlist_history_action emits do_open_modlist_history."""
+        with patch("app.controllers.menu_bar_controller.EventBus") as mock_event_bus:
+            _controller = MenuBarController(
+                menu_bar_instance, mock_settings_controller.settings, lambda: None
+            )
+            menu_bar_instance.modlist_history_action.trigger()
+            mock_event_bus.return_value.do_open_modlist_history.emit.assert_called_once()
+
+
+class TestMenuBarGameFileVerification:
+    """Test confirmation before verifying game files from the menu bar."""
+
+    @pytest.mark.parametrize(
+        ("dialog_result", "should_emit"),
+        [
+            (True, True),
+            (False, False),
+        ],
+        ids=["confirmed_emits_event", "cancelled_does_not_emit_event"],
+    )
+    def test_verify_game_files_confirmation_flow(
+        self,
+        menu_bar_instance: MenuBar,
+        mock_settings_controller: MagicMock,
+        dialog_result: bool,
+        should_emit: bool,
+    ) -> None:
+        """Verify confirm and cancel behavior for menu-bar game-file verification."""
+        with (
+            patch("app.controllers.menu_bar_controller.EventBus") as mock_event_bus,
+            patch(
+                "app.controllers.menu_bar_controller.show_dialogue_conditional",
+                return_value=dialog_result,
+            ) as mock_dialog,
+        ):
+            controller = MenuBarController(
+                menu_bar_instance, mock_settings_controller.settings, lambda: None
+            )
+
+            menu_bar_instance.steam_verify_game_files_action.trigger()
+
+            mock_dialog.assert_called_once_with(
+                title=controller.tr("Verify Game Files"),
+                text=controller.tr(
+                    "Are you sure you want to verify RimWorld's game files through Steam?"
+                    "<br><br>This process cannot be canceled once it has started."
+                ),
+                icon="warning",
+            )
+
+            emit_mock = mock_event_bus.return_value.do_steam_verify_game_files.emit
+            if should_emit:
+                emit_mock.assert_called_once_with()
+            else:
+                emit_mock.assert_not_called()
 
 
 class TestDisableUpdaterFlag:

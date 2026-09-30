@@ -595,9 +595,7 @@ class MetadataController(QObject):
         logger.debug(f"Generated active mods with {len(active_mod_paths)} mods")
 
         logger.info("Generating inactive mod list")
-        inactive_mod_paths = [
-            path for path in all_mods.keys() if path not in active_mod_paths
-        ]
+        inactive_mod_paths = [path for path in all_mods if path not in active_mod_paths]
         logger.info(f"# active mods: {len(active_mod_paths)}")
         logger.info(f"# inactive mods: {len(inactive_mod_paths)}")
         logger.info(f"# duplicate mods: {len(duplicate_mods)}")
@@ -748,7 +746,7 @@ class MetadataController(QObject):
         ``AppInfo().databases_folder / <repo-name> / <file_name>``, not
         at the settings default.
         """
-        if source == "Disabled":
+        if source in {"None", "Disabled"}:
             return None
         if source == "Configured file path":
             return Path(file_path) if file_path else None

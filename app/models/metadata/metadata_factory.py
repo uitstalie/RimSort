@@ -2,9 +2,10 @@ import itertools
 import os
 import re
 import traceback
+from collections.abc import Sequence
 from functools import cache
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
 import msgspec
 from loguru import logger
@@ -139,7 +140,7 @@ def match_version(
     input: dict[str, str] | dict[str, list[str]],
     target_version: str,
     stop_at_first: bool = True,
-) -> tuple[bool, None | list[str] | list[str] | str]:
+) -> tuple[bool, None | list[str] | str]:
     """Attempts to match an input key with the target version using regex.
 
     If the key is not found, the function returns None.
@@ -156,10 +157,13 @@ def match_version(
     except ValueError:
         return False, None
 
-    if stop_at_first:
-        if (result := input.get(version_regex, None)) and result is not None:
-            return True, result
-        elif (result := input.get(f"{major}.{minor}", None)) and result is not None:
+    if stop_at_first:  # noqa: SIM102
+        if (
+            (result := input.get(version_regex, None))
+            and result is not None
+            or (result := input.get(f"{major}.{minor}", None))
+            and result is not None
+        ):
             return True, result
 
     results = []
@@ -396,6 +400,17 @@ def _set_mod_type(
     elif parent_path == workshop_path:
         mod.mod_type = ModType.STEAM_WORKSHOP
     elif parent_path == local_path:
+        published_file_id_path = mod.mod_path / Path("About/PublishedFileId.txt")
+        if (
+            published_file_id_path.exists()
+            and mod.published_file_id == mod.mod_path.name
+        ):
+            # SteamCMD installs Workshop items into directories named after their
+            # PublishedFileId. Some Workshop items also ship a .git directory,
+            # which must not take precedence over that SteamCMD layout.
+            mod.mod_type = ModType.STEAM_CMD
+            return mod
+
         try:
             repo = pygit2.discover_repository(str(mod.mod_path))
 
@@ -412,7 +427,7 @@ def _set_mod_type(
             )
             logger.error(e)
 
-        if (mod.mod_path / Path("About/PublishedFileId.txt")).exists():
+        if published_file_id_path.exists():
             mod.mod_type = ModType.STEAM_CMD
         else:
             mod.mod_type = ModType.LOCAL
@@ -865,9 +880,9 @@ def write_rules_db(path: Path, external_rules: ExternalRulesSchema) -> None:
             json_string = msgspec.json.encode(external_rules)
             f.write(json_string)
             logger.info("Rules DB written successfully")
-    except (IOError, OSError) as e:
+    except OSError as e:
         logger.error(f"Error writing Rules DB: {e}")
-        raise e
+        raise
 
 
 def read_steam_db(path: Path) -> SteamDbSchema | None:
@@ -920,6 +935,6 @@ def write_steam_db(path: Path, steam_db: SteamDbSchema) -> None:
             json_string = msgspec.json.encode(steam_db)
             f.write(json_string)
             logger.info("SteamDB written successfully")
-    except (IOError, OSError) as e:
+    except OSError as e:
         logger.error(f"Error writing SteamDB: {e}")
-        raise e
+        raise

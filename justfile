@@ -8,6 +8,7 @@ set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 # Shared flag values to keep recipes DRY and consistent.
 ruff_config := "--config pyproject.toml"
 pytest_opts := "--doctest-modules --no-qt-log"
+cov_opts := "--junitxml=junit/test-results.xml --cov=app --cov-report=xml --cov-report=html --cov-report=term-missing"
 
 # ─── Default Target (lists all available recipes) ────────────────────────
 @default:
@@ -21,7 +22,7 @@ pytest_opts := "--doctest-modules --no-qt-log"
 run: dev-setup
     uv run python -m app
 
-# Run tests with doctest modules enabled
+# Run tests with doctest modules enabled and output capture disabled
 test: dev-setup
     uv run pytest {{pytest_opts}} -s
 
@@ -31,18 +32,25 @@ test-verbose: dev-setup
 
 # Run tests with full coverage reports (XML, HTML, and terminal)
 test-coverage: dev-setup
-    uv run pytest {{pytest_opts}} --junitxml=junit/test-results.xml --cov=app --cov-report=xml --cov-report=html --cov-report=term-missing
+    uv run pytest {{pytest_opts}} {{cov_opts}}
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Code Quality
 # ═══════════════════════════════════════════════════════════════════════════
 
 # Container image for super-linter (matches CI version)
-superlinter_image := "ghcr.io/super-linter/super-linter:slim-v8.6.0"
+superlinter_image := "ghcr.io/super-linter/super-linter:slim-v8.7.0"
 
-# Run super-linter locally via container (ruff, ruff-format, jscpd, bash,
-# json, yaml, checkov, gitleaks). Mypy/Pyright run natively because they
-# need the local venv to resolve imports.
+# Run super-linter locally via container (ruff, ruff-format, mypy, jscpd,
+# bash/shellcheck, shfmt, json, yaml, markdown, checkov, gitleaks,
+# github-actions). Pyright runs natively because it needs the local venv to
+# resolve imports. Env is kept identical to .github/workflows/lint.yml.
+# Note: super-linter v8.7.0 rejects mixing VALIDATE_*=true/false, so this list
+# stays all-true (opt-in mode; unlisted linters are disabled).
+# IGNORE_GITIGNORED_FILES=false: super-linter v8.7.0 bundles jscpd 5, which
+# dropped the --gitignore CLI flag that super-linter adds when this is true.
+# jscpd 5 skips gitignored files on its own (see .jscpd.json), and the
+# per-file file list only contains tracked files (USE_FIND_ALGORITHM=false).
 [unix]
 super-lint:
     #!/usr/bin/env bash
@@ -67,18 +75,30 @@ super-lint:
         -e DEFAULT_BRANCH=main \
         -e LOG_LEVEL=NOTICE \
         -e LINTER_RULES_PATH=. \
+        -e VALIDATE_ALL_CODEBASE=true \
+        -e VALIDATE_PYTHON_MYPY=true \
         -e VALIDATE_PYTHON_RUFF=true \
         -e VALIDATE_PYTHON_RUFF_FORMAT=true \
-        -e VALIDATE_BASH=true \
-        -e VALIDATE_JSCPD=true \
+        -e VALIDATE_GITHUB_ACTIONS=true \
+        -e VALIDATE_GITLEAKS=true \
         -e VALIDATE_JSON=true \
         -e VALIDATE_YAML=true \
+        -e VALIDATE_BASH=true \
         -e VALIDATE_CHECKOV=true \
-        -e VALIDATE_GITLEAKS=true \
+        -e VALIDATE_JSCPD=true \
+        -e VALIDATE_SHELL_SHFMT=true \
+        -e MARKDOWN_CONFIG_FILE=.markdownlint.json \
+        -e VALIDATE_MARKDOWN=true \
+        -e FIX_MARKDOWN=true \
+        -e FIX_SHELL_SHFMT=true \
         -e PYTHON_RUFF_CONFIG_FILE=pyproject.toml \
         -e PYTHON_RUFF_FORMAT_CONFIG_FILE=pyproject.toml \
-        -e FILTER_REGEX_EXCLUDE="LICENSE.md|super-linter-output/|github_conf/" \
-        -e IGNORE_GITIGNORED_FILES=true \
+        -e PYTHON_MYPY_CONFIG_FILE=pyproject.toml \
+        -e FILTER_REGEX_EXCLUDE="LICENSE.md|super-linter-output/|github_conf/|setup_.*_script\\.js" \
+        -e IGNORE_GITIGNORED_FILES=false \
+        -e FIX_PYTHON_RUFF=true \
+        -e FIX_PYTHON_RUFF_FORMAT=true \
+        -e GITHUB_ACTIONS_COMMAND_ARGS='-ignore '\''unknown permission scope '"'""attestations'"'"'\''' \
         -v "$(pwd)":/tmp/lint \
         -v "${GIT_COMMON_DIR}:${GIT_COMMON_DIR}" \
         {{superlinter_image}}
@@ -91,8 +111,13 @@ typecheck:
 pyright:
     uv run python -m pyright -p pyproject.toml .
 
-# Run ruff fixes
-ruff: ruff-fix ruff-format-fix
+# Run ruff lint checks (ruff check)
+ruff:
+    uv run ruff check {{ruff_config}} .
+
+# Check code for formatting issues (ruff format --check)
+ruff-format:
+    uv run ruff format {{ruff_config}} --check .
 
 # Check and automatically fix linting issues (ruff check --fix)
 ruff-fix:
@@ -102,34 +127,61 @@ ruff-fix:
 ruff-format-fix:
     uv run ruff format {{ruff_config}} .
 
+# Check Markdown documentation for issues (markdownlint-cli2)
+markdownlint:
+    npx --yes markdownlint-cli2@0.23.2
+
 # Fix Markdown documentation issues (markdownlint-cli2 --fix)
 markdownlint-fix:
-    npx markdownlint-cli2@latest --fix
+    npx --yes markdownlint-cli2@0.23.2 --fix
+
+# Check shell script formatting (shfmt, fails on any differences)
+[unix]
+shfmt:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mapfile -t sh_files < <(fd -e sh --exclude .venv --exclude submodules)
+    if [ ${#sh_files[@]} -eq 0 ]; then
+        echo "shfmt: no shell scripts found"
+        exit 0
+    fi
+    # shfmt -l prints files whose formatting differs and exits 1 if any exist
+    shfmt -l "${sh_files[@]}"
+
+[windows]
+shfmt:
+    $env:PATH = "$env:PATH;$env:LOCALAPPDATA\RimSortTools"; $files = @(fd -e sh --exclude .venv --exclude submodules); if ($files.Count -eq 0) { Write-Output "shfmt: no shell scripts found" } else { shfmt -l $files }
 
 # Automatically fix shell script formatting issues (shfmt)
+[unix]
 shfmt-fix:
-    fd -e sh --exclude .venv --exclude submodules -x shfmt -w {}
+    fd -e sh --exclude .venv --exclude submodules -X shfmt -w
+
+[windows]
+shfmt-fix:
+    $env:PATH = "$env:PATH;$env:LOCALAPPDATA\RimSortTools"; fd -e sh --exclude .venv --exclude submodules -X shfmt -w
 
 # Run copy/paste detection (jscpd) using the project's .jscpd.json config
 jscpd:
-    npx jscpd@4 . --config .jscpd.json
+    npx --yes jscpd@5.3.0 . --config .jscpd.json
 
 # Run all code quality checks: super-linter + typecheck + pyright
 [unix]
 check: super-lint typecheck pyright
     @echo "Use 'just fix' to automatically fix linting and formatting issues!"
 
-# Run all code quality checks available on Windows: typecheck + pyright + jscpd + deferred-import guard
+# Run all code quality checks available on Windows: typecheck + pyright + ruff + ruff-format + jscpd + markdownlint + shfmt + deferred-import guard
 [windows]
-check: typecheck pyright jscpd deferred-imports
+check: typecheck pyright ruff ruff-format jscpd markdownlint shfmt deferred-imports
     @echo "Use 'just fix' to automatically fix linting and formatting issues!"
 
 # Check for new function-local from app/ imports (circular-import regression guard)
 deferred-imports:
     uv run python check_deferred_imports.py
 
-# Automatically fix linting and formatting issues (ruff-fix + ruff-format-fix + shfmt -w + markdown fixes)
-fix: ruff shfmt-fix markdownlint-fix
+# Automatically fix linting and formatting issues, then verify the markdown check passes
+# (ruff-fix + ruff-format-fix + shfmt -w + markdown fixes + markdownlint check)
+fix: ruff-fix ruff-format-fix shfmt-fix markdownlint-fix markdownlint
     @echo "Auto-fixes applied!"
 
 # Run full CI pipeline locally: all quality checks + tests with coverage
@@ -164,7 +216,7 @@ clean:
 
 [windows]
 clean:
-    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue build, dist, *.egg-info, .pytest_cache, .mypy_cache, .ruff_cache, htmlcov, .coverage, coverage.xml, junit
+    Get-ChildItem -Force | Where-Object { $_.Name -in @("build", "dist", ".pytest_cache", ".mypy_cache", ".ruff_cache", "htmlcov", ".coverage", "coverage.xml", "junit") -or $_.Name -like "*.egg-info" } | Remove-Item -Recurse -Force
     Get-ChildItem -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
 
 # ═══════════════════════════════════════════════════════════════════════════

@@ -1,7 +1,8 @@
 import json
 import shutil
+from collections.abc import Generator
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import msgspec
@@ -84,12 +85,10 @@ def metadata_controller(
     ):
         steamcmd_instance.return_value = MagicMock(spec=SteamcmdInterface)
         steamcmd_instance.return_value.steamcmd_appworkshop_acf_path = str(
-            (
-                Path("tests/data/instance/instance_1/steam")
-                / "steamapps"
-                / "workshop"
-                / "appworkshop_294100.acf"
-            )
+            Path("tests/data/instance/instance_1/steam")
+            / "steamapps"
+            / "workshop"
+            / "appworkshop_294100.acf"
         )
         return MetadataController(mock_settings, lambda: mock_active_instance, temp_db)
 
@@ -98,6 +97,19 @@ def test_metadata_controller_creation(metadata_controller: MetadataController) -
     assert metadata_controller.metadata_mediator is not None
     assert metadata_controller.metadata_db_controller is not None
     assert metadata_controller.steamcmd_wrapper is not None
+
+
+@pytest.mark.parametrize("source", ["None", "Disabled"])
+def test_resolve_db_path_returns_none_for_disabled_sources(source: str) -> None:
+    assert (
+        MetadataController._resolve_db_path(
+            source,
+            "/configured/database.json",
+            "https://github.com/example/database",
+            "database.json",
+        )
+        is None
+    )
 
 
 @pytest.fixture
@@ -793,7 +805,7 @@ def test_get_mods_from_list_missing_mods(
         "/mods/mod_a": mod_a,
     }
 
-    active, inactive, duplicates, missing = metadata_controller.get_mods_from_list(
+    active, _inactive, _duplicates, missing = metadata_controller.get_mods_from_list(
         ["author.modA", "nonexistent.mod"]
     )
 
@@ -858,7 +870,7 @@ def test_get_mods_from_list_steam_suffix_priority(
         "/mods/workshop/mymod": mod_workshop,
     }
 
-    active, inactive, duplicates, missing = metadata_controller.get_mods_from_list(
+    active, inactive, _duplicates, missing = metadata_controller.get_mods_from_list(
         ["author.mymod_steam"]
     )
 
@@ -873,11 +885,12 @@ def test_get_mods_from_list_git_duplicate_prefers_git_over_workshop(
 ) -> None:
     """Regression test for issue #2300.
 
-    For a bare package ID (no ``_steam`` suffix), a locally installed git-backed
-    copy of a mod must win over a Steam Workshop copy that shares the package ID.
-    If ``ModType.GIT`` is missing from the default source-priority order,
-    resolution falls through to the Workshop copy and the in-development mod is
-    deactivated on reload.
+        For a bare package ID (no ``_steam`` suffix), a locally installed git-backed
+        copy of a mod must win over a Steam Workshop copy that shares the package ID.
+        If ``ModType.GIT`` is missing from the default source-priority order,
+        resolution falls through to the Workshop copy and the in-development mod is
+    # jscpd:ignore-start
+        deactivated on reload.
     """
     mod_git = _make_about_xml_mod(
         "My Mod Git", "author.mymod", ModType.GIT, "/mods/local/mymod"
@@ -894,8 +907,9 @@ def test_get_mods_from_list_git_duplicate_prefers_git_over_workshop(
         "/mods/workshop/mymod": mod_workshop,
     }
 
-    active, inactive, duplicates, missing = metadata_controller.get_mods_from_list(
+    active, inactive, _duplicates, missing = metadata_controller.get_mods_from_list(
         ["author.mymod"]
+        # jscpd:ignore-end
     )
 
     assert active == ["/mods/local/mymod"]
@@ -926,7 +940,7 @@ def test_get_mods_from_list_steamcmd_duplicate_prefers_steamcmd_over_workshop(
         "/mods/workshop/mymod": mod_workshop,
     }
 
-    active, inactive, duplicates, missing = metadata_controller.get_mods_from_list(
+    active, inactive, _duplicates, missing = metadata_controller.get_mods_from_list(
         ["author.mymod"]
     )
 
@@ -955,7 +969,7 @@ def test_get_mods_from_list_steam_suffix_prefers_workshop_over_git(
         "/mods/workshop/mymod": mod_workshop,
     }
 
-    active, inactive, duplicates, missing = metadata_controller.get_mods_from_list(
+    active, inactive, _duplicates, missing = metadata_controller.get_mods_from_list(
         ["author.mymod_steam"]
     )
 
@@ -996,7 +1010,7 @@ def test_get_mods_from_list_empty_list(
         "/mods/mod_a": mod_a,
     }
 
-    active, inactive, duplicates, missing = metadata_controller.get_mods_from_list([])
+    active, inactive, _duplicates, missing = metadata_controller.get_mods_from_list([])
 
     assert active == []
     assert inactive == ["/mods/mod_a"]

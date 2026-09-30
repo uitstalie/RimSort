@@ -602,8 +602,39 @@ When unchecked, search all file types with standard search.</source>
         <translation>Щёлкните правой кнопкой мыши по результату для доступа к действиям</translation>
     </message>
     <message>
+        <source>File Search</source>
+        <translation>Поиск по файлам</translation>
+    </message>
+    <message>
         <source>Right-click for actions</source>
         <translation>Щёлкните правой кнопкой мыши для доступа к действиям</translation>
+    </message>
+</context>
+<context>
+    <name>FilterPanel</name>
+    <message>
+        <source>Mod Source</source>
+        <translation>Источник мода</translation>
+    </message>
+    <message>
+        <source>Mod Type</source>
+        <translation>Тип мода</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>Теги</translation>
+    </message>
+    <message>
+        <source>Select All</source>
+        <translation>Выбрать все</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Нет</translation>
+    </message>
+    <message>
+        <source>Clear All</source>
+        <translation>Очистить всё</translation>
     </message>
 </context>
 <context>
@@ -652,7 +683,7 @@ Manage mods installed from GitHub releases.</source>
 {mod_list}</source>
         <translation>Полностью удалить следующие моды? Это невозможно отменить.
 
-{мод_список}</translation>
+ {mod_list}</translation>
     </message>
     <message>
         <source>Deleted {n} mod(s).</source>
@@ -668,7 +699,7 @@ Manage mods installed from GitHub releases.</source>
 {mod_list}</source>
         <translation>Преобразовать следующие моды в отслеживание git? Они будут обновляться через Git Mod Updater, а не через выпуски GitHub.
 
-{мод_список}</translation>
+ {mod_list}</translation>
     </message>
     <message>
         <source>Release-based mods will be re-cloned from HEAD, replacing current files.</source>
@@ -684,7 +715,7 @@ Manage mods installed from GitHub releases.</source>
     </message>
     <message>
         <source>Failed: {names}</source>
-        <translation>Не удалось: {имена}</translation>
+        <translation>Не удалось:  {names}</translation>
     </message>
     <message>
         <source>Checking for updates...</source>
@@ -1030,6 +1061,14 @@ Manage mods installed from GitHub releases.</source>
         <translation>Выбранный алгоритм сортировки не реализован</translation>
     </message>
     <message>
+        <source>Import failed</source>
+        <translation>Не удалось выполнить импорт</translation>
+    </message>
+    <message>
+        <source>Could not read the selected mod list file.</source>
+        <translation>Не удалось прочитать выбранный файл списка модов.</translation>
+    </message>
+    <message>
         <source>Failed to export to file</source>
         <translation>Не удалось экспортировать в файл</translation>
     </message>
@@ -1142,6 +1181,14 @@ Manage mods installed from GitHub releases.</source>
         <translation>Файл: {path}</translation>
     </message>
     <message>
+        <source>Upload failed</source>
+        <translation>Upload failed</translation>
+    </message>
+    <message>
+        <source>Failed to upload log file to RimSort Logs.</source>
+        <translation>Failed to upload log file to RimSort Logs.</translation>
+    </message>
+    <message>
         <source>Uploaded file</source>
         <translation>Файл загружен</translation>
     </message>
@@ -1226,6 +1273,10 @@ Manage mods installed from GitHub releases.</source>
         <translation>Проверка модов Мастерской Steam на наличие обновлений...</translation>
     </message>
     <message>
+        <source>Failed to check for Workshop updates</source>
+        <translation>Failed to check for Workshop updates</translation>
+    </message>
+    <message>
         <source>No Workshop mods to check for updates</source>
         <translation>Нет модов Мастерской для проверки обновлений</translation>
     </message>
@@ -1272,6 +1323,10 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>Please add mods to list before attempting to download.</source>
         <translation>Перед загрузкой добавьте моды в список.</translation>
+    </message>
+    <message>
+        <source>RimSort - SteamCMD downloader</source>
+        <translation>RimSort — загрузчик SteamCMD</translation>
     </message>
     <message>
         <source>SteamCMD not found</source>
@@ -2381,6 +2436,10 @@ Manage mods installed from GitHub releases.</source>
         <translation>Открыть список модов…</translation>
     </message>
     <message>
+        <source>Append Mod List…</source>
+        <translation>Append Mod List…</translation>
+    </message>
+    <message>
         <source>Save Mod List As…</source>
         <translation>Сохранить список модов как…</translation>
     </message>
@@ -2407,6 +2466,10 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>To Rentry.co…</source>
         <translation>В Rentry.co…</translation>
+    </message>
+    <message>
+        <source>Mod List History…</source>
+        <translation>История списка модов…</translation>
     </message>
     <message>
         <source>Open...</source>
@@ -2603,6 +2666,14 @@ Manage mods installed from GitHub releases.</source>
         <source>Current: {current_instance}</source>
         <translation>Текущий: {current_instance}</translation>
     </message>
+    <message>
+        <source>Verify Game Files</source>
+        <translation>Проверить файлы игры</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to verify RimWorld's game files through Steam?&lt;br&gt;&lt;br&gt;This process cannot be canceled once it has started.</source>
+        <translation>Вы уверены, что хотите проверить файлы игры RimWorld через Steam?&lt;br&gt;&lt;br&gt;Этот процесс нельзя отменить после начала.</translation>
+    </message>
 </context>
 <context>
     <name>MissingDependenciesDialog</name>
@@ -2657,6 +2728,18 @@ All dependencies are satisfied. No missing dependencies found.</source>
     <message>
         <source>Dependency Manager</source>
         <translation>Менеджер зависимостей</translation>
+    </message>
+    <message>
+        <source>Open Workshop</source>
+        <translation>Открыть мастерскую</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation>Загрузить</translation>
+    </message>
+    <message>
+        <source>Workshop ID not found — open Workshop to find manually</source>
+        <translation>ID мастерской не найден — откройте мастерскую для ручного поиска</translation>
     </message>
 </context>
 <context>
@@ -2953,6 +3036,10 @@ Please select your preferred mod variant in the table below. You can also open e
     <message>
         <source>None</source>
         <translation>Нет</translation>
+    </message>
+    <message>
+        <source>Calculating...</source>
+        <translation>Расчет...</translation>
     </message>
 </context>
 <context>
@@ -3361,6 +3448,149 @@ Alternative Dependencies:</source>
     <message>
         <source>Open folder(s) in text editor</source>
         <translation>Открыть папку(и) в текстовом редакторе</translation>
+    </message>
+</context>
+<context>
+    <name>ModlistHistoryPanel</name>
+    <message>
+        <source>Mod List History</source>
+        <translation>История списка модов</translation>
+    </message>
+    <message>
+        <source>Every save writes a snapshot of your mod list. Select a snapshot to compare it with the one before it, or hold Ctrl and select two snapshots to compare them directly.</source>
+        <translation>При каждом сохранении создается снимок вашего списка модов.Выберите снимок, чтобы сравнить его с предыдущим, или, удерживая клавишу Ctrl, выберите два снимка, чтобы сравнить их напрямую.</translation>
+    </message>
+    <message>
+        <source>Change</source>
+        <translation>Изменять</translation>
+    </message>
+    <message>
+        <source>Mod</source>
+        <translation>Мод</translation>
+    </message>
+    <message>
+        <source>Restore Selected</source>
+        <translation>Восстановить выбранное</translation>
+    </message>
+    <message>
+        <source>Export Selected…</source>
+        <translation>Экспортировать выбранное…</translation>
+    </message>
+    <message>
+        <source>Edit Note…</source>
+        <translation>Изменить примечание…</translation>
+    </message>
+    <message>
+        <source>Open History Folder</source>
+        <translation>Открыть папку истории</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрывать</translation>
+    </message>
+    <message>
+        <source>No snapshots yet</source>
+        <translation>Снимков пока нет</translation>
+    </message>
+    <message>
+        <source>Save your mod list to create one</source>
+        <translation>Сохраните список модов, чтобы создать его.</translation>
+    </message>
+    <message>
+        <source>Oldest snapshot</source>
+        <translation>Самый старый снимок</translation>
+    </message>
+    <message>
+        <source>Nothing to compare against</source>
+        <translation>Не с чем сравнивать</translation>
+    </message>
+    <message>
+        <source>Comparing</source>
+        <translation>Сравнивая</translation>
+    </message>
+    <message>
+        <source>{old} → {new}</source>
+        <translation>→  {old} {new}</translation>
+    </message>
+    <message>
+        <source>No differences</source>
+        <translation>Никаких различий</translation>
+    </message>
+    <message>
+        <source>Added to active ({n})</source>
+        <translation>Добавлен в активный ({n})</translation>
+    </message>
+    <message>
+        <source>Removed from active ({n})</source>
+        <translation>Удален из активного ({n})</translation>
+    </message>
+    <message>
+        <source>Reordered ({n})</source>
+        <translation>Переупорядочено ({n})</translation>
+    </message>
+    <message>
+        <source>Newly installed / disabled ({n})</source>
+        <translation>Недавно установленный/отключенный ({n})</translation>
+    </message>
+    <message>
+        <source>No longer installed ({n})</source>
+        <translation>Больше не установлено ({n})</translation>
+    </message>
+    <message>
+        <source>Source: {src}</source>
+        <translation>Источник:  {src}</translation>
+    </message>
+    <message>
+        <source>Restore Mod List</source>
+        <translation>Восстановить список модов</translation>
+    </message>
+    <message>
+        <source>Load the active mod list from this snapshot ({ts})?</source>
+        <translation>Загрузить список активных модов из этого снимка ({ts})?</translation>
+    </message>
+    <message>
+        <source>This replaces the mods currently loaded in RimSort. Nothing is written to disk until you press Save.</source>
+        <translation>Это заменяет моды, загруженные в настоящее время в RimSort.На диск ничего не записывается, пока вы не нажмете «Сохранить».</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Восстановить</translation>
+    </message>
+    <message>
+        <source>Restore failed</source>
+        <translation>Восстановление не удалось</translation>
+    </message>
+    <message>
+        <source>Could not restore the selected snapshot.</source>
+        <translation>Не удалось восстановить выбранный снимок.</translation>
+    </message>
+    <message>
+        <source>Export snapshot</source>
+        <translation>Экспортировать снимок</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Экспорт не удался</translation>
+    </message>
+    <message>
+        <source>Could not write the snapshot file.</source>
+        <translation>Не удалось записать файл снимка.</translation>
+    </message>
+    <message>
+        <source>Snapshot Note</source>
+        <translation>Примечание к снимку</translation>
+    </message>
+    <message>
+        <source>Note for {ts}:</source>
+        <translation>Примечание для {ts}:</translation>
+    </message>
+    <message>
+        <source>Could not save note</source>
+        <translation>Не удалось сохранить заметку</translation>
+    </message>
+    <message>
+        <source>The snapshot note could not be written.</source>
+        <translation>Не удалось записать заметку о снимке.</translation>
     </message>
 </context>
 <context>
@@ -3969,6 +4199,21 @@ Alternative Dependencies:</source>
     </message>
 </context>
 <context>
+    <name>RimSort</name>
+    <message>
+        <source>RimSort Already Running</source>
+        <translation>RimSort уже запущен</translation>
+    </message>
+    <message>
+        <source>Another instance of RimSort is already running.</source>
+        <translation>Другой экземпляр RimSort уже работает.</translation>
+    </message>
+    <message>
+        <source>Please close the existing instance before starting a new one.</source>
+        <translation>Закройте существующий экземпляр перед запуском нового.</translation>
+    </message>
+</context>
+<context>
     <name>RuleEditor</name>
     <message>
         <source>No mod currently being edited</source>
@@ -4033,6 +4278,10 @@ Alternative Dependencies:</source>
     <message>
         <source>Search mods by name</source>
         <translation>Поиск модов по названию</translation>
+    </message>
+    <message>
+        <source>RimSort - Rule Editor</source>
+        <translation>RimSort — редактор правил</translation>
     </message>
     <message>
         <source>Duplicate rule</source>
@@ -4237,8 +4486,8 @@ Alternative Dependencies:</source>
         <translation>Вы уверены, что хотите сбросить все настройки к значениям по умолчанию?</translation>
     </message>
     <message>
-        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
-        <translation>Выбранная папка игры не содержит корректного исполняемого файла RimWorld.&lt;br&gt;&lt;br&gt;Выберите правильное расположение игры.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe или RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe или RimWorldWin.exe, если вы используете Windows-версию игры на Linux</translation>
+        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
+        <translation>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</translation>
     </message>
     <message>
         <source>The selected config folder does not contain ModsConfig.xml.&lt;br&gt;&lt;br&gt;Please select a valid config folder.&lt;br&gt;&lt;br&gt;If you have not launched the game before,&lt;br&gt;&lt;br&gt;Please launch the game at least once to generate the necessary config files.</source>
@@ -4269,7 +4518,7 @@ Alternative Dependencies:</source>
     </message>
     <message>
         <source>Reset to Defaults</source>
-        <translation>Сбросить к умолчаниям</translation>
+        <translation>Сбросить в значения по умолчанию</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -4408,8 +4657,60 @@ Alternative Dependencies:</source>
         <translation>Топологически</translation>
     </message>
     <message>
+        <source>Game location</source>
+        <translation>Расположение игры</translation>
+    </message>
+    <message>
+        <source>Config location</source>
+        <translation>Расположение конфигурации</translation>
+    </message>
+    <message>
+        <source>Steam mods location</source>
+        <translation>Расположение модов Steam</translation>
+    </message>
+    <message>
+        <source>Local mods location</source>
+        <translation>Расположение локальных модов</translation>
+    </message>
+    <message>
+        <source>Instance folder location (optional)</source>
+        <translation>Расположение папки экземпляра (необязательно)</translation>
+    </message>
+    <message>
+        <source>Backup Settings</source>
+        <translation>Резервные копии</translation>
+    </message>
+    <message>
+        <source>Integration with recent save</source>
+        <translation>Интеграция с последним сохранением</translation>
+    </message>
+    <message>
+        <source>Mod list history</source>
+        <translation>История списка модов</translation>
+    </message>
+    <message>
+        <source>Save a snapshot of the mod list every time it is saved</source>
+        <translation>Сохраняйте снимок списка модов каждый раз, когда он сохраняется.</translation>
+    </message>
+    <message>
+        <source>If enabled, RimSort writes a timestamped copy of the active and inactive mod lists on every save so you can compare them later (File → Mod List History…).</source>
+        <translation>Если этот параметр включен, RimSort записывает копию списков активных и неактивных модов с отметкой времени при каждом сохранении, чтобы вы могли сравнить их позже (Файл → История списка модов…).</translation>
+    </message>
+    <message>
+        <source>Number of snapshots to keep:</source>
+        <translation>Количество сохраняемых снимков:</translation>
+    </message>
+    <message>
+        <source>The number of mod list snapshots to keep. Set to -1 to keep all.</source>
+        <translation>Количество сохраняемых снимков списка модов.Установите значение -1, чтобы сохранить все.</translation>
+    </message>
+    <message>
         <source>RimWorld Versions Database</source>
         <translation>База данных версий RimWorld</translation>
+    </message>
+    <message>
+        <source>Auxiliary Metadata DB deletion time limit in seconds. (Delete instantly 0, Never Delete -1)</source>
+        <translation>Лимит удаления Auxiliary Metadata DB в секундах (сразу — 0, никогда — -1)</translation>
     </message>
     <message>
         <source>To enable editing of this time limit, enable the checkbox (Enable editing) on the right.
@@ -4424,6 +4725,14 @@ This basically preserves your mod coloring, user notes etc. for this many second
 (Это относится и к удалению вне RimSort)</translation>
     </message>
     <message>
+        <source>Sorting Method</source>
+        <translation>Метод сортировки</translation>
+    </message>
+    <message>
+        <source>Dependencies Handling Behavior</source>
+        <translation>Поведение при обработке зависимостей</translation>
+    </message>
+    <message>
         <source>Use dependency rules for sorting.</source>
         <translation>Использовать правила зависимостей при сортировке.</translation>
     </message>
@@ -4434,6 +4743,10 @@ This basically preserves your mod coloring, user notes etc. for this many second
     <message>
         <source>Prompt user to download dependencies when click in Sort</source>
         <translation>Предлагать загрузить зависимости при нажатии кнопки «Сортировать»</translation>
+    </message>
+    <message>
+        <source>XML Parsing Behavior</source>
+        <translation>Разбор XML</translation>
     </message>
     <message>
         <source>When enabled, *ByVersion tags take precedence over the base tags, 
@@ -4460,6 +4773,10 @@ See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
 См.: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</translation>
     </message>
     <message>
+        <source>Mod list options</source>
+        <translation>Параметры списка модов</translation>
+    </message>
+    <message>
         <source>Notifies to download mods that may be missing in the active modlist</source>
         <translation>Уведомляет о необходимости загрузить моды, которые могут отсутствовать в списке активных</translation>
     </message>
@@ -4480,12 +4797,20 @@ See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
         <translation>Скрывает недействительные моды, включать не рекомендуется</translation>
     </message>
     <message>
+        <source>Inactive Mods Sorting</source>
+        <translation>Сортировка неактивных модов</translation>
+    </message>
+    <message>
         <source>Save inactive mods sort state</source>
         <translation>Сохранять порядок сортировки неактивных модов</translation>
     </message>
     <message>
         <source>DB Builder</source>
         <translation>Конструктор БД</translation>
+    </message>
+    <message>
+        <source>When building the database:</source>
+        <translation>При построении базы данных:</translation>
     </message>
     <message>
         <source>Get PublishedFileIDs from locally installed mods.</source>
@@ -4540,6 +4865,10 @@ See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
         <translation>Построить базу данных</translation>
     </message>
     <message>
+        <source>Database expiry in seconds for example, 604800 for 7 days. and 0 for no expiry.</source>
+        <translation>Срок жизни базы в секундах (например, 604800 — 7 дней; 0 — без срока)</translation>
+    </message>
+    <message>
         <source>Internal Tools</source>
         <translation>Внутренние инструменты</translation>
     </message>
@@ -4556,6 +4885,10 @@ See: https://www.rimworldwiki.com/wiki/Modding_Tutorials/About.xml</source>
 This may potentially prevent some issues with downloading mods such as download failures and deleted mods repopulating.</source>
         <translation>Автоматически очищать кэш депо перед загрузкой модов через SteamCMD.
 Это может предотвратить некоторые проблемы при загрузке модов, такие как сбои загрузки и повторное появление удалённых модов.</translation>
+    </message>
+    <message>
+        <source>SteamCMD installation location</source>
+        <translation>Расположение установки SteamCMD</translation>
     </message>
     <message>
         <source>Clear depot cache</source>
@@ -4578,8 +4911,24 @@ This may potentially prevent some issues with downloading mods such as download 
         <translation>Установить SteamCMD</translation>
     </message>
     <message>
+        <source>todds</source>
+        <translation>todds</translation>
+    </message>
+    <message>
+        <source>Quality preset</source>
+        <translation>Пресет качества</translation>
+    </message>
+    <message>
         <source>Optimized - Recommended for RimWorld</source>
         <translation>Оптимизировано — рекомендуется для RimWorld</translation>
+    </message>
+    <message>
+        <source>If -p as in path is not specified, path from current active or all mods selection will be used.</source>
+        <translation>Если -p (путь) не указан, будет использован путь из текущих активных или всех выбранных модов.</translation>
+    </message>
+    <message>
+        <source>When optimizing textures</source>
+        <translation>При оптимизации текстур</translation>
     </message>
     <message>
         <source>Optimize active mods only</source>
@@ -4600,6 +4949,14 @@ This may potentially prevent some issues with downloading mods such as download 
     <message>
         <source>Automatically run todds before launching the game</source>
         <translation>Автоматически запускать todds перед запуском игры</translation>
+    </message>
+    <message>
+        <source>Text Editor command location</source>
+        <translation>Расположение команды текстового редактора</translation>
+    </message>
+    <message>
+        <source>Theme Settings</source>
+        <translation>Настройки темы</translation>
     </message>
     <message>
         <source>Enable to use theme / stylesheet instead of system Theme</source>
@@ -4634,6 +4991,10 @@ Name of folder will be used as name of the theme and any invalid theme will be i
         <translation>Открыть папку темы</translation>
     </message>
     <message>
+        <source>Font Settings</source>
+        <translation>Настройки шрифта</translation>
+    </message>
+    <message>
         <source>Font Family</source>
         <translation>Семейство шрифтов</translation>
     </message>
@@ -4646,12 +5007,40 @@ Name of folder will be used as name of the theme and any invalid theme will be i
         <translation>Сбросить</translation>
     </message>
     <message>
+        <source>Language Setting</source>
+        <translation>Настройки языка</translation>
+    </message>
+    <message>
         <source>Select Language (Restart required to apply changes)</source>
         <translation>Выбор языка (для применения изменений требуется перезапуск)</translation>
     </message>
     <message>
+        <source>RimSort restart required for some settings</source>
+        <translation>Для части настроек требуется перезапуск RimSort</translation>
+    </message>
+    <message>
         <source>Constrain dialogues to main window monitor</source>
         <translation>Ограничивать диалоговые окна монитором главного окна</translation>
+    </message>
+    <message>
+        <source>Main Window Launch State</source>
+        <translation>Состояние главного окна при запуске</translation>
+    </message>
+    <message>
+        <source>Browser Window Launch State</source>
+        <translation>Состояние окна браузера при запуске</translation>
+    </message>
+    <message>
+        <source>Settings Window Launch State</source>
+        <translation>Состояние окна настроек при запуске</translation>
+    </message>
+    <message>
+        <source>Custom Width:</source>
+        <translation>Ширина:</translation>
+    </message>
+    <message>
+        <source>Custom Height:</source>
+        <translation>Высота:</translation>
     </message>
     <message>
         <source>Advanced</source>
@@ -4933,6 +5322,10 @@ Please choose one of the following options to proceed.</source>
 Выберите один из следующих вариантов для продолжения.</translation>
     </message>
     <message>
+        <source>Unable to parse settings file!</source>
+        <translation>Не удалось разобрать файл настроек!</translation>
+    </message>
+    <message>
         <source>Open Settings Folder</source>
         <translation>Открыть папку настроек</translation>
     </message>
@@ -5162,6 +5555,13 @@ Please choose one of the following options to proceed.</source>
     </message>
 </context>
 <context>
+    <name>TaskProgressWindow</name>
+    <message>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
+    </message>
+</context>
+<context>
     <name>ThemeController</name>
     <message>
         <source>Theme path Error</source>
@@ -5260,6 +5660,10 @@ Please reach out to us for support at: {support_url}</source>
     <message>
         <source>Export Mod List</source>
         <translation>Экспорт списка модов</translation>
+    </message>
+    <message>
+        <source>The selected file is not a valid mod list file.&lt;br&gt;Expected RimWorld ModsConfig XML or RimSort JSON export.&lt;br&gt;Details: {e}</source>
+        <translation>Выбранный файл не является корректным файлом списка модов.&lt;br&gt;Ожидается экспорт RimWorld ModsConfig XML или RimSort JSON.&lt;br&gt;Подробности: {e}</translation>
     </message>
     <message>
         <source>The selected file is not a valid mod list file.&lt;br&gt;Details: {e}</source>
@@ -5567,6 +5971,10 @@ Please reach out to us for support at: {support_url}</source>
     <message>
         <source>Warning: These operations will delete selected files permanently!</source>
         <translation>Внимание: эти операции безвозвратно удалят выбранные файлы!</translation>
+    </message>
+    <message>
+        <source>Troubleshooting</source>
+        <translation>Устранение неполадок</translation>
     </message>
     <message>
         <source>Export List</source>

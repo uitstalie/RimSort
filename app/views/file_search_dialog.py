@@ -1,7 +1,7 @@
 import json
 import os
 import subprocess
-from typing import Any, Optional
+from typing import Any
 
 from loguru import logger
 from PySide6.QtCore import QPoint, Qt, QTimer, Signal
@@ -37,9 +37,9 @@ class FileSearchDialog(QDialog):
     search_stopped = Signal()
     result_found = Signal(str, str, str)  # mod_name, file_name, path
 
-    def __init__(self, parent: Optional[QWidget] = None) -> None:
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.setWindowTitle("File Search")
+        self.setWindowTitle(self.tr("File Search"))
         self._search_paths: list[str] = []
         self._recent_searches: list[str] = []
         self._max_recent_searches = 10
@@ -560,7 +560,7 @@ class FileSearchDialog(QDialog):
             return
         header = self.results_table.horizontalHeader()
         min_w = max(40, int(vpw * 0.05 / col_count))
-        widths = [max(min_w, int(round(w * vpw))) for w in self._results_col_weights]
+        widths = [max(min_w, round(w * vpw)) for w in self._results_col_weights]
         diff = vpw - sum(widths)
         widths[-1] = max(min_w, widths[-1] + diff)
         self._suppress_results_section_updates = True
@@ -570,7 +570,7 @@ class FileSearchDialog(QDialog):
         finally:
             self._suppress_results_section_updates = False
 
-    def _on_results_section_resized(self, index: int, old: int, new: int) -> None:  # noqa: ARG002
+    def _on_results_section_resized(self, index: int, old: int, new: int) -> None:
         if getattr(self, "_suppress_results_section_updates", False):
             return
         self._recalculate_results_weights()
@@ -655,13 +655,11 @@ class FileSearchDialog(QDialog):
             "exclude_options": exclude_options,  # Add exclude options to the search options
         }
 
-    def _update_algorithm_for_file_type(self, state: Optional[int] = None) -> None:
+    def _update_algorithm_for_file_type(self, state: int | None = None) -> None:
         """Remove redundant method as algorithm is dynamically determined."""
-        pass
 
     def _on_regex_checkbox_changed(self, state: Qt.CheckState) -> None:
         """Remove redundant method as regex state is dynamically handled."""
-        pass
 
     def set_search_paths(self, paths: list[str]) -> None:
         """set the search paths"""

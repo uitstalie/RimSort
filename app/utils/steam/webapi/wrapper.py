@@ -7,7 +7,7 @@ from logging import WARNING, getLogger
 from math import ceil
 from multiprocessing import Lock, Pool, cpu_count
 from time import sleep, time
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 from urllib.parse import urlparse
 
 import requests
@@ -52,7 +52,7 @@ class CollectionImport:
     Class to handle importing workshop collection links and extracting package IDs.
     """
 
-    def __init__(self, metadata_controller: "MetadataController") -> None:
+    def __init__(self, metadata_controller: MetadataController) -> None:
         """
         Initialize the CollectionImport instance.
 
@@ -177,9 +177,7 @@ class CollectionImport:
                         details="\n".join(failed_mods),
                     )
         except Exception as e:
-            logger.error(
-                f"An error occurred while fetching collection content: {str(e)}"
-            )
+            logger.error(f"An error occurred while fetching collection content: {e!s}")
 
     def _get_package_id_from_pfid(self, pfid: str | int | None) -> str | None:
         """Map published id to package id if possible
@@ -242,7 +240,7 @@ class CollectionImport:
 
 def _find_value_in_dict(coll: dict[str, Any], key: str) -> Any:
     key = key.strip().lower()
-    key_found = next((_ for _ in coll.keys() if _.strip().lower() == key), None)
+    key_found = next((_ for _ in coll if _.strip().lower() == key), None)
     if not key_found:
         return None
     return coll.get(key_found)
@@ -267,7 +265,7 @@ class DynamicQuery(QObject):
         appid: int,
         get_appid_deps: bool = False,
         life: int = 0,
-        callback: Optional[Callable[[str], None]] = None,
+        callback: Callable[[str], None] | None = None,
         output_database_path: str = "",
     ) -> None:
         QObject.__init__(self)
@@ -606,7 +604,7 @@ class DynamicQuery(QObject):
         WebAPI.call() results that are being are parsing
         """
         if self.api is None:
-            raise Exception(
+            raise Exception(  # noqa: TRY002
                 "Tried to query files while API was not properly initialized."
             )  # Exit query
 
@@ -653,7 +651,7 @@ class DynamicQuery(QObject):
             admin_query=False,
         )
         # Print total mods found we need to iter through paginations to get info for
-        if (
+        if (  # noqa: SIM102
             self.pagenum and self.total == 0
         ):  # If True, this is initial loop; we properly set them in initial loop
             if result["response"]["total"]:
@@ -665,11 +663,11 @@ class DynamicQuery(QObject):
                 # Since this is only run during the initial loop, we print out the 0
                 # needed for RunnerPanel progress bar calculations
                 self._emit_message(
-                    "IPublishedFileService/QueryFiles page [0" + f"/{str(self.pages)}]"
+                    "IPublishedFileService/QueryFiles page [0" + f"/{self.pages!s}]"
                 )
         self._emit_message(
-            f"IPublishedFileService/QueryFiles page [{str(self.pagenum)}"
-            + f"/{str(self.pages)}]"
+            f"IPublishedFileService/QueryFiles page [{self.pagenum!s}"
+            + f"/{self.pages!s}]"
         )
         ids_from_page = []
         for item in result["response"]["publishedfiledetails"]:
@@ -847,7 +845,7 @@ def ISteamRemoteStorage_GetCollectionDetails(
             f"Querying details for {len(chunk)} collection(s) via Steam WebAPI"
         )
         # Construct arguments to pass to the API call
-        data = {"collectioncount": f"{str(len(chunk))}"}
+        data = {"collectioncount": f"{len(chunk)!s}"}
         for publishedfileid in chunk:
             count = chunk.index(publishedfileid)
             data[f"publishedfileids[{count}]"] = publishedfileid
@@ -863,7 +861,7 @@ def ISteamRemoteStorage_GetCollectionDetails(
             logger.debug(json_response)
             if json_response.get("response", {}).get("resultcount", 0) > 0:
                 for mod_metadata in json_response["response"]["collectiondetails"]:
-                    metadata.append(mod_metadata)
+                    metadata.append(mod_metadata)  # noqa: PERF402
         except requests.exceptions.JSONDecodeError as e:
             logger.error(f"Invalid JSON response: {e}")
         finally:
@@ -894,7 +892,7 @@ def ISteamRemoteStorage_GetPublishedFileDetails(
     total = len(publishedfileids)
     items_processed = 0
 
-    for chunk in list(chunks(_list=publishedfileids, limit=5000)):
+    for chunk in list(chunks(_list=publishedfileids, limit=300)):
         chunk_size = len(chunk)
         items_processed += chunk_size
 
@@ -942,7 +940,7 @@ def ISteamRemoteStorage_GetPublishedFileDetails(
                     for mod_metadata in json_response["response"][
                         "publishedfiledetails"
                     ]:
-                        metadata.append(mod_metadata)
+                        metadata.append(mod_metadata)  # noqa: PERF402
                 logger.debug(
                     f"GetPublishedFileDetails chunk [{items_processed}/{total}]: "
                     f"HTTP {request.status_code}, "
@@ -953,6 +951,7 @@ def ISteamRemoteStorage_GetPublishedFileDetails(
             except (
                 requests.exceptions.Timeout,
                 requests.exceptions.ConnectionError,
+                requests.exceptions.ChunkedEncodingError,
                 requests.exceptions.HTTPError,
             ) as e:
                 if not last_error_desc:
