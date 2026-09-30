@@ -22,7 +22,9 @@ def patch_launch(monkeypatch: pytest.MonkeyPatch) -> list[tuple[Path, str]]:
 
     calls: list[tuple[Path, str]] = []
 
-    def fake_launch_game_process(game_install_path: str, run_args: str = "") -> None:
+    def fake_launch_game_process(
+        game_install_path: str, run_args: str = "", process_nice: int = 0
+    ) -> None:
         calls.append((Path(game_install_path), run_args))
 
     monkeypatch.setattr(
