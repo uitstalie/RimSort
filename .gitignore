@@ -58,3 +58,11 @@ ltex.dictionary*
 .translation_cache.json
 # CocoIndex Code (ccc)
 /.cocoindex_code/
+
+# 本地 fork（Fedora）忽略：构建产物、工具运行时状态、工作笔记
+build.log
+libs/SteamworksPy.so
+memory-bank/
+.opencode/dcp-forget.db
+.opencode/dcp-forget-state.json
+.opencode/runtime-orchestrator-state.json
