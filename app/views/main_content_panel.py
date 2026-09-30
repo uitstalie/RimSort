@@ -2901,9 +2901,7 @@ class MainContent(QObject):
         ].launch_via_steam_protocol
 
         # Retrieve process nice value for Linux process priority
-        process_nice = self.settings_controller.settings.instances[
-            current_instance
-        ].process_nice
+        process_nice = self.settings.instances[current_instance].process_nice
 
         # Manage steam_appid.txt file for Steam integration
         # If Steam integration is enabled, Steam requires this file with the app ID in the game folder
