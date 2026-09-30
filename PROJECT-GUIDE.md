@@ -3,6 +3,12 @@
 > 本文原名 `AGENTS.md`，2026-09-30 改名：全工作区只保留工作区根目录一份 `AGENTS.md`
 > （统一入口，含本项目要点、环境事实与跨项目铁律）。本文件保留本仓库的深度细节。
 > 注：本文件与 `opencode.json` 都是本地分支 `dev-local-fedora` 新增的，不属于上游。
+>
+> **远端与同步（2026-09-30）**：`origin` = 自己的 fork `uitstalie/RimSort`，`upstream` = `RimSort/RimSort`。
+> 可以把 `dev-local-fedora` push 到 `origin`，**不要 push 到 `upstream`**。
+> 同日已 merge 上游 107 个提交；唯一冲突是 `rimsort.nuitka-package.config.yml`（本地删除、上游修改），
+> 处理为**保持删除**（本分支不用 Nuitka），故每次同步上游都会再冲突一次 —— 属已知代价。
+> 上游自带的 `RimSort/AGENTS.md` 是上游开发规范，与本工作区根目录的 `AGENTS.md` 并存。
 
 RimWorld mod manager. Python 3.12 + PySide6, MVC architecture.
 
