@@ -1,4 +1,8 @@
-# RimSort
+# RimSort - 项目指南
+
+> 本文原名 `AGENTS.md`，2026-09-30 改名：全工作区只保留工作区根目录一份 `AGENTS.md`
+> （统一入口，含本项目要点、环境事实与跨项目铁律）。本文件保留本仓库的深度细节。
+> 注：本文件与 `opencode.json` 都是本地分支 `dev-local-fedora` 新增的，不属于上游。
 
 RimWorld mod manager. Python 3.12 + PySide6, MVC architecture.
 
