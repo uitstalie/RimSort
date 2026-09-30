@@ -68,7 +68,10 @@ from app.utils.json_utils import atomic_json_dump
 from app.utils.rentry.wrapper import RentryImport
 from app.utils.startup_impact import invalidate_startup_impact_cache
 from app.utils.steam.availability import check_steam_available
-from app.utils.steam.linux_runtime_fonts import ensure_cjk_fonts_in_steam_runtimes
+from app.utils.steam.linux_runtime_fonts import (
+    ensure_cjk_fonts_in_steam_runtimes,
+    steam_apps_dirs,
+)
 from app.utils.steam.steambrowser.browser import SteamBrowser
 from app.utils.steam.steamcmd.wrapper import SteamcmdInterface
 from app.utils.steam.steamworks.wrapper import (
@@ -3241,9 +3244,10 @@ class MainContent(QObject):
             # Launch via Steam protocol URI
             # This allows Steam to manage the game launch and enables the Steam overlay
             # Custom run arguments are ignored when using this method
-            # Steam also wraps native Linux games in a container whose font set is
-            # minimal, so CJK fonts have to be made available there first (Linux only)
-            ensure_cjk_fonts_in_steam_runtimes()
+            # Steam wraps native Linux games in a container whose font set is
+            # minimal, so CJK fonts have to be made available there first
+            if sys.platform == "linux":
+                ensure_cjk_fonts_in_steam_runtimes(steam_apps_dirs(game_install_path))
             logger.info(
                 "Launching game via Steam protocol URI (steam://rungameid/294100)..."
             )
