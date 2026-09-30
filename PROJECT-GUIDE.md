@@ -71,11 +71,17 @@ uv run python distribute.py --help
 **实现**：`app/utils/steam/linux_runtime_fonts.py`
 
 - `ensure_cjk_fonts_in_steam_runtimes()` 在 **Steam 协议启动分支**里调用
-  （`app/views/main_content_panel.py` 的 `_do_run_game`，仅 Linux 生效）
-- 把宿主的中文 **`.ttf`**（`DroidSansFallbackFull.ttf`、`simhei.ttf`）复制进各
-  `*_platform_*/files/share/fonts/cjk/`，并把条目写进该平台清单（备份为 `.orig`）
+  （`app/views/main_content_panel.py` 的 `_do_run_game`，调用点用 `sys.platform == "linux"` 守卫）
+- **Steam 目录发现**（Linux 上位置并不唯一）：先取**游戏所在库**（`<库>/steamapps/common`，
+  非默认库只靠这个才找得到），再补 `~/.local/share/Steam`、`~/.steam/steam`、
+  **Flatpak** `~/.var/app/com.valvesoftware.Steam/...`，并解析各根的
+  `libraryfolders.vdf` 取**所有**库；去重（解析符号链接）、跳过不存在项
+- 把宿主的中文 **`.ttf`**（`DroidSansFallbackFull.ttf`、`simhei.ttf`）复制进该平台
+  `files/share/fonts/cjk/`，并把条目写进平台清单（首次备份为 `.orig`）
+- **只修每个运行时家族"最新"的平台目录**：平台目录名内嵌可排序版本号，Steam 只运行最新那个；
+  全量复制 21 个目录约 265 MB，只修最新约 55 MB
 - 幂等、失败只告警不阻断启动（与 `process_nice` 的处理风格一致）
-- 测试：`tests/utils/steam/test_linux_runtime_fonts.py`
+- 测试：`tests/utils/steam/test_linux_runtime_fonts.py`（14 项，含目录发现与幂等）
 
 **注意**：
 

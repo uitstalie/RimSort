@@ -18,8 +18,8 @@ Two details make the repair non-obvious:
   matching manifest entry is silently ignored.
 
 :func:`ensure_cjk_fonts_in_steam_runtimes` copies CJK TrueType fonts from the
-host into every runtime platform directory and records them in the manifest.
-It is idempotent and safe to call on every launch.
+host into the newest platform of every runtime and records them in the
+manifest. It is idempotent and safe to call on every launch.
 
 Note:
     Fonts must be ``.ttf``/``.otf``: Unity's directory scan ignores ``.ttc``
@@ -35,15 +35,28 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
+import vdf  # type: ignore
 from loguru import logger
-
-DEFAULT_STEAM_APPS_DIR = Path.home() / ".local/share/Steam/steamapps/common"
 
 #: Platform directories of the Steam Linux Runtimes that wrap native games.
 RUNTIME_GLOBS: tuple[str, ...] = (
     "SteamLinuxRuntime_soldier/soldier_platform_*",
     "SteamLinuxRuntime_sniper/sniper_platform_*",
     "SteamLinuxRuntime_4/steamrt4_platform_*",
+)
+
+#: Steam roots on Linux, relative to the user's home directory.
+STEAM_ROOT_SUFFIXES: tuple[str, ...] = (
+    ".local/share/Steam",
+    ".steam/steam",
+    # Flatpak
+    ".var/app/com.valvesoftware.Steam/.local/share/Steam",
+)
+
+#: Library manifests, relative to a Steam root.
+LIBRARY_MANIFESTS: tuple[str, ...] = (
+    "config/libraryfolders.vdf",
+    "steamapps/libraryfolders.vdf",
 )
 
 #: Host CJK TrueType fonts, in order of preference.
@@ -54,10 +67,91 @@ DEFAULT_FONT_CANDIDATES: tuple[Path, ...] = (
     Path("/usr/share/fonts/wqy-microhei-fonts/wqy-microhei.ttf"),
 )
 
-#: Font directory inside a runtime platform directory (``files/`` is the container's ``/usr``).
+#: Font directory inside a runtime platform directory (``files/`` holds the container's ``/usr``).
 FONT_SUBDIR = Path("share/fonts/cjk")
 MANIFEST_NAME = "usr-mtree.txt.gz"
 MANIFEST_BACKUP_SUFFIX = ".orig"
+
+
+def _deduplicate(paths: Sequence[Path]) -> list[Path]:
+    """Return existing, unique directories, keeping the given order.
+
+    :param paths: candidate directories.
+    :return: directories that exist, without duplicates.
+    """
+    seen: set[Path] = set()
+    unique: list[Path] = []
+    for path in paths:
+        try:
+            key = path.resolve()
+        except OSError:
+            key = path
+        if key in seen or not path.is_dir():
+            continue
+        seen.add(key)
+        unique.append(path)
+    return unique
+
+
+def _library_apps_dirs(steam_root: Path) -> list[Path]:
+    """Read a Steam root's library manifest and return its ``steamapps/common`` dirs.
+
+    Games and runtimes may live in a secondary library, so every library path
+    recorded by Steam is considered, not just the default one.
+
+    :param steam_root: Steam installation root, e.g. ``~/.local/share/Steam``.
+    :return: ``steamapps/common`` directories of the recorded libraries.
+    """
+    for relative in LIBRARY_MANIFESTS:
+        manifest = steam_root / relative
+        if not manifest.is_file():
+            continue
+        try:
+            with manifest.open("r") as handle:
+                data = vdf.load(handle)
+        except Exception:
+            logger.warning(
+                f"Could not parse Steam library file: {manifest}", exc_info=True
+            )
+            return []
+        libraries = data.get("libraryfolders", {})
+        if not isinstance(libraries, dict):
+            return []
+        return [
+            Path(entry["path"]) / "steamapps/common"
+            for entry in libraries.values()
+            if isinstance(entry, dict) and entry.get("path")
+        ]
+    return []
+
+
+def steam_apps_dirs(
+    game_install_path: Path | None = None,
+    home: Path | None = None,
+) -> list[Path]:
+    """Locate the ``steamapps/common`` directories that may hold Steam runtimes.
+
+    The library containing the configured game is reported first: runtimes of a
+    game installed outside the default Steam library are only found that way.
+
+    :param game_install_path: configured RimWorld folder, if known.
+    :param home: home directory to search, defaults to the current user's.
+    :return: existing ``steamapps/common`` directories, most relevant first.
+    """
+    home_dir = Path.home() if home is None else home
+    candidates: list[Path] = []
+
+    if game_install_path is not None:
+        common_dir = game_install_path.parent
+        if common_dir.name == "common" and common_dir.parent.name == "steamapps":
+            candidates.append(common_dir)
+
+    for suffix in STEAM_ROOT_SUFFIXES:
+        steam_root = home_dir / suffix
+        candidates.append(steam_root / "steamapps/common")
+        candidates.extend(_library_apps_dirs(steam_root))
+
+    return _deduplicate(candidates)
 
 
 def _discover_candidates(font_candidates: Sequence[Path] | None) -> list[Path]:
@@ -157,11 +251,26 @@ def _ensure_platform(platform: Path, fonts: Sequence[Path]) -> None:
     )
 
 
+def _newest_platform(apps_dir: Path, pattern: str) -> Path | None:
+    """Return the newest runtime platform directory matching ``pattern``.
+
+    Platform directory names embed a sortable version, and Steam runs the most
+    recent platform of a runtime, so older platforms are left untouched: copying
+    fonts into them would only waste disk space.
+
+    :param apps_dir: ``steamapps/common`` directory to search.
+    :param pattern: glob of one runtime family, e.g. ``SteamLinuxRuntime_*/…``.
+    :return: the newest matching platform directory, if any.
+    """
+    matches = sorted(apps_dir.glob(pattern))
+    return matches[-1] if matches else None
+
+
 def ensure_cjk_fonts_in_steam_runtimes(
-    apps_dir: Path | None = None,
+    apps_dirs: Sequence[Path] | None = None,
     font_candidates: Sequence[Path] | None = None,
 ) -> None:
-    """Install CJK fonts into every Steam Linux Runtime platform directory.
+    """Install CJK fonts into the newest platform of every Steam Linux Runtime.
 
     Call this before launching the game through the Steam protocol on Linux:
     that launch path wraps the game in a container which otherwise has no font
@@ -171,16 +280,16 @@ def ensure_cjk_fonts_in_steam_runtimes(
     font or an unwritable runtime only produces a log message, because a launch
     should not be blocked by this repair.
 
-    :param apps_dir: Steam ``steamapps/common`` directory, defaults to the
-        current user's Steam library.
+    :param apps_dirs: ``steamapps/common`` directories to repair, defaults to
+        :func:`steam_apps_dirs`.
     :param font_candidates: host font files to install, defaults to
         :data:`DEFAULT_FONT_CANDIDATES`.
     """
     if sys.platform != "linux":
         return
 
-    steam_apps_dir = DEFAULT_STEAM_APPS_DIR if apps_dir is None else apps_dir
-    if not steam_apps_dir.is_dir():
+    roots = list(apps_dirs) if apps_dirs is not None else steam_apps_dirs()
+    if not roots:
         return
 
     fonts = _discover_candidates(font_candidates)
@@ -191,12 +300,20 @@ def ensure_cjk_fonts_in_steam_runtimes(
         )
         return
 
-    for pattern in RUNTIME_GLOBS:
-        for platform in sorted(steam_apps_dir.glob(pattern)):
+    visited: set[Path] = set()
+    for apps_dir in roots:
+        for pattern in RUNTIME_GLOBS:
+            platform = _newest_platform(Path(apps_dir), pattern)
+            if platform is None:
+                continue
+            key = platform.resolve()
+            if key in visited:
+                continue
+            visited.add(key)
             try:
                 _ensure_platform(platform, fonts)
             except OSError:
                 logger.warning(
-                    f"Could not install CJK fonts into Steam Linux Runtime: {platform}",
+                    f"Could not install CJK fonts into Steam runtime platform: {platform}",
                     exc_info=True,
                 )
