@@ -7,3 +7,5 @@
 - 有效结论：步骤完成：移除剩余 Claude 项目配置并验证结果
 - 有效结论：步骤完成：检查待提交变更与近期提交风格
 - 有效结论：步骤完成：按当前任务提交配置迁移文件
+- opencode.json 增强：补 ruff formatter、basedpyright LSP、compaction 参数、snapshot、权限声明 #decision #architecture
+- dev-local-fedora 分支 8 个无意义 commit squash 成 1 个整洁提交，仅本地不 push #decision

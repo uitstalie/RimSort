@@ -32,7 +32,7 @@ class Instance(msgspec.Struct):
     launch_via_steam_protocol: bool = False
     # Process nice value for game launch on Linux (-20 to 19, 0 = default)
     # Positive = lower priority, negative = higher priority (requires CAP_SYS_NICE)
-    process_nice: int = 0
+    process_nice: int = -10
     instance_folder_override: str = (
         ""  # Custom instance folder path, empty = use default
     )
