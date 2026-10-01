@@ -86,6 +86,18 @@ def test_largest_gaps_sorted_and_thresholded() -> None:
     assert gaps[0][1].endswith("e")
 
 
+def test_largest_gaps_ignores_our_own_cadence_lines() -> None:
+    """FastLoad's periodic report lines must not look like stalls."""
+    entries = [
+        LogEntry(0.0, "a"),
+        LogEntry(10.0, "[FastLoad] 报告已写出（Root.Update 周期写出）→ /x.txt"),
+        LogEntry(10.1, "b"),
+        LogEntry(12.5, "c"),
+    ]
+    gaps = largest_gaps(entries, threshold=0.5)
+    assert [round(gap, 2) for gap, _ in gaps] == [2.4]
+
+
 def test_count_interesting_counts_known_issues() -> None:
     entries = [
         LogEntry(0.0, "Could not load Texture2D at 'Things/X' for def 'Y'"),
