@@ -180,8 +180,9 @@ def largest_gaps(
 ) -> list[tuple[float, str]]:
     """Return (gap, following line) pairs for gaps at or above ``threshold``.
 
-    Lines matching :data:`GAP_IGNORE_PATTERNS` are skipped: they are emitted on a
-    fixed cadence by our own tooling and would look like stalls.
+    Lines matching :data:`GAP_IGNORE_PATTERNS` are skipped as *anchors*: a gap
+    that spans such a line is not reported, because the missing line is our own
+    fixed-cadence output rather than a real stall.
 
     :param entries: timestamped log lines in order
     :param threshold: minimum gap in seconds to report
@@ -189,14 +190,17 @@ def largest_gaps(
     """
     gaps: list[tuple[float, str]] = []
     previous: LogEntry | None = None
+    bridged = False
     for entry in entries:
         if any(pattern.search(entry.line) for pattern in GAP_IGNORE_PATTERNS):
+            bridged = True
             continue
-        if previous is not None:
+        if previous is not None and not bridged:
             gap = entry.elapsed - previous.elapsed
             if gap >= threshold:
                 gaps.append((gap, f"+{entry.elapsed:7.2f}s  {entry.line.strip()}"))
         previous = entry
+        bridged = False
     gaps.sort(key=lambda item: item[0], reverse=True)
     return gaps
 
