@@ -92,6 +92,35 @@ uv run python distribute.py --help
 - 已实测**无效**、勿再试：`PRESSURE_VESSEL_FILESYSTEMS_RO` 挂字体目录、
   往 `~/.fonts`/`~/.local/share/fonts` 放字体、去掉 `start_RimWorld.sh` 的 `LC_ALL=C`
 
+## 本机特有改动：启动剖析（挂在启动路径上）
+
+**目的**：量化「启动 → 进游戏」的时间花在哪，优先 Linux 侧优化。放在启动器里而不是游戏里，
+因为**普通 mod 测不到"加载 mod 自己"那一段**（mod 构造函数是在
+`LoadedModManager.LoadAllActiveMods` → `CreateModClasses` 里才执行的；真实调用栈见
+`common/rimworld-linux/startup-perf/FINDINGS.md`）。
+
+**实现**：`app/utils/startup_profiler.py`。`_do_run_game()` 在真正启动前调用
+`start_startup_profiler(...)`，后台线程：
+
+1. 等待 `RimWorldLinux` 进程出现（`psutil`，兼容 Steam 容器）；
+2. 增量读取 `Player.log` 并给每行打时间戳（**处理启动时的截断重写**：inode 变化或大小回退即从头读）；
+3. 每秒采样进程：`read/write_bytes`、读写信道数、CPU 时间、RSS、线程数；
+4. 进程退出或超时后写报告。
+
+**产物**（`AppInfo().app_storage_folder / "startup-profiles"`）：
+
+| 文件 | 内容 |
+|---|---|
+| `startup-<时间>.txt` | 阶段标记（Prepatcher/HugsLib/`took N ms`/`Total: N ms`）、最大停顿（相邻日志行间隔）、资源摘要、关注项计数 |
+| `timeline-<时间>.log` | 每行 = `相对秒 + 原始日志行` |
+| `samples-<时间>.csv` | 资源采样原始数据 |
+
+**关闭方式**：环境变量 `RIMSORT_STARTUP_PROFILE=0`。
+**永不致命**：任何异常只记 warning，照常启动游戏（与字体注入同一原则）。
+
+**per-mod 明细不在这里**：那是 [Loading Progress](https://github.com/ilyvion/loading-progress) mod 的
+`StartupImpactData.xml`，RimSort 上游已支持解析并在 mod 列表里展示（`app/utils/startup_impact.py`）。
+
 ## Working Notes
 
 - Prefer the existing Python 3.12 + PySide6 MVC structure.
