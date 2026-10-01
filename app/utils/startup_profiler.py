@@ -37,6 +37,14 @@ DEFAULT_SAMPLE_SECONDS = 1.0
 DEFAULT_WRITE_SECONDS = 10.0
 GAP_THRESHOLD_SECONDS = 0.2
 
+#: Lines that are written on a fixed cadence by our own tooling (FastLoad's
+#: periodic report, RimSort markers). They would otherwise show up as fake
+#: "stalls" of exactly the write interval.
+GAP_IGNORE_PATTERNS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"\[FastLoad\] 报告已写出"),
+    re.compile(r"\[FastLoad\] \+"),
+)
+
 #: Lines the game (or its mods) already log with a timing inside.
 PHASE_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"Prepatcher: Starting.*"),
@@ -172,6 +180,9 @@ def largest_gaps(
 ) -> list[tuple[float, str]]:
     """Return (gap, following line) pairs for gaps at or above ``threshold``.
 
+    Lines matching :data:`GAP_IGNORE_PATTERNS` are skipped: they are emitted on a
+    fixed cadence by our own tooling and would look like stalls.
+
     :param entries: timestamped log lines in order
     :param threshold: minimum gap in seconds to report
     :return: gaps sorted from largest to smallest
@@ -179,6 +190,8 @@ def largest_gaps(
     gaps: list[tuple[float, str]] = []
     previous: LogEntry | None = None
     for entry in entries:
+        if any(pattern.search(entry.line) for pattern in GAP_IGNORE_PATTERNS):
+            continue
         if previous is not None:
             gap = entry.elapsed - previous.elapsed
             if gap >= threshold:
