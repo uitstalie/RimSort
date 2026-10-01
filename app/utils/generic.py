@@ -3,6 +3,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import threading
 import webbrowser
 from collections.abc import Callable, Generator
 from datetime import datetime
@@ -397,6 +398,37 @@ def validate_game_executable(game_folder: str) -> bool:
     return False
 
 
+def _reap_process(process: subprocess.Popen[bytes]) -> None:
+    """
+    Wait for a launched child so it does not linger as a zombie.
+
+    RimWorld is started with ``Popen`` and never waited on, so without a reaper
+    every launch leaves a zombie entry in the process table until RimSort exits
+    (which also makes "is the game still running" checks unreliable).
+
+    :param process: process handle returned by subprocess.Popen
+    """
+    try:
+        return_code = process.wait()
+        logger.debug(f"Reaped launched process {process.pid} (exit code {return_code})")
+    except Exception as exc:
+        logger.warning(f"Could not reap launched process: {exc}")
+
+
+def _start_process_reaper(process: subprocess.Popen[bytes]) -> None:
+    """
+    Start a daemon thread that reaps ``process`` once it exits.
+
+    :param process: process handle returned by subprocess.Popen
+    """
+    threading.Thread(
+        target=_reap_process,
+        args=(process,),
+        name="RimWorldProcessReaper",
+        daemon=True,
+    ).start()
+
+
 def launch_process(
     executable_path: str,
     args: list[str],
@@ -427,6 +459,7 @@ def launch_process(
     :return: Tuple of (process PID, list of popen arguments used)
     """
     pid = -1
+    process: subprocess.Popen[bytes] | None = None
 
     # Prepare environment variables
     env = os.environ.copy()
@@ -447,22 +480,22 @@ def launch_process(
             )
         popen_args = ["open", executable_path, "--args"]
         popen_args.extend(args)
-        p = subprocess.Popen(popen_args, env=env)
-        pid = p.pid
+        process = subprocess.Popen(popen_args, env=env)
+        pid = process.pid
     else:
         # On Linux/Windows, prepend wrapper commands before the executable
         popen_args = wrappers + [executable_path]
         popen_args.extend(args)
 
         if sys.platform == "win32":
-            p = subprocess.Popen(
+            process = subprocess.Popen(
                 popen_args,
                 creationflags=subprocess.CREATE_NEW_PROCESS_GROUP,
                 shell=True,
                 cwd=cwd,
                 env=env,
             )
-            pid = p.pid
+            pid = process.pid
         else:
             # not Windows, so assume POSIX; if not, we'll get a usable exception
             # Apply process nice value if non-zero
@@ -479,18 +512,23 @@ def launch_process(
                             "Consider using gamemoderun wrapper instead."
                         )
 
-                p = subprocess.Popen(
+                process = subprocess.Popen(
                     popen_args,
                     start_new_session=True,
                     cwd=cwd,
                     env=env,
-                    preexec_fn=_set_nice,
+                    # nice() must run in the child before exec; it takes no locks,
+                    # so the usual preexec_fn-with-threads caveat does not apply
+                    preexec_fn=_set_nice,  # noqa: PLW1509
                 )
             else:
-                p = subprocess.Popen(
+                process = subprocess.Popen(
                     popen_args, start_new_session=True, cwd=cwd, env=env
                 )
-            pid = p.pid
+            pid = process.pid
+    if process is not None:
+        _start_process_reaper(process)
+    return pid, popen_args
     return pid, popen_args
 
 

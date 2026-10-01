@@ -1,9 +1,11 @@
+import threading
 from unittest.mock import MagicMock, patch
 
 from app.utils.generic import (
     check_valid_http_git_url,
     extract_git_dir_name,
     extract_git_user_or_org,
+    launch_process,
     restart_application,
 )
 
@@ -75,3 +77,21 @@ class TestRestartApplication:
             restart_application()
 
             mock_popen.assert_called_once_with(["C:\\RimSort\\RimSort.exe", "--extra"])
+
+
+def test_launch_process_reaps_child() -> None:
+    """Launched children are reaped so they do not linger as zombies."""
+    waited = threading.Event()
+
+    class FakeProcess:
+        pid = 4321
+
+        def wait(self, timeout: float | None = None) -> int:
+            waited.set()
+            return 0
+
+    with patch("app.utils.generic.subprocess.Popen", return_value=FakeProcess()):
+        pid, _ = launch_process("echo", [], "/tmp")
+
+    assert pid == 4321
+    assert waited.wait(5.0), "reaper thread did not wait() on the launched process"
