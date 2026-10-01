@@ -67,6 +67,7 @@ from app.utils.generic import (
 from app.utils.json_utils import atomic_json_dump
 from app.utils.rentry.wrapper import RentryImport
 from app.utils.startup_impact import invalidate_startup_impact_cache
+from app.utils.startup_profiler import start_startup_profiler
 from app.utils.steam.availability import check_steam_available
 from app.utils.steam.linux_runtime_fonts import (
     ensure_cjk_fonts_in_steam_runtimes,
@@ -3125,6 +3126,25 @@ class MainContent(QObject):
         )
 
     @Slot()
+    def _rimworld_player_log_path(self) -> Path | None:
+        """
+        Return the game's Player.log path for the current instance, if known.
+
+        The instance config folder points at ``<user data>/Config``, so the log
+        (and its ``Player-prev.log`` sibling) live in its parent directory.
+
+        :return: path to Player.log, or None when the config folder is unknown
+        """
+        try:
+            config_folder = self.settings.instances[
+                self.settings.current_instance
+            ].config_folder
+        except (KeyError, AttributeError):
+            return None
+        if not config_folder:
+            return None
+        return Path(config_folder).parent / "Player.log"
+
     def _do_run_game(self) -> None:
         """
         Prepare and launch the RimWorld game process.
@@ -3222,6 +3242,14 @@ class MainContent(QObject):
                 f.write("294100")
         elif not steam_client_integration and steam_appid_path.exists():
             steam_appid_path.unlink()
+
+        # Start a background startup profiler for this launch. It waits for the
+        # game process, timestamps Player.log and samples the process so slow
+        # phases and stalls can be analysed afterwards. Never fatal.
+        start_startup_profiler(
+            player_log_path=self._rimworld_player_log_path(),
+            output_dir=AppInfo().app_storage_folder / "startup-profiles",
+        )
 
         # Launch the game using the configured method
         if launch_via_steam_protocol:
