@@ -1,7 +1,9 @@
 import os
 import time
 from pathlib import Path
+from unittest.mock import MagicMock
 
+import psutil
 import pytest
 
 from app.utils.startup_profiler import (
@@ -16,6 +18,7 @@ from app.utils.startup_profiler import (
     extract_phase_notes,
     find_game_process,
     largest_gaps,
+    process_exited,
     render_report,
     start_startup_profiler,
 )
@@ -149,6 +152,27 @@ def test_render_report_without_data() -> None:
     )
     assert "（无）" in report
     assert "（无采样）" in report
+
+
+def test_process_exited_detects_zombie() -> None:
+    """psutil keeps is_running() True for zombies, so status must be checked."""
+    proc = MagicMock()
+    proc.is_running.return_value = True
+    proc.status.return_value = psutil.STATUS_ZOMBIE
+    assert process_exited(proc) is True
+
+
+def test_process_exited_detects_live_process() -> None:
+    proc = MagicMock()
+    proc.is_running.return_value = True
+    proc.status.return_value = "running"
+    assert process_exited(proc) is False
+
+
+def test_process_exited_handles_reaped_process() -> None:
+    proc = MagicMock()
+    proc.is_running.side_effect = psutil.NoSuchProcess(1234)
+    assert process_exited(proc) is True
 
 
 def test_find_game_process_unknown_name() -> None:

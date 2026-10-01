@@ -34,6 +34,7 @@ PROFILE_ENV_VAR = "RIMSORT_STARTUP_PROFILE"
 DEFAULT_MAX_SECONDS = 1200.0
 DEFAULT_POLL_SECONDS = 0.05
 DEFAULT_SAMPLE_SECONDS = 1.0
+DEFAULT_WRITE_SECONDS = 10.0
 GAP_THRESHOLD_SECONDS = 0.2
 
 #: Lines the game (or its mods) already log with a timing inside.
@@ -287,6 +288,26 @@ def find_game_process(name: str = GAME_PROCESS_NAME) -> psutil.Process | None:
     return newest
 
 
+def process_exited(process: psutil.Process) -> bool:
+    """Return whether the process has finished, including the zombie case.
+
+    ``psutil.Process.is_running()`` keeps returning ``True`` for a zombie (it
+    only turns ``False`` once the PID is reused), so a launcher waiting for a
+    game that exited without being reaped would hang until its timeout. The
+    game is launched with ``Popen`` and never waited on, so it does become a
+    zombie.
+
+    :param process: process to inspect
+    :return: True when the process finished or cannot be inspected
+    """
+    try:
+        if not process.is_running():
+            return True
+        return process.status() == psutil.STATUS_ZOMBIE
+    except (psutil.NoSuchProcess, psutil.AccessDenied):
+        return True
+
+
 def _take_sample(proc: psutil.Process, elapsed: float) -> Sample | None:
     try:
         io = proc.io_counters()
@@ -316,6 +337,7 @@ class StartupProfiler:
     :param max_seconds: hard cap on observation time
     :param poll_seconds: log polling interval
     :param sample_seconds: process sampling interval
+    :param write_interval: how often the report is refreshed while running
     """
 
     def __init__(
@@ -327,6 +349,7 @@ class StartupProfiler:
         max_seconds: float = DEFAULT_MAX_SECONDS,
         poll_seconds: float = DEFAULT_POLL_SECONDS,
         sample_seconds: float = DEFAULT_SAMPLE_SECONDS,
+        write_interval: float = DEFAULT_WRITE_SECONDS,
     ) -> None:
         self._player_log_path = player_log_path
         self._output_dir = output_dir
@@ -334,6 +357,7 @@ class StartupProfiler:
         self._max_seconds = max_seconds
         self._poll_seconds = poll_seconds
         self._sample_seconds = sample_seconds
+        self._write_interval = write_interval
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
 
@@ -395,11 +419,12 @@ class StartupProfiler:
 
         tailer = LogTailer(self._player_log_path)
         next_sample = 0.0
+        next_write = 0.0
         while not self._stop_event.is_set():
             if time.time() > deadline:
                 result.outcome = "达到时间上限"
                 break
-            if not process.is_running():
+            if process_exited(process):
                 result.outcome = "游戏已退出"
                 break
 
@@ -408,6 +433,11 @@ class StartupProfiler:
                 result.entries.append(LogEntry(elapsed=elapsed, line=line))
 
             elapsed = time.time() - create_time
+            if elapsed >= next_write:
+                # 周期写盘：加载完成时就能看到结果，不必等进程退出
+                result.end_wall = time.time()
+                self._write_outputs(result)
+                next_write = elapsed + self._write_interval
             if elapsed >= next_sample:
                 sample = _take_sample(process, elapsed)
                 if sample is not None:
