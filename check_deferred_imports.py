@@ -32,6 +32,9 @@ ALLOWED: set[str] = {
     "app/controllers/main_content_controller.py: from app.views.download_rimworld_dialog import DownloadRimWorldDialog",
     # Genuine circular: settings_dialog ↔ language_controller
     "app/views/settings_dialog.py: from app.controllers.language_controller import LanguageController",
+    # Startup-performance: app.utils.generic pulls requests/vdf/dialogue, and
+    # settings_dialog is constructed from app_controller at startup
+    "app/views/settings_dialog.py: from app.utils.generic import detect_system_tools",
     # Platform-guarded: find_steam_folder only defined on win32
     "app/controllers/settings_controller.py: from app.utils.win_find_steam import find_steam_folder",
     "app/utils/steam/availability.py: from app.utils.win_find_steam import find_steam_folder",
