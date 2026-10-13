@@ -7,12 +7,16 @@ from pathlib import Path
 import pytest
 
 from app.utils.steam.linux_runtime_fonts import (
-    FONT_SUBDIR,
+    LEGACY_FONT_SUBDIR,
     MANIFEST_BACKUP_SUFFIX,
     MANIFEST_NAME,
+    WAYLITH_FONT_TARGETS,
     ensure_cjk_fonts_in_steam_runtimes,
     steam_apps_dirs,
+    waylith_font_targets,
 )
+
+FONT_SUBDIR = LEGACY_FONT_SUBDIR
 
 
 def _write_manifest(platform: Path) -> Path:
@@ -60,6 +64,53 @@ def test_installs_fonts_and_manifest_entries(tmp_path: Path) -> None:
     assert f"./{FONT_SUBDIR.as_posix()}/{font.name} type=file" in manifest
     assert f"size={font.stat().st_size}" in manifest
     assert (platform / (MANIFEST_NAME + MANIFEST_BACKUP_SUFFIX)).is_file()
+
+
+def test_installs_into_waylith_hardcoded_paths(tmp_path: Path) -> None:
+    """Waylith's hardcoded font paths are populated for available fonts."""
+    app_dir = tmp_path / "steamapps" / "common"
+    platform = _make_platform(app_dir, "soldier_platform_1")
+    droid = _make_font(tmp_path / "fonts" / "DroidSansFallbackFull.ttf")
+    noto = _make_font(tmp_path / "fonts" / "NotoSansCJK-Regular.ttc")
+
+    ensure_cjk_fonts_in_steam_runtimes([app_dir], [droid, noto])
+
+    manifest = _read_manifest(platform)
+    paired = waylith_font_targets([droid, noto])
+    assert any(relative.name == droid.name for relative, _ in paired)
+    assert any(relative.name == noto.name for relative, _ in paired)
+    for relative, font in paired:
+        installed = platform / "files" / relative
+        assert installed.read_bytes() == font.read_bytes()
+        assert f"./{relative.as_posix()} type=file" in manifest
+    # every Waylith parent directory is recorded so the hardlink farm links it
+    assert "./share/fonts/truetype/droid type=dir" in manifest
+    assert "./share/fonts/noto-cjk type=dir" in manifest
+    # the legacy Unity directory keeps the same fonts
+    assert (platform / "files" / FONT_SUBDIR / droid.name).is_file()
+
+
+def test_waylith_matching_ignores_case_and_container_extension() -> None:
+    """Host fonts pair with Waylith's names despite casing/extension drift."""
+    host_font = Path("/host/NotoSansCJK-Regular.ttf")
+
+    paired = waylith_font_targets([host_font])
+
+    names = {relative.name for relative, _ in paired}
+    assert names == {"NotoSansCJK-Regular.ttc"}
+    assert all(font == host_font for _, font in paired)
+    assert {relative for relative, _ in paired} <= {
+        relative for relative, _ in WAYLITH_FONT_TARGETS
+    }
+
+
+def test_waylith_paths_are_all_under_share_fonts() -> None:
+    """Guard the hardcoded target list against typos."""
+    assert WAYLITH_FONT_TARGETS
+    for relative, name in WAYLITH_FONT_TARGETS:
+        assert relative.parent != Path(".")
+        assert str(relative).startswith("share/fonts/")
+        assert Path(name).suffix in {".ttf", ".ttc", ".otf"}
 
 
 def test_is_idempotent(tmp_path: Path) -> None:
