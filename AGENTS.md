@@ -4,14 +4,14 @@
 
 RimSort is a free and open-source multi-platform mod manager and sorter for RimWorld. It reads RimWorld `About.xml` metadata, sorts mod lists using graph/topological algorithms plus community/user rules databases, and integrates with the Steam Workshop (via SteamworksPy and SteamCMD), Git mods, and optional static metadata databases (`SteamDB`, `Community Rules`).
 
-- **Stack:** Python `==3.12.*` (pinned in `pyproject.toml`), PySide6 6.11 / Qt6 GUI, Nuitka 4.x packaging, [uv](https://docs.astral.sh/uv/) for deps, [just](https://just.systems/) task runner. Targets Windows, macOS, and Linux — no platform-locked code without a guard.
+- **Stack:** Python `==3.14.*` (pinned in `pyproject.toml`), PySide6 6.11 / Qt6 GUI, Nuitka 4.x packaging, [uv](https://docs.astral.sh/uv/) for deps, [just](https://just.systems/) task runner. Targets Windows, macOS, and Linux — no platform-locked code without a guard.
 - **Architecture:** pragmatic MVC under `app/` (`views` = PySide6 widgets, `controllers` = glue/logic, `models` = data classes, `services` = reusable operations, `utils` = helpers, `sort` = ordering algorithms, `windows` = top-level dialogs, `cli` = `build-db` etc.). Tests in `tests/` mirror the `app/` layout.
 
 ## Setup
 
 - Clone with submodules: `git clone --recurse-submodules https://github.com/RimSort/RimSort`
 - If submodules are missing: `git submodule update --init --recursive`
-- Prerequisites: git, Python 3.12, [uv](https://docs.astral.sh/uv/), [just](https://just.systems/). Full `just check` also needs Node/npx (jscpd, markdownlint) and shfmt.
+- Prerequisites: git, Python 3.14, [uv](https://docs.astral.sh/uv/), [just](https://just.systems/). The full Unix `just check` runs `nix flake check` (Nix required; skipped with a warning when absent). The Windows recipe additionally needs Node/npx (jscpd, markdownlint) and shfmt.
 - `just dev-setup` — creates venv, `uv sync --locked --dev --group build`, compiles locales. Do this first.
 - `just install-hooks` — installs the pre-commit hook (runs `just check` before every commit; requires `just` and `pwsh` on PATH).
 - Always use the local venv via `uv run ...` — never activate the venv manually or use a bare `pytest`/`ruff`.
@@ -36,7 +36,7 @@ Never run `uv lock --upgrade` (== `just update`) as part of a task — dependenc
 
 ## Code Quality (MUST pass before finishing)
 
-`just check` runs the quality gate (Windows: `typecheck`, `pyright`, `ruff`, `ruff-format`, `jscpd`, `markdownlint`, `shfmt`, `deferred-imports`; Unix adds super-linter, which covers the same plus bash, json, yaml, github-actions, checkov, and gitleaks). `just fix` auto-fixes ruff check/format, shfmt, and markdownlint.
+`just check` runs the quality gate (Windows: `typecheck`, `pyright`, `ruff`, `ruff-format`, `jscpd`, `markdownlint`, `shfmt`, `deferred-imports`; Unix runs `nix flake check` — the pinned git-hooks (nixfmt, deadnix, statix, gitleaks, actionlint, check-json, check-yaml, checkov, ruff, ruff-format, mypy, pyright, shellcheck, shfmt, markdownlint, jscpd, repo guards) plus pytest and the packaged app build — then the native type/repo guards). `just fix` auto-fixes ruff check/format, shfmt, and markdownlint.
 
 | Command | Purpose |
 | --- | --- |
@@ -47,10 +47,11 @@ Never run `uv lock --upgrade` (== `just update`) as part of a task — dependenc
 | `just pyright` | pyright (standard mode) against `pyproject.toml` |
 | `just jscpd` | Copy-paste detection — CI enforces **0% duplication** (config in `.jscpd.json`). If code repeats, extract a shared helper. |
 | `just deferred-imports` | Guard against new function-local `from app…` imports (see Traps) |
+| `just eventbus-subscribers` | Guard against `EventBus` subscribers that aren't Qt objects or explicitly retained (see Traps) |
 | `just markdownlint` | Markdown lint for `docs/**` and root `*.md` (rules in `.markdownlint.json`; options in `.markdownlint-cli2.jsonc`) |
 | `just shfmt` | Shell script formatting (fails when any script would be reformatted) |
 
-Run at minimum `just fix` + `just test` + `just typecheck` + `just pyright` (or the full `just check`, then `just test`) and get everything green before declaring a change complete. CI runs ruff, ruff-format, mypy, pyright, jscpd, gitleaks, markdownlint, and pytest on ubuntu/macos/windows.
+Run at minimum `just fix` + `just test` + `just typecheck` + `just pyright` (or the full `just check`, then `just test`) and get everything green before declaring a change complete. CI runs the Nix Flake Check gate (git-hooks + pytest + package build) on ubuntu via `nix flake check`, plus the artifact-build matrix on ubuntu/macos/windows.
 
 ## Code Style
 
@@ -101,7 +102,7 @@ Run at minimum `just fix` + `just test` + `just typecheck` + `just pyright` (or 
 
 ## Definition of Done
 
-1. `just fix` + `just typecheck` + `just pyright` + `just deferred-imports` all pass (or full `just check`).
+1. `just fix` + `just typecheck` + `just pyright` + `just deferred-imports` + `just eventbus-subscribers` all pass (or full `just check`).
 2. `just test` passes (full suite).
 3. The diff contains no unrelated reformatting, comments, or scope creep.
 4. New translatable strings have been run through `just i18n-update` and `just i18n-compile`. (Note: the i18n rule in the AGENTS.md spec — run these and commit both `.ts`/`.qm`.)
@@ -109,6 +110,7 @@ Run at minimum `just fix` + `just test` + `just typecheck` + `just pyright` (or 
 ## Traps
 
 - **Deferred imports are judged, not banned:** `check_deferred_imports.py` fails on any *new* function-local `import app…` not in its `ALLOWED` set. Genuine circular-import fixes go in `ALLOWED`; start-up hot-path imports may stay deferred. If you add one, you must update `ALLOWED` or CI (`just deferred-imports`) fails.
+- **`EventBus` subscribers must be Qt objects or explicitly retained:** `EventBus` is a QObject singleton, so Qt keeps `QObject`/`QWidget` receivers alive — but it does **not** keep a bound method of a plain Python object alive. A plain class that connects its slots in `__init__` and is never retained gets garbage collected the moment its constructor returns, and its slots silently stop running: no log line, no exception. This broke every instance action for v1.6.0–v1.16.0 (#2539). Whoever constructs such a class must keep the reference (`self.foo = Foo(...)`), or make it a `QObject`. `check_eventbus_subscribers.py` (`just eventbus-subscribers`) fails on non-Qt subscribers not in its `ALLOWED` set — an entry there must name the owner holding the reference.
 - Never reformat code wholesale or add comments explaining what the code does — match surrounding style and only change what your feature touches.
 - Don't create new top-level data dirs/files under the repo root; app data goes through `AppInfo` (which tests redirect via `mock_app_info`).
 - Keep `docs/` edits lint-clean (markdownlint) and only touch `docs/index.md`/locale variants when truly needed.

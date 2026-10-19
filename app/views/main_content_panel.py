@@ -9,7 +9,7 @@ import webbrowser
 from collections.abc import Callable
 from functools import partial
 from pathlib import Path
-from typing import Any, Literal, Optional, cast, overload
+from typing import Any, Literal, cast, overload
 
 from loguru import logger
 from PySide6.QtCore import (
@@ -42,9 +42,14 @@ from app.models.instance import Instance
 from app.models.metadata.metadata_structure import AboutXmlMod, ModType
 from app.models.settings import Settings
 from app.services.dependency_resolver import build_dependencies_dialog_context
+from app.services.game_layout_service import (
+    get_game_content_candidates,
+    resolve_game_layout,
+)
 from app.services.import_export_service import ImportExportService
 from app.services.mod_list_parser import ModListFormatError, parse_mod_list_file
 from app.services.modlist_history_service import ModlistHistoryService
+from app.services.official_content_service import find_official_content_issues
 from app.services.path_autodetect_service import PathAutodetectService
 from app.services.window_manager import WindowManager
 from app.sort.mod_sorting import ModsPanelSortKey
@@ -63,6 +68,7 @@ from app.utils.generic import (
     open_url_browser,
     platform_specific_open,
     upload_log_to_privatebin,
+    validate_game_executable,
 )
 from app.utils.json_utils import atomic_json_dump
 from app.utils.rentry.wrapper import RentryImport
@@ -123,13 +129,13 @@ class MainContent(QObject):
     and their dependencies.
     """
 
-    _instance: Optional["MainContent"] = None
+    _instance: MainContent | None = None
 
     disable_enable_widgets_signal = Signal(bool)
     status_signal = Signal(str)
     stop_watchdog_signal = Signal()
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> "MainContent":  # noqa: PYI034
+    def __new__(cls, *args: Any, **kwargs: Any) -> MainContent:  # noqa: PYI034
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
@@ -354,7 +360,7 @@ class MainContent(QObject):
         self._refresh_in_progress: bool = False
 
     @classmethod
-    def instance(cls, *args: Any, **kwargs: Any) -> "MainContent":
+    def instance(cls, *args: Any, **kwargs: Any) -> MainContent:
         if cls._instance is None:
             cls._instance = cls(*args, **kwargs)
         elif args or kwargs:
@@ -436,9 +442,14 @@ class MainContent(QObject):
         candidate_paths = {
             "game_folder": game_folder,
             "config_folder": config_folder,
-            "local_folder": game_folder / "Mods",
             "workshop_folder": workshop_folder,
         }
+        effective_game = (
+            Path(instance.game_folder) if instance.game_folder else game_folder
+        )
+        layout = resolve_game_layout(effective_game)
+        if layout is not None:
+            candidate_paths["local_folder"] = layout.local_mods_path
         changed = False
         for field, detected_path in candidate_paths.items():
             current_value = getattr(instance, field, "")
@@ -1842,51 +1853,90 @@ class MainContent(QObject):
                 ),
             )
 
-    def _do_save(self) -> None:
-        """
-        Method to save the current list of active mods to the selected ModsConfig.xml
-        """
+    def _confirm_official_content_save(self) -> bool:
+        instance = self.settings.instances[self.settings.current_instance]
+        if not instance.game_folder or not instance.config_folder:
+            dialogue.show_warning(
+                title=self.tr("Game or config location is not set"),
+                text=self.tr(
+                    "Configure game and config locations before saving a mod list."
+                ),
+            )
+            return False
+        game_path = Path(instance.game_folder)
+        issues = find_official_content_issues(
+            self.metadata_controller.mods_metadata,
+            game_path,
+            Path(instance.config_folder) / "ModsConfig.xml",
+        )
+        if not issues.has_issues:
+            return True
+        details = [
+            self.tr("Configured game location: {path}").format(path=game_path),
+            self.tr("Checked content locations: {paths}").format(
+                paths="\n".join(str(p) for p in get_game_content_candidates(game_path))
+            ),
+            self.tr("Discovered Data location: {path}").format(
+                path=str(issues.data_path)
+                if issues.data_path is not None
+                else self.tr("Not found")
+            ),
+            self.tr("Missing official modules: {package_ids}").format(
+                package_ids=", ".join(issues.missing_package_ids)
+            ),
+        ]
+        if issues.config_unreadable:
+            details.append(
+                self.tr("The existing ModsConfig.xml could not be read or validated.")
+            )
+        return dialogue.confirm_content_discovery_override(
+            title=self.tr("Incomplete game content discovery"),
+            text=self.tr(
+                "RimSort could not verify all official game content. Saving this list may remove Core or enabled DLC from ModsConfig.xml. Check the game content paths before continuing."
+            ),
+            action_text=self.tr("Save anyway"),
+            details="\n".join(details),
+        )
+
+    def _do_save(self) -> bool:
+        """Save the proposed list only after discovery preflight permits the write."""
         logger.info("Saving current active mods to ModsConfig.xml")
-        # Persist divider data before saving
-        self.settings.active_mods_dividers = (
-            self.mods_panel.active_mods_list.get_dividers_data()
-        )
-        self.settings.save()
-
-        data = self._import_export_service.collect_active_mods(
-            self.mods_panel.active_mods_list.paths, self.duplicate_mods
-        )
-        active_mods_uuids, inactive_mods_uuids, _, _ = (
-            self.metadata_controller.get_mods_from_list(mod_list=data.active_mods)
-        )
-        self.active_mods_uuids_last_save = active_mods_uuids
-        logger.info(f"Collected {len(data.active_mods)} active mods for saving")
-
-        save_succeeded = False
         try:
+            if not self._confirm_official_content_save():
+                return False
+            data = self._import_export_service.collect_active_mods(
+                self.mods_panel.active_mods_list.paths, self.duplicate_mods
+            )
+            active_mods_uuids, inactive_mods_uuids, _, _ = (
+                self.metadata_controller.get_mods_from_list(mod_list=data.active_mods)
+            )
             self._import_export_service.save_to_mods_config(data.active_mods)
-            save_succeeded = True
+            self.settings.active_mods_dividers = (
+                self.mods_panel.active_mods_list.get_dividers_data()
+            )
+            self.settings.save()
+            self.active_mods_uuids_last_save = active_mods_uuids
+            self.active_mods_uuids_restore_state = active_mods_uuids
+            self.inactive_mods_uuids_restore_state = inactive_mods_uuids
+            if self.settings.modlist_history_enabled:
+                try:
+                    self._modlist_history_service.write_snapshot(
+                        active_mods_uuids, inactive_mods_uuids
+                    )
+                except Exception:
+                    logger.exception("Failed to write mod list history snapshot")
+            logger.info("Finished saving active mods")
+            return True
         except Exception:
-            logger.error("Could not save active mods")
+            logger.exception("Could not save active mods")
             dialogue.show_fatal_error(
                 title=self.tr("Could not save active mods"),
                 text=self.tr("Failed to save active mods to file:"),
                 details=traceback.format_exc(),
             )
-
-        if save_succeeded and self.settings.modlist_history_enabled:
-            try:
-                self._modlist_history_service.write_snapshot(
-                    active_mods_uuids, inactive_mods_uuids
-                )
-            except Exception:
-                logger.exception("Failed to write mod list history snapshot")
-
-        EventBus().do_save_button_animation_stop.emit()
-        # Save current modlists to their respective restore states
-        self.active_mods_uuids_restore_state = active_mods_uuids
-        self.inactive_mods_uuids_restore_state = inactive_mods_uuids
-        logger.info("Finished saving active mods")
+            return False
+        finally:
+            EventBus().do_save_button_animation_stop.emit()
 
     def _do_restore(self) -> None:
         """
@@ -2115,7 +2165,9 @@ class MainContent(QObject):
                 dialogue.show_information(
                     title=self.tr("Reset SteamCMD ACF data file"),
                     text=self.tr(
-                        f"Successfully deleted SteamCMD ACF data file: {steamcmd_appworkshop_acf_path}"
+                        "Successfully deleted SteamCMD ACF data file: {steamcmd_appworkshop_acf_path}"
+                    ).format(
+                        steamcmd_appworkshop_acf_path=steamcmd_appworkshop_acf_path
                     ),
                     information=self.tr(
                         "ACF data file will be recreated when you download mods using steamcmd next time."
@@ -2142,7 +2194,7 @@ class MainContent(QObject):
         if self.steam_browser is not None:
             try:
                 self.steam_browser.destroyed.disconnect(self._on_steam_browser_restore)
-            except (TypeError, RuntimeError):
+            except TypeError, RuntimeError:
                 pass
             self._workshop_restore_target = restore_target
             assert self.steam_browser.web_view is not None
@@ -2466,6 +2518,14 @@ class MainContent(QObject):
             instruction, etc.) - callers use this to know whether it's safe to
             treat the instruction's mods as handled.
         """
+        if instruction[0] == "launch_game_process" and not self._confirm_direct_launch(
+            Path(instruction[1][0])
+        ):
+            return False
+        return self._dispatch_steamworks_api_call(instruction)
+
+    def _dispatch_steamworks_api_call(self, instruction: list[Any]) -> bool:
+        """Dispatch a preflighted instruction without constructing GUI dialogs."""
         logger.info(f"Received Steamworks API instruction: {instruction}")
         # use prebuilt libs path
         libs_path = str(AppInfo().libs_folder)
@@ -2535,6 +2595,10 @@ class MainContent(QObject):
     def _do_steamworks_api_call_animated(
         self, instruction: list[list[str] | str]
     ) -> None:
+        if instruction[0] == "launch_game_process" and not self._confirm_direct_launch(
+            Path(instruction[1][0])
+        ):
+            return
         publishedfileids = instruction[1]
         logger.debug(f"Attempting to download {len(publishedfileids)} mods with Steam")
         steam_db_schema = self.metadata_controller.steam_db
@@ -2564,7 +2628,7 @@ class MainContent(QObject):
         # Process API call
         dispatched = self.do_threaded_loading_animation(
             gif_path=str(AppInfo().theme_data_folder / "default-icons" / "steam.gif"),
-            target=partial(self._do_steamworks_api_call, instruction=instruction),
+            target=partial(self._dispatch_steamworks_api_call, instruction=instruction),
             text=self.tr(
                 "Processing Steam subscription action(s) via Steamworks API..."
             ),
@@ -3125,6 +3189,29 @@ class MainContent(QObject):
             self.settings.steamcmd_validate_downloads
         )
 
+    def _confirm_direct_launch(self, game_path: Path) -> bool:
+        if not validate_game_executable(str(game_path)):
+            dialogue.show_warning(
+                title=self.tr("Invalid game folder"),
+                text=self.tr(
+                    "RimWorld executable was not found in the configured game location."
+                ),
+                details=str(game_path),
+            )
+            return False
+        if resolve_game_layout(game_path) is not None:
+            return True
+        return dialogue.confirm_content_discovery_override(
+            title=self.tr("Game content not found"),
+            text=self.tr(
+                "The game executable is valid, but RimSort could not locate its content. The game may not find its Data or Mods folders. Check the game content paths before continuing."
+            ),
+            action_text=self.tr("Run anyway"),
+            details=self.tr("Checked content locations: {paths}").format(
+                paths="\n".join(str(p) for p in get_game_content_candidates(game_path))
+            ),
+        )
+
     @Slot()
     def _rimworld_player_log_path(self) -> Path | None:
         """
@@ -3184,14 +3271,25 @@ class MainContent(QObject):
                 logger.info(
                     "User chose to save before proceeding with running the game."
                 )
-                self._do_save()
+                if self._do_save() is False:
+                    return
             elif answer == self.tr("Run Anyway"):
                 logger.info(
                     "User chose to ignore unsaved changes and proceed with running the game anyway."
                 )
-            elif answer == QMessageBox.StandardButton.Cancel:
+            else:
                 logger.info("User chose to cancel.")
                 return
+
+        instance = self.settings.instances[self.settings.current_instance]
+        game_install_path = Path(instance.game_folder)
+        run_args = instance.run_args
+        steam_client_integration = instance.steam_client_integration
+        launch_via_steam_protocol = instance.launch_via_steam_protocol
+        if not launch_via_steam_protocol and not self._confirm_direct_launch(
+            game_install_path
+        ):
+            return
 
         # Run todds before launch if auto-run is enabled
         if self.settings.auto_run_todds_before_launch:
@@ -3210,22 +3308,8 @@ class MainContent(QObject):
                     ),
                 )
 
-        # Retrieve instance configuration
-        current_instance = self.settings.current_instance
-        game_install_path = Path(self.settings.instances[current_instance].game_folder)
-        run_args = self.settings.instances[current_instance].run_args
-
-        # Retrieve Steam-related settings for this instance
-        steam_client_integration = self.settings.instances[
-            current_instance
-        ].steam_client_integration
-
-        launch_via_steam_protocol = self.settings.instances[
-            current_instance
-        ].launch_via_steam_protocol
-
-        # Retrieve process nice value for Linux process priority
-        process_nice = self.settings.instances[current_instance].process_nice
+        # Local fork: Linux process priority for the launched game
+        process_nice = instance.process_nice
 
         # Manage steam_appid.txt file for Steam integration
         # If Steam integration is enabled, Steam requires this file with the app ID in the game folder

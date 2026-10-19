@@ -38,70 +38,21 @@ test-coverage: dev-setup
 # Code Quality
 # ═══════════════════════════════════════════════════════════════════════════
 
-# Container image for super-linter (matches CI version)
-superlinter_image := "ghcr.io/super-linter/super-linter:slim-v9.0.0"
-
-# Run super-linter locally via container (ruff, ruff-format, mypy, jscpd,
-# bash/shellcheck, shfmt, json, yaml, markdown, checkov, gitleaks,
-# github-actions). Pyright runs natively because it needs the local venv to
-# resolve imports. Env is kept identical to .github/workflows/lint.yml.
-# Note: super-linter rejects mixing VALIDATE_*=true/false, so this list
-# stays all-true (opt-in mode; unlisted linters are disabled).
-# The justfile is excluded because shellcheck/shfmt do not understand just
-# interpolation ({{...}}) and reject its Windows one-liners.
-# IGNORE_GITIGNORED_FILES filters super-linter's file list, which is separate
-# from jscpd's own gitignore handling (the "gitignore" key in .jscpd.json).
+# Flake gate: the pinned git-hooks (ruff, ruff-format, mypy, pyright, shellcheck,
+# shfmt, markdownlint, jscpd, gitleaks, actionlint, check-json, check-yaml,
+# checkov, nixfmt, deadnix, statix, repo guards) plus pytest and the packaged
+# app build. This is exactly what the Nix Flake Check CI job runs; the tools
+# are pinned by uv.lock (via uv2nix) and nixpkgs instead of a container image.
+# Contributors without Nix keep the per-tool recipes and rely on CI.
 [unix]
-super-lint:
+nix-check:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Detect container runtime
-    if command -v docker &>/dev/null && docker info &>/dev/null 2>&1; then
-        RUNTIME=docker
-    elif command -v podman &>/dev/null && podman info &>/dev/null 2>&1; then
-        RUNTIME=podman
-    else
-        echo "Error: docker or podman required but neither is running" >&2
-        exit 1
+    if ! command -v nix >/dev/null 2>&1; then
+        echo "warning: nix not found; skipping 'nix flake check' (CI runs it as the authoritative gate)" >&2
+        exit 0
     fi
-    PLATFORM_FLAG=""
-    if [ "$(uname -m)" = "arm64" ] || [ "$(uname -m)" = "aarch64" ]; then
-        PLATFORM_FLAG="--platform linux/amd64"
-    fi
-    # Mount the git common dir for worktree support
-    GIT_COMMON_DIR="$(git rev-parse --path-format=absolute --git-common-dir)"
-    $RUNTIME run --rm $PLATFORM_FLAG \
-        -e RUN_LOCAL=true \
-        -e DEFAULT_BRANCH=main \
-        -e LOG_LEVEL=NOTICE \
-        -e LINTER_RULES_PATH=. \
-        -e VALIDATE_ALL_CODEBASE=true \
-        -e VALIDATE_PYTHON_MYPY=true \
-        -e VALIDATE_PYTHON_RUFF=true \
-        -e VALIDATE_PYTHON_RUFF_FORMAT=true \
-        -e VALIDATE_GITHUB_ACTIONS=true \
-        -e VALIDATE_GITLEAKS=true \
-        -e VALIDATE_JSON=true \
-        -e VALIDATE_YAML=true \
-        -e VALIDATE_BASH=true \
-        -e VALIDATE_CHECKOV=true \
-        -e VALIDATE_JSCPD=true \
-        -e VALIDATE_SHELL_SHFMT=true \
-        -e MARKDOWN_CONFIG_FILE=.markdownlint.json \
-        -e VALIDATE_MARKDOWN=true \
-        -e FIX_MARKDOWN=true \
-        -e FIX_SHELL_SHFMT=true \
-        -e PYTHON_RUFF_CONFIG_FILE=pyproject.toml \
-        -e PYTHON_RUFF_FORMAT_CONFIG_FILE=pyproject.toml \
-        -e PYTHON_MYPY_CONFIG_FILE=pyproject.toml \
-        -e FILTER_REGEX_EXCLUDE="LICENSE.md|super-linter-output/|github_conf/|setup_.*_script\\.js|(^|/)justfile$" \
-        -e IGNORE_GITIGNORED_FILES=true \
-        -e FIX_PYTHON_RUFF=true \
-        -e FIX_PYTHON_RUFF_FORMAT=true \
-        -e GITHUB_ACTIONS_COMMAND_ARGS='-ignore '\''unknown permission scope '"'""attestations'"'"'\''' \
-        -v "$(pwd)":/tmp/lint \
-        -v "${GIT_COMMON_DIR}:${GIT_COMMON_DIR}" \
-        {{superlinter_image}}
+    nix flake check
 
 # Run static type checking (mypy)
 typecheck:
@@ -165,19 +116,24 @@ shfmt-fix:
 jscpd:
     npx --yes jscpd@5.3.0 . --config .jscpd.json
 
-# Run all code quality checks: super-linter + typecheck + pyright
+# Run all code quality checks: nix flake check + typecheck + pyright + repo guards
 [unix]
-check: super-lint typecheck pyright
+check: nix-check typecheck pyright deferred-imports eventbus-subscribers
     @echo "Use 'just fix' to automatically fix linting and formatting issues!"
 
-# Run all code quality checks available on Windows: typecheck + pyright + ruff + ruff-format + jscpd + markdownlint + shfmt + deferred-import guard
+# Run all code quality checks available on Windows: typecheck + pyright + ruff + ruff-format + jscpd + markdownlint + shfmt + repo guards
 [windows]
-check: typecheck pyright ruff ruff-format jscpd markdownlint shfmt deferred-imports
+check: typecheck pyright ruff ruff-format jscpd markdownlint shfmt deferred-imports eventbus-subscribers
     @echo "Use 'just fix' to automatically fix linting and formatting issues!"
 
 # Check for new function-local from app/ imports (circular-import regression guard)
 deferred-imports:
     uv run python check_deferred_imports.py
+
+# Check that EventBus subscribers are Qt objects or explicitly retained
+# (an unretained plain-class subscriber is garbage collected and goes silent)
+eventbus-subscribers:
+    uv run python check_eventbus_subscribers.py
 
 # Automatically fix linting and formatting issues, then verify the markdown check passes
 # (ruff-fix + ruff-format-fix + shfmt -w + markdownlint-fix + markdownlint check)
@@ -196,6 +152,18 @@ ci: check test-coverage
 # git submodules are initialized. `uv sync` creates/reuses `.venv` itself:
 # a fresh one if missing, or the existing one without rewriting `python.exe`,
 # which avoids failing when that file is locked by another process (os error 32).
+# In the Nix dev shell (RIMSORT_NIX_SHELL) the environment is built from
+# uv.lock by Nix and is read-only, so the sync step is skipped there.
+[unix]
+dev-setup: submodules-init
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -z "${RIMSORT_NIX_SHELL:-}" ]; then
+        uv sync --locked --dev --group build
+    fi
+    just i18n-compile  # not a dependency — must run after uv sync so pyside6-lrelease is available
+
+[windows]
 dev-setup: submodules-init
     uv sync --locked --dev --group build
     just i18n-compile  # not a dependency — must run after uv sync so pyside6-lrelease is available

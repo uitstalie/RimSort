@@ -11,7 +11,7 @@ _real_popen = subprocess.Popen
 
 
 @pytest.fixture(autouse=True)
-def _block_steam_urls(request: pytest.FixtureRequest) -> Generator[None, None, None]:
+def _block_steam_urls(request: pytest.FixtureRequest) -> Generator[None]:
     """Prevent tests from opening steam:// URLs on the host machine.
 
     Guards subprocess.Popen to block any steam:// URI regardless of
@@ -52,7 +52,7 @@ def auto_accept_dialogs(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 @pytest.fixture(scope="function")
-def qapp() -> Generator[QApplication | QCoreApplication, None, None]:
+def qapp() -> Generator[QApplication | QCoreApplication]:
     """Create a QApplication instance for Qt tests."""
     app = QApplication.instance()
     if app is None:
@@ -63,7 +63,7 @@ def qapp() -> Generator[QApplication | QCoreApplication, None, None]:
 @pytest.fixture(autouse=True)
 def mock_app_info(
     tmp_path_factory: pytest.TempPathFactory,
-) -> Generator[None, None, None]:
+) -> Generator[None]:
     """Redirect all AppInfo paths to a temp dir to prevent filesystem side effects.
 
     Uses ``tmp_path_factory`` instead of ``tmp_path`` so the mock's
@@ -123,7 +123,16 @@ def mock_app_info(
 
 
 @pytest.fixture
-def fresh_event_bus() -> Generator[None, None, None]:
+def nix_launch_prefix(monkeypatch: pytest.MonkeyPatch) -> str:
+    """Simulate the Nix wrapper: RIMSORT_LAUNCH_PREFIX set on Linux."""
+    prefix = "/nix/store/x-steam-run/bin/steam-run"
+    monkeypatch.setenv("RIMSORT_LAUNCH_PREFIX", prefix)
+    monkeypatch.setattr("app.utils.generic.platform.system", lambda: "Linux")
+    return prefix
+
+
+@pytest.fixture
+def fresh_event_bus() -> Generator[None]:
     """Reset the EventBus singleton so each test gets a clean instance."""
     from app.utils.event_bus import EventBus
 

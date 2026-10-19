@@ -47,6 +47,46 @@
         <translation>何もしないで終了</translation>
     </message>
     <message>
+        <source>Name</source>
+        <translation type="unfinished">名前</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished">作者</translation>
+    </message>
+    <message>
+        <source>Package ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Published File Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Supported Versions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Mod Downloaded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Updated on Workshop</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished">パス</translation>
+    </message>
+    <message>
+        <source>Workshop Page</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Open Page</source>
         <translation>ページを開く</translation>
     </message>
@@ -102,8 +142,8 @@
         <translation>不完全なインポート</translation>
     </message>
     <message>
-        <source>{len(failed_mods)} mods could not be imported due to missing package ids. This may happen if you don't have all the mods downloaded.&lt;br&gt;&lt;br&gt;Try subscribing to the collection first</source>
-        <translation>パッケージ ID が見つからないため、{len(failed_mods)} 個の MOD をインポートできませんでした。これは、すべての MOD をダウンロードしていない場合に発生する可能性があります。&lt;br&gt;&lt;br&gt;まずコレクションに登録してみてください。</translation>
+        <source>{count} mods could not be imported due to missing package ids. This may happen if you don't have all the mods downloaded.&lt;br&gt;&lt;br&gt;Try subscribing to the collection first</source>
+        <translation>パッケージ ID が見つからないため、{count} 個の MOD をインポートできませんでした。これは、すべての MOD をダウンロードしていない場合に発生する可能性があります。&lt;br&gt;&lt;br&gt;まずコレクションに登録してみてください。</translation>
     </message>
 </context>
 <context>
@@ -916,6 +956,14 @@ Manage mods installed from GitHub releases.</source>
         <translation>まだ使用されていない新しいインスタンスの一意の名前を入力します。</translation>
     </message>
     <message>
+        <source>Game content not found</source>
+        <translation>ゲームコンテンツが見つかりません</translation>
+    </message>
+    <message>
+        <source>Cannot clone this instance until its game content location is resolved.</source>
+        <translation>ゲーム コンテンツの場所が解決されるまで、このインスタンスのクローンを作成できません。</translation>
+    </message>
+    <message>
         <source>Clone instance [{name}]</source>
         <translation>クローン インスタンス [{name}]</translation>
     </message>
@@ -1196,6 +1244,50 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>Failed to upload log file to RimSort Logs.</source>
         <translation>Failed to upload log file to RimSort Logs.</translation>
+    </message>
+    <message>
+        <source>Game or config location is not set</source>
+        <translation>ゲームまたは設定の場所が設定されていません</translation>
+    </message>
+    <message>
+        <source>Configure game and config locations before saving a mod list.</source>
+        <translation>MOD リストを保存する前に、ゲームと構成の場所を構成します。</translation>
+    </message>
+    <message>
+        <source>Configured game location: {path}</source>
+        <translation>設定されたゲームの場所: {path}</translation>
+    </message>
+    <message>
+        <source>Checked content locations: {paths}</source>
+        <translation>チェックされたコンテンツの場所: {paths}</translation>
+    </message>
+    <message>
+        <source>Discovered Data location: {path}</source>
+        <translation>検出されたデータの場所: {path}</translation>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation>見つかりません</translation>
+    </message>
+    <message>
+        <source>Missing official modules: {package_ids}</source>
+        <translation>公式モジュールがありません: {package_ids}</translation>
+    </message>
+    <message>
+        <source>The existing ModsConfig.xml could not be read or validated.</source>
+        <translation>既存の ModsConfig.xml を読み取ることも検証することもできませんでした。</translation>
+    </message>
+    <message>
+        <source>Incomplete game content discovery</source>
+        <translation>不完全なゲーム コンテンツの発見</translation>
+    </message>
+    <message>
+        <source>RimSort could not verify all official game content. Saving this list may remove Core or enabled DLC from ModsConfig.xml. Check the game content paths before continuing.</source>
+        <translation>rimSort はすべての公式ゲーム コンテンツを検証できませんでした。このリストを保存すると、コアまたは有効な DLC が ModsConfig.xml から削除される可能性があります。続行する前に、ゲーム コンテンツのパスを確認してください。</translation>
+    </message>
+    <message>
+        <source>Save anyway</source>
+        <translation>とにかく保存する</translation>
     </message>
     <message>
         <source>Could not save active mods</source>
@@ -1480,6 +1572,26 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>Please reconfigure the expiry value with an integer in terms of the seconds from epoch you would like your query to expire.</source>
         <translation>クエリの有効期限を切れるまでのエポックからの秒数を整数で再構成してください。</translation>
+    </message>
+    <message>
+        <source>Invalid game folder</source>
+        <translation>無効なゲームフォルダー</translation>
+    </message>
+    <message>
+        <source>RimWorld executable was not found in the configured game location.</source>
+        <translation>構成されたゲームの場所に、RimWorld 実行可能ファイルが見つかりませんでした。</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>ゲームコンテンツが見つかりません</translation>
+    </message>
+    <message>
+        <source>The game executable is valid, but RimSort could not locate its content. The game may not find its Data or Mods folders. Check the game content paths before continuing.</source>
+        <translation>ゲームの実行可能ファイルは有効ですが、RimSort はそのコンテンツを見つけることができませんでした。ゲームに Data フォルダーまたは Mods フォルダーが見つからない可能性があります。続行する前に、ゲーム コンテンツのパスを確認してください。</translation>
+    </message>
+    <message>
+        <source>Run anyway</source>
+        <translation>とにかく走ってください</translation>
     </message>
     <message>
         <source>todds Optimization Failed</source>
@@ -2918,8 +3030,8 @@ Please select your preferred mod variant in the table below. You can also open e
         <translation>{result.failed_count} mod（s）を削除できませんでした。詳細については、ログを確認してください。</translation>
     </message>
     <message>
-        <source>{e.strerror or 'Unknown error'} occurred at {e.filename or mod_path} with error code {error_code}.</source>
-        <translation>は、でエラーコード{error_code}で発生しました。 {e.filename or mod_path} {e.strerror or 'Unknown error'}</translation>
+        <source>{error_message} occurred at {path} with error code {error_code}.</source>
+        <translation>は、でエラーコード{error_code}で発生しました。 {path} {error_message}</translation>
     </message>
     <message>
         <source>You have selected {selected_count} mod(s) for complete deletion.</source>
@@ -2952,6 +3064,10 @@ Please select your preferred mod variant in the table below. You can also open e
     <message>
         <source>Confirm Deletion and {action_capitalized}</source>
         <translation>削除を確認し、{action_capitalized}</translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3299,8 +3415,8 @@ Please select your preferred mod variant in the table below. You can also open e
         <translation>翻訳を選択</translation>
     </message>
     <message>
-        <source>Found {len(translation_mods)} translation(s). Select one to open:</source>
-        <translation>{len(translation_mods)} 件の翻訳が見つかりました。開くものを 1 つ選択してください:</translation>
+        <source>Found {count} translation(s). Select one to open:</source>
+        <translation>{count} 件の翻訳が見つかりました。開くものを 1 つ選択してください:</translation>
     </message>
     <message>
         <source>Open</source>
@@ -4441,8 +4557,8 @@ Alternative Dependencies:</source>
         <translation>設定読み込みエラー</translation>
     </message>
     <message>
-        <source>If you proceed, a backup of the corrupted file will be saved to {AppInfo().settings_backups_folder / 'settings.json.corrupted'}.</source>
-        <translation>続行すると、破損したファイルのバックアップが {AppInfo().settings_backups_folder / 'settings.json.corrupted'} に保存されます。</translation>
+        <source>If you proceed, a backup of the corrupted file will be saved to {corrupted_path}.</source>
+        <translation>続行すると、破損したファイルのバックアップが {corrupted_path} に保存されます。</translation>
     </message>
     <message>
         <source>Proceed</source>
@@ -4457,8 +4573,24 @@ Alternative Dependencies:</source>
         <translation>設定の回復に失敗しました</translation>
     </message>
     <message>
-        <source>RimSort failed to recover your settings from the backup. You may be able to manually recover your settings by restoring "settings.json.backup" or "settings.json.backup.old" from {AppInfo().settings_backups_folder} to {self._settings_file}.</source>
-        <translation>rimSort はバックアップから設定を復元できませんでした。 「settings.json.backup」または「settings.json.backup.old」を {AppInfo().settings_backups_folder} から {self._settings_file} に復元することで、設定を手動で復元できる場合があります。</translation>
+        <source>RimSort failed to recover your settings from the backup. You may be able to manually recover your settings by restoring "settings.json.backup" or "settings.json.backup.old" from {backups_folder} to {settings_file}.</source>
+        <translation>rimSort はバックアップから設定を復元できませんでした。 「settings.json.backup」または「settings.json.backup.old」を {backups_folder} から {settings_file} に復元することで、設定を手動で復元できる場合があります。</translation>
+    </message>
+    <message>
+        <source>Your settings file seems to be corrupted and cannot be loaded.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RimSort found a backup at {backup_path}. Do you want to attempt to recover your settings from this backup?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RimSort found an old backup at {backup_path}. Do you want to attempt to recover your settings from this backup?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No backup file was found, RimSort will reset your settings to defaults.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4476,16 +4608,28 @@ Alternative Dependencies:</source>
         <translation>すべての設定をデフォルト値に戻しますか？</translation>
     </message>
     <message>
-        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
-        <translation>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</translation>
+        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorld.exe, RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimWorld.app or RimWorldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorld, RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorld.exe, RimWorldWin64.exe or RimWorldWin.exe for Windows builds on Linux</source>
+        <translation>選択したゲーム フォルダには有効なRimWorld実行可能ファイルが含まれていません。&lt;br&gt;&lt;br&gt;有効なゲームの場所を選択してください。&lt;br&gt;&lt;br&gt;Windows:RimWorld.exe、RimWorldWin64.exeまたはRimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac:RimWorld.appまたはRimWorldMac.app&lt;br&gt;&lt;br&gt;Linux:RimWorld、RimWorldLinux64またはRimWorldLinux&lt;br&gt;&lt;br&gt;RimWorld.exe、RimWorldWin64.exeまたはRimWorldWin.exe Linux 上に構築された Windows 用</translation>
+    </message>
+    <message>
+        <source>The selected local mods folder location is not a valid directory.&lt;br&gt;&lt;br&gt;Please select a valid folder for local mods.&lt;br&gt;&lt;br&gt;The local mods folder should be the 'Mods' subfolder within the game content directory.</source>
+        <translation>選択したローカル MOD フォルダの場所は有効なディレクトリではありません。&lt;br&gt;&lt;br&gt;ローカル MOD 用に有効なフォルダを選択してください。&lt;br&gt;&lt;br&gt;ローカル MOD フォルダは、ゲーム コンテンツ ディレクトリ内の「Mods」サブフォルダである必要があります。</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>ゲームコンテンツが見つかりません</translation>
+    </message>
+    <message>
+        <source>The game executable is valid, but RimSort could not locate its content.</source>
+        <translation>ゲームの実行可能ファイルは有効ですが、RimSort はそのコンテンツを見つけることができませんでした。</translation>
+    </message>
+    <message>
+        <source>Version and mod discovery are incomplete. Check the game content paths.</source>
+        <translation>バージョンと MOD の検出が不完全です。ゲームコンテンツのパスを確認してください。</translation>
     </message>
     <message>
         <source>The selected config folder does not contain ModsConfig.xml.&lt;br&gt;&lt;br&gt;Please select a valid config folder.&lt;br&gt;&lt;br&gt;If you have not launched the game before,&lt;br&gt;&lt;br&gt;Please launch the game at least once to generate the necessary config files.</source>
         <translation>選択した構成フォルダーには ModsConfig.xml が含まれていません。&lt;br&gt;&lt;br&gt;有効な構成フォルダーを選択してください。&lt;br&gt;&lt;br&gt;これまでにゲームを起動したことがない場合は、&lt;br&gt;&lt;br&gt;必要な構成ファイルを生成するために、少なくとも 1 回ゲームを起動してください。</translation>
-    </message>
-    <message>
-        <source>The selected local mods folder location is not a valid directory.&lt;br&gt;&lt;br&gt;Please select a valid folder for local mods.&lt;br&gt;&lt;br&gt;The local mods folder should be a 'Mods' subfolder within the game folder.</source>
-        <translation>選択したローカル MOD フォルダの場所は有効なディレクトリではありません。&lt;br&gt;&lt;br&gt;ローカル MOD 用に有効なフォルダを選択してください。&lt;br&gt;&lt;br&gt;ローカル MOD フォルダは、ゲーム フォルダ内の「Mods」サブフォルダである必要があります。</translation>
     </message>
     <message>
         <source>Invalid Game Location</source>
@@ -5620,6 +5764,14 @@ Please reach out to us for support at: {support_url}</source>
     <message>
         <source>This will delete the selected files. Make sure you have backups if needed.</source>
         <translation>これにより、選択したファイルが削除されます。必要に応じてバックアップを取ってください。</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>ゲームコンテンツが見つかりません</translation>
+    </message>
+    <message>
+        <source>Cannot clear local mods until the game content location is resolved.</source>
+        <translation>ゲーム コンテンツの場所が解決されるまで、ローカル MOD をクリアできません。</translation>
     </message>
     <message>
         <source>Confirm Clear</source>

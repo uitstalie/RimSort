@@ -47,6 +47,46 @@
         <translation>Hiçbir şey yapma ve çık</translation>
     </message>
     <message>
+        <source>Name</source>
+        <translation type="unfinished">İsim</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished">Yazar</translation>
+    </message>
+    <message>
+        <source>Package ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Published File Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Supported Versions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Mod Downloaded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Updated on Workshop</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished">Yol</translation>
+    </message>
+    <message>
+        <source>Workshop Page</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Open Page</source>
         <translation>Sayfayı Aç</translation>
     </message>
@@ -102,8 +142,8 @@
         <translation>Eksik içe aktarma</translation>
     </message>
     <message>
-        <source>{len(failed_mods)} mods could not be imported due to missing package ids. This may happen if you don't have all the mods downloaded.&lt;br&gt;&lt;br&gt;Try subscribing to the collection first</source>
-        <translation>Eksik paket kimlikleri nedeniyle {len(failed_mods)} mod içe aktarılamadı. Tüm modları indirmediyseniz bu durum meydana gelebilir.&lt;br&gt;&lt;br&gt;Önce koleksiyona abone olmayı deneyin</translation>
+        <source>{count} mods could not be imported due to missing package ids. This may happen if you don't have all the mods downloaded.&lt;br&gt;&lt;br&gt;Try subscribing to the collection first</source>
+        <translation>Eksik paket kimlikleri nedeniyle {count} mod içe aktarılamadı. Tüm modları indirmediyseniz bu durum meydana gelebilir.&lt;br&gt;&lt;br&gt;Önce koleksiyona abone olmayı deneyin</translation>
     </message>
 </context>
 <context>
@@ -917,6 +957,14 @@ Manage mods installed from GitHub releases.</source>
         <translation>Henüz kullanılmayan yeni örneğin benzersiz bir adını girin:</translation>
     </message>
     <message>
+        <source>Game content not found</source>
+        <translation>Oyun içeriği bulunamadı</translation>
+    </message>
+    <message>
+        <source>Cannot clone this instance until its game content location is resolved.</source>
+        <translation>Oyun içeriği konumu çözümlenene kadar bu örnek kopyalanamaz.</translation>
+    </message>
+    <message>
         <source>Clone instance [{name}]</source>
         <translation>Klon örneği [{name}]</translation>
     </message>
@@ -1213,6 +1261,50 @@ Manage mods installed from GitHub releases.</source>
         <translation>Dosya yükleme başarısız.</translation>
     </message>
     <message>
+        <source>Game or config location is not set</source>
+        <translation>Oyun veya yapılandırma konumu ayarlanmamış</translation>
+    </message>
+    <message>
+        <source>Configure game and config locations before saving a mod list.</source>
+        <translation>Mod listesini kaydetmeden önce oyun ve yapılandırma konumlarını yapılandırın.</translation>
+    </message>
+    <message>
+        <source>Configured game location: {path}</source>
+        <translation>Yapılandırılmış oyun konumu: {path}</translation>
+    </message>
+    <message>
+        <source>Checked content locations: {paths}</source>
+        <translation>Kontrol edilen içerik konumları: {paths}</translation>
+    </message>
+    <message>
+        <source>Discovered Data location: {path}</source>
+        <translation>Keşfedilen Veri konumu: {path}</translation>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation>Bulunamadı</translation>
+    </message>
+    <message>
+        <source>Missing official modules: {package_ids}</source>
+        <translation>Eksik resmi modüller: {package_ids}</translation>
+    </message>
+    <message>
+        <source>The existing ModsConfig.xml could not be read or validated.</source>
+        <translation>Mevcut ModsConfig.xml okunamadı veya doğrulanamadı.</translation>
+    </message>
+    <message>
+        <source>Incomplete game content discovery</source>
+        <translation>Eksik oyun içeriği keşfi</translation>
+    </message>
+    <message>
+        <source>RimSort could not verify all official game content. Saving this list may remove Core or enabled DLC from ModsConfig.xml. Check the game content paths before continuing.</source>
+        <translation>RimSort tüm resmi oyun içeriğini doğrulayamadı. Bu listenin kaydedilmesi, Core veya etkinleştirilmiş DLC'nin ModsConfig.xml'den kaldırılmasına neden olabilir. Devam etmeden önce oyun içeriği yollarını kontrol edin.</translation>
+    </message>
+    <message>
+        <source>Save anyway</source>
+        <translation>Yine de kaydet</translation>
+    </message>
+    <message>
         <source>Could not save active mods</source>
         <translation>Aktif modlar kaydedilemedi</translation>
     </message>
@@ -1455,6 +1547,26 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>This operation will overwrite the {rules_source} database located at the following path:&lt;br&gt;&lt;br&gt;{path}</source>
         <translation>Bu işlem şu yolda bulunan {rules_source} veritabanının üzerine yazacaktır:&lt;br&gt;&lt;br&gt;{path}</translation>
+    </message>
+    <message>
+        <source>Invalid game folder</source>
+        <translation>Geçersiz oyun klasörü</translation>
+    </message>
+    <message>
+        <source>RimWorld executable was not found in the configured game location.</source>
+        <translation>RimWorld çalıştırılabilir dosyası, yapılandırılan oyun konumunda bulunamadı.</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>Oyun içeriği bulunamadı</translation>
+    </message>
+    <message>
+        <source>The game executable is valid, but RimSort could not locate its content. The game may not find its Data or Mods folders. Check the game content paths before continuing.</source>
+        <translation>Oyunun yürütülebilir dosyası geçerli, ancak RimSort içeriğini bulamadı. Oyun, Veri veya Modlar klasörlerini bulamayabilir. Devam etmeden önce oyun içeriği yollarını kontrol edin.</translation>
+    </message>
+    <message>
+        <source>Run anyway</source>
+        <translation>Yine de koş</translation>
     </message>
     <message>
         <source>todds Optimization Failed</source>
@@ -2920,8 +3032,8 @@ Lütfen aşağıdaki tabloda tercih ettiğiniz Mod varyantı seçin. Doğrulamak
         <translation>mod (lar) ı silemedi. Ayrıntılar için günlükleri kontrol edin. {result.failed_count}</translation>
     </message>
     <message>
-        <source>{e.strerror or 'Unknown error'} occurred at {e.filename or mod_path} with error code {error_code}.</source>
-        <translation>'te {error_code} hata kodu ile gerçekleşti. {e.filename or mod_path} {e.strerror or 'Unknown error'}</translation>
+        <source>{error_message} occurred at {path} with error code {error_code}.</source>
+        <translation>'te {error_code} hata kodu ile gerçekleşti. {path} {error_message}</translation>
     </message>
     <message>
         <source>You have selected {selected_count} mod(s) for complete deletion.</source>
@@ -2954,6 +3066,10 @@ Lütfen aşağıdaki tabloda tercih ettiğiniz Mod varyantı seçin. Doğrulamak
     <message>
         <source>Confirm Deletion and {action_capitalized}</source>
         <translation>Silinmeyi onaylayın ve  {action_capitalized}</translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3329,8 +3445,8 @@ Lütfen aşağıdaki tabloda tercih ettiğiniz Mod varyantı seçin. Doğrulamak
         <translation>Çeviri Seç</translation>
     </message>
     <message>
-        <source>Found {len(translation_mods)} translation(s). Select one to open:</source>
-        <translation>{len(translation_mods)} çeviri bulundu. Açmak için birini seçin:</translation>
+        <source>Found {count} translation(s). Select one to open:</source>
+        <translation>{count} çeviri bulundu. Açmak için birini seçin:</translation>
     </message>
     <message>
         <source>Open</source>
@@ -4440,8 +4556,8 @@ An alternative updated mod is recommended:
         <translation>Ayarlar Yükleme Hatası</translation>
     </message>
     <message>
-        <source>If you proceed, a backup of the corrupted file will be saved to {AppInfo().settings_backups_folder / 'settings.json.corrupted'}.</source>
-        <translation>Devam ederseniz, bozuk dosyanın bir yedeği {AppInfo().settings_backups_folder / 'settings.json.corrupted'} klasörüne kaydedilecektir.</translation>
+        <source>If you proceed, a backup of the corrupted file will be saved to {corrupted_path}.</source>
+        <translation>Devam ederseniz, bozuk dosyanın bir yedeği {corrupted_path} klasörüne kaydedilecektir.</translation>
     </message>
     <message>
         <source>Proceed</source>
@@ -4456,8 +4572,24 @@ An alternative updated mod is recommended:
         <translation>Ayarları Kurtarma Başarısız Oldu</translation>
     </message>
     <message>
-        <source>RimSort failed to recover your settings from the backup. You may be able to manually recover your settings by restoring "settings.json.backup" or "settings.json.backup.old" from {AppInfo().settings_backups_folder} to {self._settings_file}.</source>
-        <translation>RimSort, ayarlarınızı yedeklemeden kurtaramadı. "settings.json.backup" veya "settings.json.backup.old" dosyasını {AppInfo().settings_backups_folder} konumundan {self._settings_file} konumuna geri yükleyerek ayarlarınızı manuel olarak kurtarabilirsiniz.</translation>
+        <source>RimSort failed to recover your settings from the backup. You may be able to manually recover your settings by restoring "settings.json.backup" or "settings.json.backup.old" from {backups_folder} to {settings_file}.</source>
+        <translation>RimSort, ayarlarınızı yedeklemeden kurtaramadı. "settings.json.backup" veya "settings.json.backup.old" dosyasını {backups_folder} konumundan {settings_file} konumuna geri yükleyerek ayarlarınızı manuel olarak kurtarabilirsiniz.</translation>
+    </message>
+    <message>
+        <source>Your settings file seems to be corrupted and cannot be loaded.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RimSort found a backup at {backup_path}. Do you want to attempt to recover your settings from this backup?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RimSort found an old backup at {backup_path}. Do you want to attempt to recover your settings from this backup?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No backup file was found, RimSort will reset your settings to defaults.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4475,16 +4607,28 @@ An alternative updated mod is recommended:
         <translation>Tüm ayarları varsayılan değerlerine sıfırlamak istediğinizden emin misiniz?</translation>
     </message>
     <message>
-        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
-        <translation>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</translation>
+        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorld.exe, RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimWorld.app or RimWorldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorld, RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorld.exe, RimWorldWin64.exe or RimWorldWin.exe for Windows builds on Linux</source>
+        <translation>Seçilen oyun klasörü geçerli bir RimWorld çalıştırılabilir dosyası içermiyor.&lt;br&gt;&lt;br&gt;Lütfen geçerli bir oyun konumu seçin.&lt;br&gt;&lt;br&gt;Windows: RimWorld.exe, RimWorldWin64.exe veya RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimWorld.app veya RimWorldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorld, RimWorldLinux64 veya RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorld.exe, Windows için RimWorldWin64.exe veya RimWorldWin.exe, Linux üzerine kuruludur</translation>
+    </message>
+    <message>
+        <source>The selected local mods folder location is not a valid directory.&lt;br&gt;&lt;br&gt;Please select a valid folder for local mods.&lt;br&gt;&lt;br&gt;The local mods folder should be the 'Mods' subfolder within the game content directory.</source>
+        <translation>Seçilen yerel modlar klasörü konumu geçerli bir dizin değil.&lt;br&gt;&lt;br&gt;Lütfen yerel modlar için geçerli bir klasör seçin.&lt;br&gt;&lt;br&gt;Yerel modlar klasörü, oyun içerik dizini içindeki 'Modlar' alt klasörü olmalıdır.</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>Oyun içeriği bulunamadı</translation>
+    </message>
+    <message>
+        <source>The game executable is valid, but RimSort could not locate its content.</source>
+        <translation>Oyunun yürütülebilir dosyası geçerli, ancak RimSort içeriğini bulamadı.</translation>
+    </message>
+    <message>
+        <source>Version and mod discovery are incomplete. Check the game content paths.</source>
+        <translation>Sürüm ve mod keşfi tamamlanmadı. Oyunun içerik yollarını kontrol edin.</translation>
     </message>
     <message>
         <source>The selected config folder does not contain ModsConfig.xml.&lt;br&gt;&lt;br&gt;Please select a valid config folder.&lt;br&gt;&lt;br&gt;If you have not launched the game before,&lt;br&gt;&lt;br&gt;Please launch the game at least once to generate the necessary config files.</source>
         <translation>Seçilen yapılandırma klasörü ModsConfig.xml içermiyor.&lt;br&gt;&lt;br&gt;Lütfen geçerli bir yapılandırma klasörü seçin.&lt;br&gt;&lt;br&gt;Oyunu daha önce başlatmadıysanız,&lt;br&gt;&lt;br&gt;Gerekli yapılandırma dosyalarını oluşturmak için lütfen oyunu en az bir kez başlatın.</translation>
-    </message>
-    <message>
-        <source>The selected local mods folder location is not a valid directory.&lt;br&gt;&lt;br&gt;Please select a valid folder for local mods.&lt;br&gt;&lt;br&gt;The local mods folder should be a 'Mods' subfolder within the game folder.</source>
-        <translation>Seçilen yerel modlar klasörü konumu geçerli bir dizin değil.&lt;br&gt;&lt;br&gt;Lütfen yerel modlar için geçerli bir klasör seçin.&lt;br&gt;&lt;br&gt;Yerel modlar klasörü, oyun klasörü içindeki bir 'Modlar' alt klasörü olmalıdır.</translation>
     </message>
     <message>
         <source>Invalid Game Location</source>
@@ -5632,6 +5776,14 @@ Destek için lütfen bize ulaşın: {support_url} {development_guide_url}</trans
     <message>
         <source>This will delete the selected files. Make sure you have backups if needed.</source>
         <translation>Bu, seçilen dosyaları silecektir. Gerekirse yedeklemeleriniz olduğundan emin olun.</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>Oyun içeriği bulunamadı</translation>
+    </message>
+    <message>
+        <source>Cannot clear local mods until the game content location is resolved.</source>
+        <translation>Oyun içeriği konumu çözümlenene kadar yerel modlar temizlenemez.</translation>
     </message>
     <message>
         <source>Confirm Clear</source>

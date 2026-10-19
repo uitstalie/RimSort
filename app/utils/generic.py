@@ -1,5 +1,6 @@
 import os
 import platform
+import shlex
 import shutil
 import subprocess
 import sys
@@ -21,6 +22,7 @@ from loguru import logger
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QApplication
 
+from app.services.game_layout_service import find_game_executable, resolve_game_layout
 from app.utils import http
 from app.utils.launch_command_parser import parse_launch_command
 from app.utils.platform.windows import scanpath_win32
@@ -29,7 +31,7 @@ from app.views import dialogue
 translate = QCoreApplication.translate
 
 
-def chunks(_list: list[Any], limit: int) -> Generator[list[Any], None, None]:
+def chunks(_list: list[Any], limit: int) -> Generator[list[Any]]:
     """
     Split list into chunks no larger than the configured limit
 
@@ -180,7 +182,7 @@ def delete_files_only_extension(directory: Path | str, extension: str) -> bool:
 
 def scanpath(
     path: Path | str,
-) -> Generator[os.DirEntry[str] | Any, None, None]:
+) -> Generator[os.DirEntry[str] | Any]:
     if sys.platform == "win32":
         try:
             yield from scanpath_win32(path)
@@ -249,43 +251,41 @@ def get_executable_path(game_install_path: Path) -> str | None:
     :param game_install_path: Path to the game folder.
     :return: Executable path as string or None if not found.
     """
-    system_name = platform.system()
+    executable = find_game_executable(game_install_path, platform.system())
+    return str(executable) if executable is not None else None
 
-    # Define platform-specific executable checks
-    platform_checks = {
-        "Darwin": lambda p: str(p) if p.suffix == ".app" and p.is_dir() else None,
-        "Linux": lambda p: next(
-            (
-                str(exe)
-                for exe in [
-                    p / "RimWorldLinux64",
-                    p / "RimWorldLinux",
-                    p / "RimWorldWin64.exe",
-                    p / "RimWorldWin.exe",
-                ]
-                if exe.exists()
-                and (
-                    not exe.name.startswith("RimWorldLinux") or os.access(exe, os.X_OK)
-                )
-            ),
-            None,
-        ),
-        "Windows": lambda p: next(
-            (
-                str(exe)
-                for exe in [p / "RimWorldWin64.exe", p / "RimWorldWin.exe"]
-                if exe.exists()
-            ),
-            None,
-        ),
-    }
 
-    check_func = platform_checks.get(system_name)
-    if check_func:
-        return check_func(game_install_path)
-    else:
-        logger.error(f"Unsupported platform for game launch: {system_name}")
-        return None
+def apply_launch_prefix(executable_path: str, args: list[str]) -> tuple[str, list[str]]:
+    """
+    Prefix an executable launch with the ``RIMSORT_LAUNCH_PREFIX`` command, if set.
+
+    On Linux, packaged builds (e.g. Nix) may need real executables such as
+    RimWorld or SteamCMD to run inside an FHS environment. The packager sets
+    ``RIMSORT_LAUNCH_PREFIX`` to a launcher command (e.g. the path to
+    ``steam-run``), which is inserted directly before the executable:
+    ``<prefix> <executable> <args...>``. The value is split with shell-like
+    quoting, so multi-word prefixes are supported.
+
+    The prefix is ignored on macOS and Windows, where the mechanism does not
+    apply (macOS launches via the ``open`` command).
+
+    :param executable_path: path to the executable to launch
+    :param args: arguments for the executable
+    :return: tuple of (program to run, complete argument list)
+    """
+    raw_prefix = os.getenv("RIMSORT_LAUNCH_PREFIX", "").strip()
+    if not raw_prefix:
+        return executable_path, args
+    if platform.system() != "Linux":
+        logger.debug(
+            f"Ignoring RIMSORT_LAUNCH_PREFIX on non-Linux platform: {platform.system()}"
+        )
+        return executable_path, args
+    prefix = shlex.split(raw_prefix)
+    if not prefix:
+        return executable_path, args
+    logger.info(f"Applying RIMSORT_LAUNCH_PREFIX to launch: {prefix}")
+    return prefix[0], prefix[1:] + [executable_path, *args]
 
 
 def launch_game_process(
@@ -297,7 +297,8 @@ def launch_game_process(
 
     This function initializes the Steamworks API to be used by the RimWorld game.
 
-    The game will be launched with the game install path being the working directory.
+    Linux/Windows use the validated content root as cwd, or the executable's parent
+    when content is unresolved. macOS retains the selected bundle's open behavior.
 
     :param game_install_path: is a path to the game folder
     :param run_args: a launch command string with optional Steam-style
@@ -354,10 +355,17 @@ def launch_game_process(
         f"with env_vars: {list(env_vars.keys())}, wrappers: {wrapper_commands}, "
         f"args: {game_args}, nice: {process_nice}"
     )
+    executable_path, game_args = apply_launch_prefix(executable_path, game_args)
+    cwd = game_install_path
+    if platform.system() != "Darwin":
+        layout = resolve_game_layout(game_install_path)
+        cwd = (
+            layout.content_root if layout is not None else Path(executable_path).parent
+        )
     pid, popen_args = launch_process(
         executable_path,
         game_args,
-        str(game_install_path),
+        str(cwd),
         env_vars=env_vars,
         wrapper_commands=wrapper_commands,
         process_nice=process_nice,
@@ -901,7 +909,7 @@ def get_relative_time(timestamp: int) -> str:
             return f"{delta.seconds // 60} minutes ago"
         else:
             return "Just now"
-    except (ValueError, TypeError):
+    except ValueError, TypeError:
         return "Invalid timestamp"
 
 
@@ -923,7 +931,7 @@ def format_time_display(timestamp: int | None) -> tuple[str, int | None]:
         abs_time = strftime("%Y-%m-%d %H:%M:%S", localtime(timestamp))
         rel_time = get_relative_time(timestamp)
         return f"{abs_time} | {rel_time}", timestamp
-    except (ValueError, TypeError, OSError):
+    except ValueError, TypeError, OSError:
         return "Invalid timestamp", None
 
 

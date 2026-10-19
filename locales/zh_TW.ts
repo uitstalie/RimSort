@@ -47,6 +47,46 @@
         <translation>取消並退出</translation>
     </message>
     <message>
+        <source>Name</source>
+        <translation type="unfinished">名稱</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished">作者</translation>
+    </message>
+    <message>
+        <source>Package ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Published File Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Supported Versions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Mod Downloaded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Updated on Workshop</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished">路徑</translation>
+    </message>
+    <message>
+        <source>Workshop Page</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Open Page</source>
         <translation>打開頁面</translation>
     </message>
@@ -102,8 +142,8 @@
         <translation>導入不完整</translation>
     </message>
     <message>
-        <source>{len(failed_mods)} mods could not be imported due to missing package ids. This may happen if you don't have all the mods downloaded.&lt;br&gt;&lt;br&gt;Try subscribing to the collection first</source>
-        <translation>由於缺少套件 ID，無法匯入 {len(failed_mods)} mod。如果您沒有下載所有模組，則可能會發生這種情況。 &lt;br&gt;&lt;br&gt;請先嘗試訂閱該合集</translation>
+        <source>{count} mods could not be imported due to missing package ids. This may happen if you don't have all the mods downloaded.&lt;br&gt;&lt;br&gt;Try subscribing to the collection first</source>
+        <translation>由於缺少套件 ID，無法匯入 {count} mod。如果您沒有下載所有模組，則可能會發生這種情況。 &lt;br&gt;&lt;br&gt;請先嘗試訂閱該合集</translation>
     </message>
 </context>
 <context>
@@ -917,6 +957,14 @@ Manage mods installed from GitHub releases.</source>
         <translation>輸入尚未使用的新實例的唯一名稱：</translation>
     </message>
     <message>
+        <source>Game content not found</source>
+        <translation>找不到遊戲內容</translation>
+    </message>
+    <message>
+        <source>Cannot clone this instance until its game content location is resolved.</source>
+        <translation>在解析其遊戲內容位置之前，無法複製此實例。</translation>
+    </message>
+    <message>
         <source>Clone instance [{name}]</source>
         <translation>克隆實例 [{name}]</translation>
     </message>
@@ -1195,6 +1243,50 @@ Manage mods installed from GitHub releases.</source>
         <translation>上傳文件失敗</translation>
     </message>
     <message>
+        <source>Game or config location is not set</source>
+        <translation>未設定遊戲或配置位置</translation>
+    </message>
+    <message>
+        <source>Configure game and config locations before saving a mod list.</source>
+        <translation>在儲存模組清單之前配置遊戲和配置位置。</translation>
+    </message>
+    <message>
+        <source>Configured game location: {path}</source>
+        <translation>配置的遊戲位置：{path}</translation>
+    </message>
+    <message>
+        <source>Checked content locations: {paths}</source>
+        <translation>檢查的內容位置：{paths}</translation>
+    </message>
+    <message>
+        <source>Discovered Data location: {path}</source>
+        <translation>發現資料位置：{path}</translation>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation>未找到</translation>
+    </message>
+    <message>
+        <source>Missing official modules: {package_ids}</source>
+        <translation>缺少官方模組：{package_ids}</translation>
+    </message>
+    <message>
+        <source>The existing ModsConfig.xml could not be read or validated.</source>
+        <translation>無法讀取或驗證現有的 ModsConfig.xml。</translation>
+    </message>
+    <message>
+        <source>Incomplete game content discovery</source>
+        <translation>Incomplete game content discovery</translation>
+    </message>
+    <message>
+        <source>RimSort could not verify all official game content. Saving this list may remove Core or enabled DLC from ModsConfig.xml. Check the game content paths before continuing.</source>
+        <translation>RimSort could not verify all official game content. Saving this list may remove Core or enabled DLC from ModsConfig.xml. Check the game content paths before continuing.</translation>
+    </message>
+    <message>
+        <source>Save anyway</source>
+        <translation>無論如何都要保存</translation>
+    </message>
+    <message>
         <source>Could not save active mods</source>
         <translation>無法保存啟用模組</translation>
     </message>
@@ -1429,6 +1521,26 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>This operation will overwrite the {rules_source} database located at the following path:&lt;br&gt;&lt;br&gt;{path}</source>
         <translation>此操作將覆寫位於下列路徑的 {rules_source} 資料庫：&lt;br&gt;&lt;br&gt;{path}</translation>
+    </message>
+    <message>
+        <source>Invalid game folder</source>
+        <translation>遊戲資料夾無效</translation>
+    </message>
+    <message>
+        <source>RimWorld executable was not found in the configured game location.</source>
+        <translation>在配置的遊戲位置中找不到 RimWorld 可執行檔。</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>找不到遊戲內容</translation>
+    </message>
+    <message>
+        <source>The game executable is valid, but RimSort could not locate its content. The game may not find its Data or Mods folders. Check the game content paths before continuing.</source>
+        <translation>游戏可执行文件有效，但 RimSort 无法找到其内容。游戏可能找不到其 Data 或 Mods 文件夹。在繼續之前檢查遊戲內容路徑。</translation>
+    </message>
+    <message>
+        <source>Run anyway</source>
+        <translation>無論如何都要跑</translation>
     </message>
     <message>
         <source>todds Optimization Failed</source>
@@ -2919,8 +3031,8 @@ Steam Workshop 上的 RimWorld 模組如果共享相同的 包名，則為 '變�
         <translation>無法刪除{result.failed_count} mod（s）。檢查日誌以獲取詳細資訊。</translation>
     </message>
     <message>
-        <source>{e.strerror or 'Unknown error'} occurred at {e.filename or mod_path} with error code {error_code}.</source>
-        <translation>發生在帶有錯誤代碼{error_code}的。 {e.strerror or 'Unknown error'} {e.filename or mod_path}</translation>
+        <source>{error_message} occurred at {path} with error code {error_code}.</source>
+        <translation>發生在帶有錯誤代碼{error_code}的。 {error_message} {path}</translation>
     </message>
     <message>
         <source>You have selected {selected_count} mod(s) for complete deletion.</source>
@@ -2953,6 +3065,10 @@ Steam Workshop 上的 RimWorld 模組如果共享相同的 包名，則為 '變�
     <message>
         <source>Confirm Deletion and {action_capitalized}</source>
         <translation>確認刪除和{action_capitalized}</translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3300,8 +3416,8 @@ Steam Workshop 上的 RimWorld 模組如果共享相同的 包名，則為 '變�
         <translation>選擇翻譯</translation>
     </message>
     <message>
-        <source>Found {len(translation_mods)} translation(s). Select one to open:</source>
-        <translation>找到 {len(translation_mods)} 翻譯。選擇一項開啟：</translation>
+        <source>Found {count} translation(s). Select one to open:</source>
+        <translation>找到 {count} 翻譯。選擇一項開啟：</translation>
     </message>
     <message>
         <source>Open</source>
@@ -4445,8 +4561,8 @@ Alternative Dependencies:</source>
         <translation>設定載入錯誤</translation>
     </message>
     <message>
-        <source>If you proceed, a backup of the corrupted file will be saved to {AppInfo().settings_backups_folder / 'settings.json.corrupted'}.</source>
-        <translation>如果繼續，損壞檔案的備份將會儲存到 {AppInfo().settings_backups_folder / 'settings.json.corrupted'}。</translation>
+        <source>If you proceed, a backup of the corrupted file will be saved to {corrupted_path}.</source>
+        <translation>如果繼續，損壞檔案的備份將會儲存到 {corrupted_path}。</translation>
     </message>
     <message>
         <source>Proceed</source>
@@ -4461,8 +4577,24 @@ Alternative Dependencies:</source>
         <translation>Settings Recovery Failed</translation>
     </message>
     <message>
-        <source>RimSort failed to recover your settings from the backup. You may be able to manually recover your settings by restoring "settings.json.backup" or "settings.json.backup.old" from {AppInfo().settings_backups_folder} to {self._settings_file}.</source>
-        <translation>RimSort 无法从备份恢复您的设置。您可以透過將「settings.json.backup」或「settings.json.backup.old」從 {AppInfo().settings_backups_folder} 還原到 {self._settings_file} 來手動恢復您的設定。</translation>
+        <source>RimSort failed to recover your settings from the backup. You may be able to manually recover your settings by restoring "settings.json.backup" or "settings.json.backup.old" from {backups_folder} to {settings_file}.</source>
+        <translation>RimSort 无法从备份恢复您的设置。您可以透過將「settings.json.backup」或「settings.json.backup.old」從 {backups_folder} 還原到 {settings_file} 來手動恢復您的設定。</translation>
+    </message>
+    <message>
+        <source>Your settings file seems to be corrupted and cannot be loaded.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RimSort found a backup at {backup_path}. Do you want to attempt to recover your settings from this backup?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RimSort found an old backup at {backup_path}. Do you want to attempt to recover your settings from this backup?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No backup file was found, RimSort will reset your settings to defaults.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4480,16 +4612,28 @@ Alternative Dependencies:</source>
         <translation>你確定要將所有設置恢復為預設值嗎？</translation>
     </message>
     <message>
-        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
-        <translation>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</translation>
+        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorld.exe, RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimWorld.app or RimWorldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorld, RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorld.exe, RimWorldWin64.exe or RimWorldWin.exe for Windows builds on Linux</source>
+        <translation>所選遊戲資料夾不包含有效的 RimWorld 可執行檔。 &lt;br&gt;&lt;br&gt;請選擇有效的遊戲位置。 &lt;br&gt;&lt;br&gt;Windows：RimWorld.exe、RimWorldWin64.exe 或 RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac：RimWorld.app 或 RimWorldMac.app&lt;br&gt;&lt;br&gt;Linux：RimWorld、RimWorldLinux？</translation>
+    </message>
+    <message>
+        <source>The selected local mods folder location is not a valid directory.&lt;br&gt;&lt;br&gt;Please select a valid folder for local mods.&lt;br&gt;&lt;br&gt;The local mods folder should be the 'Mods' subfolder within the game content directory.</source>
+        <translation>The selected local mods folder location is not a valid directory.&lt;br&gt;&lt;br&gt;Please select a valid folder for local mods.&lt;br&gt;&lt;br&gt;The local mods folder should be the 'Mods' subfolder within the game content directory.</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>找不到遊戲內容</translation>
+    </message>
+    <message>
+        <source>The game executable is valid, but RimSort could not locate its content.</source>
+        <translation>遊戲可執行檔有效，但 RimSort 無法找到其內容。</translation>
+    </message>
+    <message>
+        <source>Version and mod discovery are incomplete. Check the game content paths.</source>
+        <translation>版本和模組發現不完整。檢查遊戲內容路徑。</translation>
     </message>
     <message>
         <source>The selected config folder does not contain ModsConfig.xml.&lt;br&gt;&lt;br&gt;Please select a valid config folder.&lt;br&gt;&lt;br&gt;If you have not launched the game before,&lt;br&gt;&lt;br&gt;Please launch the game at least once to generate the necessary config files.</source>
         <translation>所選的設定資料夾不包含 ModsConfig.xml。 &lt;br&gt;&lt;br&gt;請選擇有效的設定資料夾。 &lt;br&gt;&lt;br&gt;如果您之前未啟動過遊戲，&lt;br&gt;&lt;br&gt;請至少啟動遊戲一次以產生必要的設定檔。</translation>
-    </message>
-    <message>
-        <source>The selected local mods folder location is not a valid directory.&lt;br&gt;&lt;br&gt;Please select a valid folder for local mods.&lt;br&gt;&lt;br&gt;The local mods folder should be a 'Mods' subfolder within the game folder.</source>
-        <translation>所選的本機 mods 資料夾位置不是有效的目錄。 &lt;br&gt;&lt;br&gt;請為本機 mods 選擇一個有效的資料夾。 &lt;br&gt;&lt;br&gt;本地 mods 資料夾應該是遊戲資料夾內的「Mods」子資料夾。</translation>
     </message>
     <message>
         <source>Invalid Game Location</source>
@@ -5626,6 +5770,14 @@ Please reach out to us for support at: {support_url}</source>
     <message>
         <source>This will delete the selected files. Make sure you have backups if needed.</source>
         <translation>這將刪除選定的文件。確保你有備份，如果需要的話。</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>找不到遊戲內容</translation>
+    </message>
+    <message>
+        <source>Cannot clear local mods until the game content location is resolved.</source>
+        <translation>在解決遊戲內容位置之前無法清除本機模組。</translation>
     </message>
     <message>
         <source>Confirm Clear</source>

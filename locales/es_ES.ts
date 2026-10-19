@@ -47,6 +47,46 @@
         <translation>No hacer nada y salir</translation>
     </message>
     <message>
+        <source>Name</source>
+        <translation type="unfinished">Nombre</translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished">Autor</translation>
+    </message>
+    <message>
+        <source>Package ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Published File Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Supported Versions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Mod Downloaded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Updated on Workshop</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished">Ruta</translation>
+    </message>
+    <message>
+        <source>Workshop Page</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Open Page</source>
         <translation>Abrir página</translation>
     </message>
@@ -102,8 +142,8 @@
         <translation>Importación incompleta</translation>
     </message>
     <message>
-        <source>{len(failed_mods)} mods could not be imported due to missing package ids. This may happen if you don't have all the mods downloaded.&lt;br&gt;&lt;br&gt;Try subscribing to the collection first</source>
-        <translation>Los mods {len(failed_mods)} no se pudieron importar debido a que faltan identificadores de paquete. Esto puede suceder si no tienes todos los mods descargados.&lt;br&gt;&lt;br&gt;Primero intenta suscribirte a la colección.</translation>
+        <source>{count} mods could not be imported due to missing package ids. This may happen if you don't have all the mods downloaded.&lt;br&gt;&lt;br&gt;Try subscribing to the collection first</source>
+        <translation>Los mods {count} no se pudieron importar debido a que faltan identificadores de paquete. Esto puede suceder si no tienes todos los mods descargados.&lt;br&gt;&lt;br&gt;Primero intenta suscribirte a la colección.</translation>
     </message>
 </context>
 <context>
@@ -917,6 +957,14 @@ Manage mods installed from GitHub releases.</source>
         <translation>Introduce un nombre único para la nueva instancia que no esté ya en uso:</translation>
     </message>
     <message>
+        <source>Game content not found</source>
+        <translation>Contenido del juego no encontrado</translation>
+    </message>
+    <message>
+        <source>Cannot clone this instance until its game content location is resolved.</source>
+        <translation>No se puede clonar esta instancia hasta que se resuelva la ubicación del contenido del juego.</translation>
+    </message>
+    <message>
         <source>Clone instance [{name}]</source>
         <translation>Clonar instancia [{name}]</translation>
     </message>
@@ -1197,6 +1245,50 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>Failed to upload log file to RimSort Logs.</source>
         <translation>Failed to upload log file to RimSort Logs.</translation>
+    </message>
+    <message>
+        <source>Game or config location is not set</source>
+        <translation>La ubicación del juego o de la configuración no está establecida</translation>
+    </message>
+    <message>
+        <source>Configure game and config locations before saving a mod list.</source>
+        <translation>Configure las ubicaciones del juego y la configuración antes de guardar una lista de mods.</translation>
+    </message>
+    <message>
+        <source>Configured game location: {path}</source>
+        <translation>Ubicación del juego configurada: {ruta}</translation>
+    </message>
+    <message>
+        <source>Checked content locations: {paths}</source>
+        <translation>Ubicaciones de contenido marcadas: {paths}</translation>
+    </message>
+    <message>
+        <source>Discovered Data location: {path}</source>
+        <translation>Ubicación de los datos descubiertos: {ruta}</translation>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation>Extraviado</translation>
+    </message>
+    <message>
+        <source>Missing official modules: {package_ids}</source>
+        <translation>Módulos oficiales faltantes: {package_ids}</translation>
+    </message>
+    <message>
+        <source>The existing ModsConfig.xml could not be read or validated.</source>
+        <translation>El ModsConfig.xml existente no se pudo leer ni validar.</translation>
+    </message>
+    <message>
+        <source>Incomplete game content discovery</source>
+        <translation>Descubrimiento de contenido de juego incompleto</translation>
+    </message>
+    <message>
+        <source>RimSort could not verify all official game content. Saving this list may remove Core or enabled DLC from ModsConfig.xml. Check the game content paths before continuing.</source>
+        <translation>RimSort no pudo verificar todo el contenido oficial del juego. Guardar esta lista puede eliminar el Core o el DLC habilitado de ModsConfig.xml. Verifique las rutas del contenido del juego antes de continuar.</translation>
+    </message>
+    <message>
+        <source>Save anyway</source>
+        <translation>Guardar de todos modos</translation>
     </message>
     <message>
         <source>Could not save active mods</source>
@@ -1489,6 +1581,26 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>Please reconfigure the expiry value with an integer in terms of the seconds from epoch you would like your query to expire.</source>
         <translation>Por favor, reconfigura el valor de expiración con un entero en términos de los segundos desde la época en que te gustaría que tu consulta expirara.</translation>
+    </message>
+    <message>
+        <source>Invalid game folder</source>
+        <translation>Carpeta de juego no válida</translation>
+    </message>
+    <message>
+        <source>RimWorld executable was not found in the configured game location.</source>
+        <translation>El ejecutable de RimWorld no se encontró en la ubicación configurada del juego.</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>Contenido del juego no encontrado</translation>
+    </message>
+    <message>
+        <source>The game executable is valid, but RimSort could not locate its content. The game may not find its Data or Mods folders. Check the game content paths before continuing.</source>
+        <translation>El ejecutable del juego es válido, pero RimSort no pudo localizar su contenido. Es posible que el juego no encuentre sus carpetas de Datos o Mods. Verifique las rutas del contenido del juego antes de continuar.</translation>
+    </message>
+    <message>
+        <source>Run anyway</source>
+        <translation>Corre de todos modos</translation>
     </message>
     <message>
         <source>todds Optimization Failed</source>
@@ -2919,8 +3031,8 @@ Seleccione su variante de mod de Mod en la tabla a continuación. También puede
         <translation>No se pudo eliminar  mod (s). Verifique los registros para más detalles. {result.failed_count}</translation>
     </message>
     <message>
-        <source>{e.strerror or 'Unknown error'} occurred at {e.filename or mod_path} with error code {error_code}.</source>
-        <translation>ocurrió en  con código de error . {error_code} {e.filename or mod_path} {e.strerror or 'Unknown error'}</translation>
+        <source>{error_message} occurred at {path} with error code {error_code}.</source>
+        <translation>ocurrió en  con código de error . {error_code} {path} {error_message}</translation>
     </message>
     <message>
         <source>You have selected {selected_count} mod(s) for complete deletion.</source>
@@ -2953,6 +3065,10 @@ Seleccione su variante de mod de Mod en la tabla a continuación. También puede
     <message>
         <source>Confirm Deletion and {action_capitalized}</source>
         <translation>Confirmar la eliminación y {action_capitalized}</translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3381,8 +3497,8 @@ Should be Loaded Before:</source>
         <translation>Seleccionar traducción</translation>
     </message>
     <message>
-        <source>Found {len(translation_mods)} translation(s). Select one to open:</source>
-        <translation>Se encontraron {len(translation_mods)} traducciones. Seleccione uno para abrir:</translation>
+        <source>Found {count} translation(s). Select one to open:</source>
+        <translation>Se encontraron {count} traducciones. Seleccione uno para abrir:</translation>
     </message>
     <message>
         <source>Open</source>
@@ -4439,8 +4555,8 @@ Alternative Dependencies:</source>
         <translation>Error de carga de configuración</translation>
     </message>
     <message>
-        <source>If you proceed, a backup of the corrupted file will be saved to {AppInfo().settings_backups_folder / 'settings.json.corrupted'}.</source>
-        <translation>Si continúa, se guardará una copia de seguridad del archivo dañado en {AppInfo().settings_backups_folder / 'settings.json.corrupted'}.</translation>
+        <source>If you proceed, a backup of the corrupted file will be saved to {corrupted_path}.</source>
+        <translation>Si continúa, se guardará una copia de seguridad del archivo dañado en {corrupted_path}.</translation>
     </message>
     <message>
         <source>Proceed</source>
@@ -4455,8 +4571,24 @@ Alternative Dependencies:</source>
         <translation>La recuperación de la configuración falló</translation>
     </message>
     <message>
-        <source>RimSort failed to recover your settings from the backup. You may be able to manually recover your settings by restoring "settings.json.backup" or "settings.json.backup.old" from {AppInfo().settings_backups_folder} to {self._settings_file}.</source>
-        <translation>RimSort no pudo recuperar su configuración de la copia de seguridad. Es posible que puedas recuperar manualmente tu configuración restaurando "settings.json.backup" o "settings.json.backup.old" de {AppInfo().settings_backups_folder} a {self._settings_file}.</translation>
+        <source>RimSort failed to recover your settings from the backup. You may be able to manually recover your settings by restoring "settings.json.backup" or "settings.json.backup.old" from {backups_folder} to {settings_file}.</source>
+        <translation>RimSort no pudo recuperar su configuración de la copia de seguridad. Es posible que puedas recuperar manualmente tu configuración restaurando "settings.json.backup" o "settings.json.backup.old" de {backups_folder} a {settings_file}.</translation>
+    </message>
+    <message>
+        <source>Your settings file seems to be corrupted and cannot be loaded.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RimSort found a backup at {backup_path}. Do you want to attempt to recover your settings from this backup?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RimSort found an old backup at {backup_path}. Do you want to attempt to recover your settings from this backup?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No backup file was found, RimSort will reset your settings to defaults.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4474,16 +4606,28 @@ Alternative Dependencies:</source>
         <translation>¿Está seguro de que desea restablecer todas las configuraciones a sus valores predeterminados?</translation>
     </message>
     <message>
-        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</source>
-        <translation>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimworldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorldWin64.exe or RimWorldWin.exe if you using windows version of the game on Linux</translation>
+        <source>The selected game folder does not contain a valid RimWorld executable.&lt;br&gt;&lt;br&gt;Please select a valid game location.&lt;br&gt;&lt;br&gt;Windows: RimWorld.exe, RimWorldWin64.exe or RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimWorld.app or RimWorldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorld, RimWorldLinux64 or RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorld.exe, RimWorldWin64.exe or RimWorldWin.exe for Windows builds on Linux</source>
+        <translation>La carpeta del juego seleccionado no contiene un ejecutable de RimWorld válido.&lt;br&gt;&lt;br&gt;Seleccione una ubicación de juego válida.&lt;br&gt;&lt;br&gt;Windows: RimWorld.exe, RimWorldWin64.exe o RimWorldWin.exe&lt;br&gt;&lt;br&gt;Mac: RimWorld.app o RimWorldMac.app&lt;br&gt;&lt;br&gt;Linux: RimWorld, RimWorldLinux64 o RimWorldLinux&lt;br&gt;&lt;br&gt;RimWorld.exe, RimWorldWin64.exe o RimWorldWin.exe para Windows se basa en Linux</translation>
+    </message>
+    <message>
+        <source>The selected local mods folder location is not a valid directory.&lt;br&gt;&lt;br&gt;Please select a valid folder for local mods.&lt;br&gt;&lt;br&gt;The local mods folder should be the 'Mods' subfolder within the game content directory.</source>
+        <translation>La ubicación de la carpeta de modificaciones locales seleccionada no es un directorio válido.&lt;br&gt;&lt;br&gt;Seleccione una carpeta válida para las modificaciones locales.&lt;br&gt;&lt;br&gt;La carpeta de modificaciones locales debe ser la subcarpeta 'Mods' dentro del directorio de contenido del juego.</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>Contenido del juego no encontrado</translation>
+    </message>
+    <message>
+        <source>The game executable is valid, but RimSort could not locate its content.</source>
+        <translation>El ejecutable del juego es válido, pero RimSort no pudo localizar su contenido.</translation>
+    </message>
+    <message>
+        <source>Version and mod discovery are incomplete. Check the game content paths.</source>
+        <translation>El descubrimiento de versiones y mods está incompleto. Verifique las rutas del contenido del juego.</translation>
     </message>
     <message>
         <source>The selected config folder does not contain ModsConfig.xml.&lt;br&gt;&lt;br&gt;Please select a valid config folder.&lt;br&gt;&lt;br&gt;If you have not launched the game before,&lt;br&gt;&lt;br&gt;Please launch the game at least once to generate the necessary config files.</source>
         <translation>La carpeta de configuración seleccionada no contiene ModsConfig.xml.&lt;br&gt;&lt;br&gt;Selecciona una carpeta de configuración válida.&lt;br&gt;&lt;br&gt;Si no has iniciado el juego antes,&lt;br&gt;&lt;br&gt;Inicia el juego al menos una vez para generar los archivos de configuración necesarios.</translation>
-    </message>
-    <message>
-        <source>The selected local mods folder location is not a valid directory.&lt;br&gt;&lt;br&gt;Please select a valid folder for local mods.&lt;br&gt;&lt;br&gt;The local mods folder should be a 'Mods' subfolder within the game folder.</source>
-        <translation>La ubicación de la carpeta de mods locales seleccionada no es un directorio válido.&lt;br&gt;&lt;br&gt;Seleccione una carpeta válida para los mods locales.&lt;br&gt;&lt;br&gt;La carpeta de mods locales debe ser una subcarpeta 'Mods' dentro de la carpeta del juego.</translation>
     </message>
     <message>
         <source>Invalid Game Location</source>
@@ -5619,6 +5763,14 @@ Comuníquese con nosotros para obtener apoyo en:  {development_guide_url} {suppo
     <message>
         <source>This will delete the selected files. Make sure you have backups if needed.</source>
         <translation>Esto eliminará los archivos seleccionados. Asegúrese de tener copias de seguridad si es necesario.</translation>
+    </message>
+    <message>
+        <source>Game content not found</source>
+        <translation>Contenido del juego no encontrado</translation>
+    </message>
+    <message>
+        <source>Cannot clear local mods until the game content location is resolved.</source>
+        <translation>No se pueden borrar las modificaciones locales hasta que se resuelva la ubicación del contenido del juego.</translation>
     </message>
     <message>
         <source>Confirm Clear</source>

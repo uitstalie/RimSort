@@ -16,8 +16,12 @@ from PySide6.QtWidgets import QMessageBox
 from app.models.settings import Instance, Settings
 from app.utils import http, symlink
 from app.utils.event_bus import EventBus
-from app.utils.generic import handle_remove_read_only
+from app.utils.generic import apply_launch_prefix, handle_remove_read_only
 from app.utils.generic import rmtree as g_rmtree
+from app.utils.steam.steamcmd.executable_check import (
+    diagnose_steamcmd_executable,
+    multilib_hint,
+)
 from app.views.dialogue import (
     BinaryChoiceDialog,
     InformationBox,
@@ -40,9 +44,9 @@ class SteamcmdInterface:
     Create SteamcmdInterface object to provide an interface for SteamCMD functionality
     """
 
-    _instance: "None | SteamcmdInterface" = None
+    _instance: None | SteamcmdInterface = None
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> "SteamcmdInterface":  # noqa: PYI034
+    def __new__(cls, *args: Any, **kwargs: Any) -> SteamcmdInterface:  # noqa: PYI034
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
@@ -113,7 +117,7 @@ class SteamcmdInterface:
         )
 
     @classmethod
-    def instance(cls, *args: Any, **kwargs: Any) -> "SteamcmdInterface":
+    def instance(cls, *args: Any, **kwargs: Any) -> SteamcmdInterface:
         if cls._instance is None:
             cls._instance = cls(*args, **kwargs)
         elif args or kwargs:
@@ -403,9 +407,12 @@ class SteamcmdInterface:
         script_path = self._build_download_script(first_batch)
         runner.message(f"Compiled & using script: {script_path}")
         runner._steamcmd_console_log_path = str(self.console_log_path)
+        program, script_args = apply_launch_prefix(
+            self.steamcmd, [f'+runscript "{script_path}"']
+        )
         runner.execute(
-            self.steamcmd,
-            [f'+runscript "{script_path}"'],
+            program,
+            script_args,
             total,
             environment=runner._steamcmd_environment,
         )
@@ -720,6 +727,51 @@ class SteamcmdInterface:
 
         return False
 
+    def check_steamcmd_runnable(self, runner: RunnerPanel | None = None) -> bool:
+        """Verify an installed SteamCMD can actually execute on this host.
+
+        On Linux SteamCMD ships a 32-bit build that needs a 32-bit glibc
+        loader. Without it the launcher only says "cannot execute: required
+        file not found", naming no package. This inspects the binary instead
+        and, when the loader is missing, reports it together with the packages
+        that provide it on the host distro (#2475).
+
+        :param runner: Optional runner to write progress into.
+        :return: True when SteamCMD is runnable or cannot be judged, else False.
+        """
+        problem = diagnose_steamcmd_executable(
+            Path(self.steamcmd_install_path), system=self.system
+        )
+        if problem is None:
+            return True
+
+        hint = multilib_hint(problem.distro_id)
+        logger.error(
+            f"SteamCMD binary {problem.binary} requires {problem.missing_loader},"
+            f" which does not exist on this system. Suggested packages: {hint}"
+        )
+        if runner is not None:
+            runner.message(f"SteamCMD cannot run: missing {problem.missing_loader}")
+        show_warning(
+            title=self.translate(
+                "SteamcmdInterface", "SteamCMD cannot run on this system"
+            ),
+            text=self.translate(
+                "SteamcmdInterface",
+                "SteamCMD is installed but cannot be executed on this system.",
+            ),
+            information=self.translate(
+                "SteamcmdInterface",
+                "The SteamCMD binary needs a 32-bit system library that is not"
+                " installed:<br><b>{loader}</b><br><br>Install the 32-bit"
+                " runtime for your distribution, usually:<br><b>{hint}</b>",
+            ).format(loader=problem.missing_loader, hint=hint),
+            details=self.translate(
+                "SteamcmdInterface", "SteamCMD binary: {binary}"
+            ).format(binary=problem.binary),
+        )
+        return False
+
     def setup_steamcmd(
         self, symlink_source_path: str, reinstall: bool, runner: RunnerPanel
     ) -> None:
@@ -779,6 +831,12 @@ class SteamcmdInterface:
             if answer == QMessageBox.StandardButton.Yes:
                 runner.message(f"Reinstalling SteamCMD: {self.steamcmd_install_path}")
                 self.setup_steamcmd(symlink_source_path, True, runner)
+
+        # Nothing below can work if the binary itself cannot execute, and the
+        # download failure would otherwise surface as an opaque SteamCMD error.
+        if not self.check_steamcmd_runnable(runner):
+            return
+
         if installed:
             if not os.path.exists(self.steamcmd_content_path):
                 os.makedirs(self.steamcmd_content_path)
