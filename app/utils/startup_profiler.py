@@ -300,7 +300,7 @@ def find_game_process(name: str = GAME_PROCESS_NAME) -> psutil.Process | None:
             create_time = float(proc.info.get("create_time") or 0.0)
             if create_time > newest_create:
                 newest, newest_create = proc, create_time
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
+        except psutil.NoSuchProcess, psutil.AccessDenied:
             continue
     return newest
 
@@ -321,7 +321,7 @@ def process_exited(process: psutil.Process) -> bool:
         if not process.is_running():
             return True
         return process.status() == psutil.STATUS_ZOMBIE
-    except (psutil.NoSuchProcess, psutil.AccessDenied):
+    except psutil.NoSuchProcess, psutil.AccessDenied:
         return True
 
 
@@ -341,7 +341,7 @@ def _take_sample(proc: psutil.Process, elapsed: float) -> Sample | None:
             rss_bytes=int(memory.rss),
             threads=int(proc.num_threads()),
         )
-    except (psutil.NoSuchProcess, psutil.AccessDenied, AttributeError):
+    except psutil.NoSuchProcess, psutil.AccessDenied, AttributeError:
         return None
 
 

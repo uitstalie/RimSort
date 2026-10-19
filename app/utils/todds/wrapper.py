@@ -3,6 +3,7 @@ import platform
 import shlex
 import sys
 from collections.abc import Sequence
+from pathlib import Path
 from typing import Protocol
 
 from loguru import logger
@@ -29,6 +30,24 @@ class ToddsInterface:
     """
     Create ToddsInterface object to provide an interface for todds functionality
     """
+
+    @staticmethod
+    def executable_path() -> Path:
+        """Return the path where RimSort expects the todds binary.
+
+        ``RIMSORT_TODDS_PATH`` takes precedence over the bundled location so
+        packaged builds (e.g. Nix) can use a system-provided binary.
+        """
+        env_path = os.getenv("RIMSORT_TODDS_PATH", "").strip()
+        if env_path:
+            return Path(env_path)
+        exe = "todds.exe" if platform.system() == "Windows" else "todds"
+        return Path(AppInfo().application_folder) / "todds" / exe
+
+    @classmethod
+    def is_available(cls) -> bool:
+        """Whether the todds binary is present at the expected location."""
+        return cls.executable_path().exists()
 
     def __init__(
         self,

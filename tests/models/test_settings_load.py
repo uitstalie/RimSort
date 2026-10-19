@@ -162,3 +162,18 @@ def test_load_tolerates_read_only_settings_file(tmp_path: Path) -> None:
     settings.load()
 
     assert json.loads(settings_file.read_text(encoding="utf-8"))["instances"]
+
+
+def test_auto_run_todds_setting_round_trips(tmp_path: Path) -> None:
+    """The pre-launch todds toggle must survive a save/load cycle."""
+    settings_file = tmp_path / "settings.json"
+    settings_file.write_text("{}", encoding="utf-8")
+
+    settings = _make_settings(settings_file)
+    settings.auto_run_todds_before_launch = False
+    settings.save()
+
+    reloaded = _make_settings(settings_file)
+    reloaded.load()
+
+    assert reloaded.auto_run_todds_before_launch is False

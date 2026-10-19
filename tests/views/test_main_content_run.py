@@ -8,6 +8,7 @@ from PySide6.QtCore import QThread
 from PySide6.QtWidgets import QApplication, QMessageBox
 
 from app.utils.event_bus import EventBus
+from app.utils.todds.wrapper import ToddsInterface
 from app.views import dialogue, main_content_panel
 from app.views.main_content_panel import MainContent
 from tests.game_layout_fixtures import make_game_install
@@ -159,6 +160,7 @@ def test_unresolved_direct_launch_requires_explicit_override_before_mutation(
     instance.game_folder = str(game)
     instance.steam_client_integration = True
     mc.settings.auto_run_todds_before_launch = True
+    monkeypatch.setattr(ToddsInterface, "is_available", staticmethod(lambda: True))
     todds = Mock(return_value=(True, 0))
     monkeypatch.setattr(mc, "_do_optimize_textures", todds)
     monkeypatch.delattr(mc, "_confirm_direct_launch")
@@ -421,3 +423,49 @@ def test_append_mod_list_cancel(
 
     # Calling this should log cancellation and return early
     mc._do_append_list_file_xml()
+
+
+class TestAutoRunTodds:
+    """Pre-launch todds must be skippable and never block on a missing binary."""
+
+    def test_disabled_setting_returns_false(
+        self,
+        main_content: tuple[MainContent, list[bool]],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        mc, _ = main_content
+        monkeypatch.delenv("RIMSORT_SKIP_TODDS", raising=False)
+        mc.settings.auto_run_todds_before_launch = False
+        assert mc._should_auto_run_todds() is False
+
+    def test_env_override_wins(
+        self,
+        main_content: tuple[MainContent, list[bool]],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        mc, _ = main_content
+        mc.settings.auto_run_todds_before_launch = True
+        monkeypatch.setenv("RIMSORT_SKIP_TODDS", "1")
+        assert mc._should_auto_run_todds() is False
+
+    def test_missing_binary_is_skipped(
+        self,
+        main_content: tuple[MainContent, list[bool]],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        mc, _ = main_content
+        mc.settings.auto_run_todds_before_launch = True
+        monkeypatch.delenv("RIMSORT_SKIP_TODDS", raising=False)
+        monkeypatch.setattr(ToddsInterface, "is_available", staticmethod(lambda: False))
+        assert mc._should_auto_run_todds() is False
+
+    def test_enabled_and_available_returns_true(
+        self,
+        main_content: tuple[MainContent, list[bool]],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        mc, _ = main_content
+        mc.settings.auto_run_todds_before_launch = True
+        monkeypatch.delenv("RIMSORT_SKIP_TODDS", raising=False)
+        monkeypatch.setattr(ToddsInterface, "is_available", staticmethod(lambda: True))
+        assert mc._should_auto_run_todds() is True

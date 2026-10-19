@@ -17,6 +17,7 @@ from PySide6.QtCore import (
     QObject,
     QProcess,
     Qt,
+    QTimer,
     QUrl,
     Signal,
     Slot,
@@ -94,6 +95,7 @@ from app.utils.steam.workshop_utils import (
     query_workshop_update_data,
 )
 from app.utils.system_info import SystemInfo
+from app.utils.todds.wrapper import ToddsInterface
 from app.utils.update_utils import UpdateManager
 from app.utils.zip_extractor import (
     BadZipFile,
@@ -1968,6 +1970,31 @@ class MainContent(QObject):
             )
 
     # TODDS ACTIONS
+    def _should_auto_run_todds(self) -> bool:
+        """Whether the pre-launch todds run should execute.
+
+        ``RIMSORT_SKIP_TODDS=1`` overrides the saved setting for a single
+        launch, so a stuck optimization can never make the game unlaunchable.
+        A missing binary is skipped instead of waiting on a process that was
+        never started.
+        """
+        if not self.settings.auto_run_todds_before_launch:
+            return False
+        if os.environ.get("RIMSORT_SKIP_TODDS", "").strip().lower() in {
+            "1",
+            "true",
+            "yes",
+        }:
+            logger.info("Skipping automatic todds run: RIMSORT_SKIP_TODDS is set")
+            return False
+        if not ToddsInterface.is_available():
+            logger.warning(
+                "Skipping automatic todds run: executable not found at {}",
+                ToddsInterface.executable_path(),
+            )
+            return False
+        return True
+
     def _create_todds_runner(self, is_pre_launch: bool) -> RunnerPanel:
         runner = RunnerPanel(
             todds_dry_run_support=self.settings.todds_dry_run,
@@ -2011,15 +2038,46 @@ class MainContent(QObject):
             return (False, -1) if block_until_complete else None
 
         if block_until_complete:
+            process = todds_runner.process
+            if process.state() == QProcess.ProcessState.NotRunning:
+                logger.error(
+                    "todds did not start; skipping pre-launch texture optimization"
+                )
+                todds_runner.close()
+                return False, -1
+
             loop = QEventLoop()
-            todds_runner.process.finished.connect(loop.quit)
-            loop.exec_()
-            exit_code = todds_runner.process.exitCode()
-            success = exit_code == 0
+            process.finished.connect(loop.quit)
+            todds_runner.closing_signal.connect(loop.quit)
+
+            # A wedged encoder must never block the game launch forever.
+            timeout = QTimer()
+            timeout.setSingleShot(True)
+            timeout.timeout.connect(loop.quit)
+            timeout.start(15 * 60 * 1000)
+            loop.exec()
+            timeout.stop()
+
+            if process.state() != QProcess.ProcessState.NotRunning:
+                logger.warning(
+                    "todds did not finish within the deadline; terminating it"
+                )
+                todds_runner.kill_process()
+                process.waitForFinished(5000)
+
+            exit_code = process.exitCode()
+            success = (
+                process.exitStatus() == QProcess.ExitStatus.NormalExit
+                and exit_code == 0
+                and not todds_runner.process_killed
+            )
             if success:
                 logger.info("todds process completed successfully")
             else:
-                logger.warning(f"todds process failed with exit code: {exit_code}")
+                logger.warning(
+                    f"todds process did not complete successfully "
+                    f"(exit code: {exit_code})"
+                )
             return success, exit_code
 
         return None
@@ -3226,7 +3284,7 @@ class MainContent(QObject):
             config_folder = self.settings.instances[
                 self.settings.current_instance
             ].config_folder
-        except (KeyError, AttributeError):
+        except KeyError, AttributeError:
             return None
         if not config_folder:
             return None
@@ -3292,7 +3350,7 @@ class MainContent(QObject):
             return
 
         # Run todds before launch if auto-run is enabled
-        if self.settings.auto_run_todds_before_launch:
+        if self._should_auto_run_todds():
             success, exit_code = self._do_optimize_textures(block_until_complete=True)
 
             # Show error message if todds failed, but continue to launch game

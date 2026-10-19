@@ -152,3 +152,30 @@ class TestToddsEnvOverride:
         runner, _ = _execute_with_application_folder(tmp_path)
 
         assert runner.execute.call_args[0][0] == str(todds_binary)
+
+
+class TestToddsAvailability:
+    """ToddsInterface.is_available must match the executable resolution."""
+
+    def test_bundled_binary_is_available(self, tmp_path: Path) -> None:
+        todds_binary = _touch_bundled_todds(tmp_path)
+        with patch("app.utils.todds.wrapper.AppInfo") as mock_app_info:
+            mock_app_info.return_value.application_folder = tmp_path
+            assert ToddsInterface.executable_path() == todds_binary
+            assert ToddsInterface.is_available() is True
+
+    def test_missing_binary_is_not_available(self, tmp_path: Path) -> None:
+        with patch("app.utils.todds.wrapper.AppInfo") as mock_app_info:
+            mock_app_info.return_value.application_folder = tmp_path
+            assert ToddsInterface.is_available() is False
+
+    def test_env_override_is_used(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        override = tmp_path / "nix" / "bin" / "todds"
+        override.parent.mkdir(parents=True)
+        override.touch()
+        monkeypatch.setenv("RIMSORT_TODDS_PATH", str(override))
+
+        assert ToddsInterface.executable_path() == override
+        assert ToddsInterface.is_available() is True

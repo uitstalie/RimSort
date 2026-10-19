@@ -98,6 +98,8 @@ def test_launch_process_reaps_child() -> None:
 
     assert pid == 4321
     assert waited.wait(5.0), "reaper thread did not wait() on the launched process"
+
+
 class TestApplyLaunchPrefix:
     """Cover RIMSORT_LAUNCH_PREFIX handling for packaged builds that must
     launch executables inside an FHS environment (e.g. Nix steam-run)."""

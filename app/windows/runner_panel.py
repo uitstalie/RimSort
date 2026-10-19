@@ -234,6 +234,10 @@ class RunnerPanel(QWidget):
         event.accept()
         self.destroy()
 
+    def kill_process(self) -> None:
+        """Terminate the running process (public wrapper for callers)."""
+        self._do_kill_process()
+
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key.Key_Escape:
             self.exit_window()
