@@ -158,3 +158,31 @@ def test_mediator_loads_use_this_instead(tmp_path: Path) -> None:
     entry = mediator.use_this_instead["111111"]
     assert entry["newName"] == "New Mod"
     assert entry["newPackageId"] == "new.mod.b"
+
+
+@pytest.mark.parametrize(
+    "xml_content",
+    [
+        '<?xml version="1.0" encoding="utf-8"?>\n<ModIdsToFix></ModIdsToFix>',
+        '<?xml version="1.0" encoding="utf-8"?>\n<ModIdsToFix/>',
+    ],
+)
+def test_mediator_handles_empty_no_version_warning(
+    tmp_path: Path, xml_content: str
+) -> None:
+    """An empty No Version Warning DB must not crash startup (1.7 ships one)."""
+    nvw_path = tmp_path / "ModIdsToFix.xml"
+    nvw_path.write_text(xml_content, encoding="utf-8")
+
+    mediator = MetadataMediator(
+        user_rules_path=tmp_path / "rules.json",
+        community_rules_path=None,
+        steam_db_path=None,
+        workshop_mods_path=None,
+        local_mods_path=None,
+        game_path=None,
+        no_version_warning_path=nvw_path,
+    )
+    mediator._load_no_version_warning()
+
+    assert mediator.no_version_warning == []
