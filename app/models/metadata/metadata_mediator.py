@@ -95,6 +95,16 @@ class MetadataMediator:
         return self._game_version
 
     @property
+    def is_waylith(self) -> bool:
+        """Whether the game version's minor component is >= 7.
+
+        Computed on each access (not cached) since ``_game_version`` changes
+        on refresh. ``"Unknown"`` or malformed versions return False.
+        """
+        parts = self._game_version.split(".")
+        return len(parts) > 1 and parts[1].isdigit() and int(parts[1]) >= 7
+
+    @property
     def no_version_warning(self) -> list[str] | None:
         return self._no_version_warning
 
@@ -123,21 +133,21 @@ class MetadataMediator:
             return
         try:
             data = xml_path_to_json(str(self.no_version_warning_path))
-            # An empty <ModIdsToFix/> is parsed as its text (""), not a dict,
-            # which used to crash startup with AttributeError on .get().
-            root = data.get("ModIdsToFix", {}) if isinstance(data, dict) else {}
-            if not isinstance(root, dict):
-                root = {}
-            mod_ids = root.get("li", [])
-            if isinstance(mod_ids, str):
-                mod_ids = [mod_ids]
-            elif not isinstance(mod_ids, list):
-                mod_ids = []
+            # An empty <ModIdsToFix/> parses as its text (""), not a dict.
+            if not isinstance(data, dict):
+                data = {}
+            container = data.get("ModIdsToFix", {})
+            raw_ids = (
+                container.get("li", []) if isinstance(container, dict) else container
+            )
+            if isinstance(raw_ids, str):
+                raw_ids = [raw_ids] if raw_ids.strip() else []
+            mod_ids = raw_ids if isinstance(raw_ids, list) else []
             self._no_version_warning = [str(mid).lower() for mid in mod_ids]
             logger.info(
                 f"Loaded {len(self._no_version_warning)} No Version Warning entries"
             )
-        except (OSError, ValueError, KeyError) as e:
+        except (OSError, ValueError, KeyError, AttributeError, TypeError) as e:
             logger.error(f"Failed to load No Version Warning DB: {e}")
             self._no_version_warning = None
 
