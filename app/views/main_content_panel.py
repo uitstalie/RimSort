@@ -3275,8 +3275,8 @@ class MainContent(QObject):
         """
         Return the game's Player.log path for the current instance, if known.
 
-        The instance config folder points at ``<user data>/Config``, so the log
-        (and its ``Player-prev.log`` sibling) live in its parent directory.
+        The instance config folder points at ``<user data>/Config``. Unity keeps
+        ``Player.log`` next to it; Waylith (1.7+) writes it under ``Logs/``.
 
         :return: path to Player.log, or None when the config folder is unknown
         """
@@ -3288,7 +3288,10 @@ class MainContent(QObject):
             return None
         if not config_folder:
             return None
-        return Path(config_folder).parent / "Player.log"
+        log_dir = Path(config_folder).parent
+        if self.metadata_controller.is_waylith:
+            log_dir /= "Logs"
+        return log_dir / "Player.log"
 
     def _do_run_game(self) -> None:
         """

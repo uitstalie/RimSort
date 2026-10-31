@@ -469,3 +469,40 @@ class TestAutoRunTodds:
         monkeypatch.delenv("RIMSORT_SKIP_TODDS", raising=False)
         monkeypatch.setattr(ToddsInterface, "is_available", staticmethod(lambda: True))
         assert mc._should_auto_run_todds() is True
+
+
+class TestRimworldPlayerLogPath:
+    """Player.log lives under Logs/ on Waylith (1.7+) and beside Config on Unity."""
+
+    def test_waylith_uses_logs_subdir(
+        self,
+        main_content: tuple[MainContent, list[bool]],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        mc, _ = main_content
+        instance = mc.settings.instances[mc.settings.current_instance]
+        instance.config_folder = "/tmp/rimworld/Config"
+        monkeypatch.setattr(mc.metadata_controller, "is_waylith", True)
+
+        assert mc._rimworld_player_log_path() == Path("/tmp/rimworld/Logs/Player.log")
+
+    def test_unity_uses_config_parent(
+        self,
+        main_content: tuple[MainContent, list[bool]],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        mc, _ = main_content
+        instance = mc.settings.instances[mc.settings.current_instance]
+        instance.config_folder = "/tmp/rimworld/Config"
+        monkeypatch.setattr(mc.metadata_controller, "is_waylith", False)
+
+        assert mc._rimworld_player_log_path() == Path("/tmp/rimworld/Player.log")
+
+    def test_unknown_config_folder_returns_none(
+        self, main_content: tuple[MainContent, list[bool]]
+    ) -> None:
+        mc, _ = main_content
+        instance = mc.settings.instances[mc.settings.current_instance]
+        instance.config_folder = ""
+
+        assert mc._rimworld_player_log_path() is None
