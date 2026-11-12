@@ -3392,6 +3392,12 @@ Please select your preferred mod variant in the table below. You can also open e
         <translation>Вы выбрали {len} мод(ов) для отписки.</translation>
     </message>
     <message>
+        <source>
+Waylith provides compatibility stubs for 1.6</source>
+        <translation>
+Waylith предоставляет заглушки совместимости для версии 1.6.</translation>
+    </message>
+    <message>
         <source>Startup impact: {time}</source>
         <translation>Влияние на запуск: {time}</translation>
     </message>
@@ -6492,6 +6498,19 @@ The following table displays Workshop mods available for update from Steam.</sou
     <message>
         <source>RimSort was unable to read the supplied mods list because it may be invalid or missing.</source>
         <translation>RimSort не смог прочитать указанный список модов, так как он может быть недействительным или отсутствовать.</translation>
+    </message>
+</context>
+<context>
+    <name>platform_specific_open</name>
+    <message>
+        <location filename="../app/utils/generic.py" line="484"/>
+        <source>Path not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/utils/generic.py" line="485"/>
+        <source>The selected path does not exist.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

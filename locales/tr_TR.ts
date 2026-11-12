@@ -3413,6 +3413,12 @@ Lütfen aşağıdaki tabloda tercih ettiğiniz Mod varyantı seçin. Doğrulamak
         <translation>Yorum yapılmadı veya giriş iptal edildi. Bu eylem için yorumlar gereklidir!</translation>
     </message>
     <message>
+        <source>
+Waylith provides compatibility stubs for 1.6</source>
+        <translation>
+Waylith 1.6 için uyumluluk taslakları sağlar</translation>
+    </message>
+    <message>
         <source>Startup impact: {time}</source>
         <translation>Başlangıç ​​etkisi: {time}</translation>
     </message>
@@ -6480,6 +6486,19 @@ The following table displays Workshop mods available for update from Steam.</sou
     <message>
         <source>The supplied mods list may be missing or invalid. If you just (re)installed RimWorld, you may need to run it once to generate the mods list.</source>
         <translation>Verilen Modlar listesi eksik veya geçersiz olabilir. Rimworld'ü yeni (yeniden) yüklediyseniz, MODS listesini oluşturmak için bir kez çalıştırmanız gerekebilir.</translation>
+    </message>
+</context>
+<context>
+    <name>platform_specific_open</name>
+    <message>
+        <location filename="../app/utils/generic.py" line="484"/>
+        <source>Path not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/utils/generic.py" line="485"/>
+        <source>The selected path does not exist.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

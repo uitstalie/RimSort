@@ -3465,6 +3465,12 @@ Should be Loaded Before:</source>
         <translation>Debe cargarse antes:</translation>
     </message>
     <message>
+        <source>
+Waylith provides compatibility stubs for 1.6</source>
+        <translation>
+Waylith proporciona códigos auxiliares de compatibilidad para 1.6</translation>
+    </message>
+    <message>
         <source>Startup impact: {time}</source>
         <translation>Impacto de inicio:  {time}</translation>
     </message>
@@ -6478,6 +6484,19 @@ The following table displays Workshop mods available for update from Steam.</sou
     <message>
         <source>RimSort was unable to read the supplied mods list because it may be invalid or missing.</source>
         <translation>Rimsort no pudo leer la lista de mods suministradas porque puede ser inválida o faltante.</translation>
+    </message>
+</context>
+<context>
+    <name>platform_specific_open</name>
+    <message>
+        <location filename="../app/utils/generic.py" line="484"/>
+        <source>Path not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/utils/generic.py" line="485"/>
+        <source>The selected path does not exist.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

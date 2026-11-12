@@ -3387,6 +3387,12 @@ Please select your preferred mod variant in the table below. You can also open e
         <translation>{len}개의 구독 해제할 모드를 선택했습니다.</translation>
     </message>
     <message>
+        <source>
+Waylith provides compatibility stubs for 1.6</source>
+        <translation>
+Waylith는 1.6에 대한 호환성 스텁을 제공합니다.</translation>
+    </message>
+    <message>
         <source>Startup impact: {time}</source>
         <translation>시작 영향: {time}</translation>
     </message>
@@ -6480,6 +6486,19 @@ The following table displays Workshop mods available for update from Steam.</sou
     <message>
         <source>RimSort was unable to read the supplied mods list because it may be invalid or missing.</source>
         <translation>RimSort가 제공된 모드 리스트를 읽을 수 없습니다. 유효하지 않거나 찾을 수 없을 가능성이 있습니다.</translation>
+    </message>
+</context>
+<context>
+    <name>platform_specific_open</name>
+    <message>
+        <location filename="../app/utils/generic.py" line="484"/>
+        <source>Path not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/utils/generic.py" line="485"/>
+        <source>The selected path does not exist.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -3387,6 +3387,12 @@ Bitte wählen Sie in der folgenden Tabelle Ihre bevorzugte Mod -Variante aus.Sie
         <translation>Sie haben {len} Mods für Abmeldung ausgewählt.</translation>
     </message>
     <message>
+        <source>
+Waylith provides compatibility stubs for 1.6</source>
+        <translation>
+Waylith stellt Kompatibilitäts-Stubs für 1.6 bereit</translation>
+    </message>
+    <message>
         <source>Startup impact: {time}</source>
         <translation>Auswirkungen auf das Startup: {time}</translation>
     </message>
@@ -6477,6 +6483,19 @@ The following table displays Workshop mods available for update from Steam.</sou
     <message>
         <source>RimSort was unable to read the supplied mods list because it may be invalid or missing.</source>
         <translation>RIMSORT konnte die gelieferte Mods -Liste nicht lesen, da sie möglicherweise ungültig oder fehlt.</translation>
+    </message>
+</context>
+<context>
+    <name>platform_specific_open</name>
+    <message>
+        <location filename="../app/utils/generic.py" line="484"/>
+        <source>Path not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/utils/generic.py" line="485"/>
+        <source>The selected path does not exist.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
