@@ -32,7 +32,7 @@ import platform
 import sys
 import traceback
 from logging import WARNING, getLogger
-from multiprocessing import freeze_support, set_start_method
+from multiprocessing import freeze_support
 from pathlib import Path
 from types import TracebackType
 
@@ -238,13 +238,12 @@ if __name__ == "__main__":
             AppInfo().application_folder / "qtwebengine_locales"
         )
 
-        # MacOS and Windows do not support fork, and can only use spawn
+        # macOS and Windows use spawn by default.
         if SYSTEM != "Linux":
             logger.warning(
-                "Non-Linux platform detected: using multiprocessing.freeze_support() & setting 'spawn' as MP method"
+                "Non-Linux platform detected: using multiprocessing.freeze_support()"
             )
             freeze_support()
-            set_start_method("spawn")
 
         logger.debug("Running using Nuitka bundle")
 

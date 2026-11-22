@@ -2460,6 +2460,18 @@ Manage mods installed from GitHub releases.</source>
         <source>{count} repositories were updated with their latest commits:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Updating databases...</source>
+        <translation>Updating databases...</translation>
+    </message>
+    <message>
+        <source>Failed to update databases</source>
+        <translation>Failed to update databases</translation>
+    </message>
+    <message>
+        <source>Database updates finished</source>
+        <translation>Database updates finished</translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -2520,6 +2532,10 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>Player Log</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RimSort {version} is available. Click to update.</source>
+        <translation>RimSort {version} is available. Click to update.</translation>
     </message>
 </context>
 <context>
@@ -5416,6 +5432,13 @@ Please choose one of the following options to proceed.</source>
     </message>
 </context>
 <context>
+    <name>Status</name>
+    <message>
+        <source>Update available</source>
+        <translation>Update available</translation>
+    </message>
+</context>
+<context>
     <name>SteamBrowser</name>
     <message>
         <source>Add Mods by Workshop ID</source>
@@ -6161,6 +6184,46 @@ Please reach out to us for support at: {support_url}</source>
     <message>
         <source>Too many requests were sent from your network, so GitHub declined this update check. Nothing is wrong with your installation.&lt;br&gt;&lt;br&gt;{reset}&lt;br&gt;&lt;br&gt;Adding a GitHub personal access token under Settings - Advanced raises the limit substantially and usually removes this.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checking for RimSort updates...</source>
+        <translation>Checking for RimSort updates...</translation>
+    </message>
+    <message>
+        <source>Creating Backup</source>
+        <translation>Creating Backup</translation>
+    </message>
+    <message>
+        <source>Backup timed out. Waiting for the backup to stop...</source>
+        <translation>Backup timed out. Waiting for the backup to stop...</translation>
+    </message>
+    <message>
+        <source>Backup timed out. The update was stopped.</source>
+        <translation>Backup timed out. The update was stopped.</translation>
+    </message>
+    <message>
+        <source>Failed to create a backup before updating. Do you want to continue without a backup?</source>
+        <translation>Failed to create a backup before updating. Do you want to continue without a backup?</translation>
+    </message>
+    <message>
+        <source>Backing up files: {current} / {total}</source>
+        <translation>Backing up files: {current} / {total}</translation>
+    </message>
+    <message>
+        <source>No compatible update download was found. Your installation has not been changed.&lt;br&gt;&lt;br&gt;Check &lt;a href="https://github.com/RimSort/RimSort/releases"&gt;RimSort releases&lt;/a&gt; for a download matching your operating system and CPU architecture.</source>
+        <translation>No compatible update download was found. Your installation has not been changed.&lt;br&gt;&lt;br&gt;Check &lt;a href="https://github.com/RimSort/RimSort/releases"&gt;RimSort releases&lt;/a&gt; for a download matching your operating system and CPU architecture.</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;&lt;br&gt;AppImage installations require a compatible AppImage download.</source>
+        <translation>&lt;br&gt;&lt;br&gt;AppImage installations require a compatible AppImage download.</translation>
+    </message>
+    <message>
+        <source>RimSort could not read its current version, so it cannot safely check for updates.</source>
+        <translation>RimSort could not read its current version, so it cannot safely check for updates.</translation>
+    </message>
+    <message>
+        <source>Download a stable release manually from &lt;a href=&quot;https://github.com/RimSort/RimSort/releases/latest&quot;&gt;the RimSort releases page&lt;/a&gt;.</source>
+        <translation>Download a stable release manually from &lt;a href=&quot;https://github.com/RimSort/RimSort/releases/latest&quot;&gt;the RimSort releases page&lt;/a&gt;.</translation>
     </message>
 </context>
 <context>

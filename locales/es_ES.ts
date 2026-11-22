@@ -2471,6 +2471,18 @@ Manage mods installed from GitHub releases.</source>
         <source>{count} repositories were updated with their latest commits:</source>
         <translation>Los repositorios se actualizaron con sus últimos compromisos: {count}</translation>
     </message>
+    <message>
+        <source>Updating databases...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to update databases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Database updates finished</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -2533,6 +2545,10 @@ Manage mods installed from GitHub releases.</source>
     <message>
         <source>Player Log</source>
         <translation>Registro de jugadores</translation>
+    </message>
+    <message>
+        <source>RimSort {version} is available. Click to update.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5484,6 +5500,13 @@ Elija una de las siguientes opciones para continuar.</translation>
     </message>
 </context>
 <context>
+    <name>Status</name>
+    <message>
+        <source>Update available</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SteamBrowser</name>
     <message>
         <source>Add Mods by Workshop ID</source>
@@ -6231,6 +6254,46 @@ Comuníquese con nosotros para obtener apoyo en:  {development_guide_url} {suppo
     <message>
         <source>&lt;br&gt;Successfully retrieved latest release.&lt;br&gt;The update will be installed from: {update_source_path}</source>
         <translation>&lt;br&gt;Última versión recuperada correctamente.&lt;br&gt;La actualización se instalará desde: {update_source_path}</translation>
+    </message>
+    <message>
+        <source>Checking for RimSort updates...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creating Backup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup timed out. Waiting for the backup to stop...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup timed out. The update was stopped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to create a backup before updating. Do you want to continue without a backup?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backing up files: {current} / {total}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No compatible update download was found. Your installation has not been changed.&lt;br&gt;&lt;br&gt;Check &lt;a href="https://github.com/RimSort/RimSort/releases"&gt;RimSort releases&lt;/a&gt; for a download matching your operating system and CPU architecture.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;&lt;br&gt;AppImage installations require a compatible AppImage download.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RimSort could not read its current version, so it cannot safely check for updates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download a stable release manually from &lt;a href=&quot;https://github.com/RimSort/RimSort/releases/latest&quot;&gt;the RimSort releases page&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
